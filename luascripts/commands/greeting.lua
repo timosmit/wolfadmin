@@ -21,9 +21,9 @@ local settings = require "luascripts.wolfadmin.util.settings"
 local greetings = require "luascripts.wolfadmin.players.greetings"
 
 function commandGreeting(clientId, cmdArguments)
-    local greetingText = greetings.get(clientId)
+    local greeting = greetings.get(clientId)
     
-    if greetingText then
+    if greeting then
         greetings.show(clientId)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgreeting: ^9you do not have a personal greeting.\";")

@@ -40,8 +40,8 @@ local voting = require "luascripts.wolfadmin.game.voting"
 local stats = require "luascripts.wolfadmin.players.stats"
 local greetings = require "luascripts.wolfadmin.players.greetings"
 
-local version = "1.0.0"
-local release = "25 January 2016"
+local version = "1.0.1"
+local release = "8 February 2016"
 
 local basepath = nil
 

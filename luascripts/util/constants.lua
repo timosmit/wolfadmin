@@ -17,6 +17,10 @@
 
 local constants = {}
 
+constants.GAME_RUNNING = 0
+constants.GAME_WARMUP = 1
+constants.GAME_STATE_INTERMISSION = 3
+
 constants.COLOR_MAIN = "^7"
 
 constants.MAX_LENGTH_CP = 56

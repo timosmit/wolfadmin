@@ -63,8 +63,12 @@ function sprees.get()
     return records
 end
 
-function sprees.reset()
-    db.removerecords(currentMapId)
+function sprees.reset(truncate)
+    if truncate then
+        db.removeallrecords()
+    else
+        db.removerecords(currentMapId)
+    end
     
     currentRecords = db.getrecords(currentMapId)
 end
@@ -86,12 +90,13 @@ function sprees.load()
 end
 
 function sprees.oninit(levelTime, randomSeed, restartMap)
-    if (settings.get("db_type") == "cfg" and settings.get("g_fileSprees") ~= "") or (settings.get("db_type") ~= "cfg" and settings.get("g_spreeRecords") ~= 0) then
+    if
+        (settings.get("db_type") == "cfg" and settings.get("g_fileSprees") ~= "") or
+        (settings.get("db_type") ~= "cfg" and settings.get("g_spreeRecords") ~= 0)
+    then
         sprees.load()
         
         events.handle("onGameStateChange", sprees.ongamestatechange)
-        events.handle("onPlayerDeath", sprees.ondeath)
-        events.handle("onPlayerRevive", sprees.onrevive)
     end
 end
 events.handle("onGameInit", sprees.oninit)
@@ -107,7 +112,10 @@ end
 events.handle("onClientConnect", sprees.onconnect)
 
 function sprees.ongamestatechange(gameState)
-    if gameState == 3 then
+    if gameState == constants.GAME_RUNNING then
+        events.handle("onPlayerDeath", sprees.ondeath)
+        events.handle("onPlayerRevive", sprees.onrevive)
+    elseif gameState == constants.GAME_INTERMISSION then
         if currentRecords["ksrecord"] and currentRecords["ksrecord"] > 0 then
             if db.getrecord(currentMapId, constants.RECORD_KILL) then
                 db.updaterecord(currentMapId, os.time(), constants.RECORD_KILL, currentRecords["ksrecord"], currentRecords["ksplayer"])
@@ -156,7 +164,7 @@ function sprees.ondeath(victimId, killerId, mod)
         
         stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
         
-        if (settings.get("g_botRecords") == 1 or not db.isplayerbot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+        if (settings.get("g_botRecords") == 1 or not stats.get(victimId, "isBot")) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
             currentRecords["dsplayer"] = db.getplayerid(victimId)
             currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
         end
@@ -169,7 +177,7 @@ function sprees.ondeath(victimId, killerId, mod)
             
             stats.set(killerId, "longestKillSpree", stats.get(killerId, "currentKillSpree") > stats.get(killerId, "longestKillSpree") and stats.get(killerId, "currentKillSpree") or stats.get(killerId, "longestKillSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not db.isplayerbot(killerId)) and (not currentRecords["ksrecord"] or stats.get(killerId, "longestKillSpree") > currentRecords["ksrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not stats.get(killerId, "isBot")) and (not currentRecords["ksrecord"] or stats.get(killerId, "longestKillSpree") > currentRecords["ksrecord"]) then
                 currentRecords["ksplayer"] = db.getplayerid(killerId)
                 currentRecords["ksrecord"] = stats.get(killerId, "longestKillSpree")
             end
@@ -184,7 +192,7 @@ function sprees.ondeath(victimId, killerId, mod)
             
             stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not db.isplayerbot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not stats.get(victimId, "isBot")) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
                 currentRecords["dsplayer"] = db.getplayerid(victimId)
                 currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
             end
@@ -200,7 +208,7 @@ function sprees.onrevive(clientMedic, clientVictim)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..stats.get(clientMedic, "playerName").." ^*"..revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")]["msg"].." ^d(^3"..stats.get(clientMedic, "currentReviveSpree").." ^drevives in a row!)\";")
     end
     
-    if (settings.get("g_botRecords") == 1 or not db.isplayerbot(clientMedic)) and (not currentRecords["rsrecord"] or stats.get(clientMedic, "longestReviveSpree") > currentRecords["rsrecord"]) then
+    if (settings.get("g_botRecords") == 1 or not stats.get(clientMedic, "isBot")) and (not currentRecords["rsrecord"] or stats.get(clientMedic, "longestReviveSpree") > currentRecords["rsrecord"]) then
         currentRecords["rsplayer"] = db.getplayerid(clientMedic)
         currentRecords["rsrecord"] = stats.get(clientMedic, "longestReviveSpree")
     end

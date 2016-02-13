@@ -55,6 +55,10 @@ function mysql.updaterecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("UPDATE `records` SET `date`="..tonumber(recorddate)..", `record`="..tonumber(record)..", `player`="..tonumber(playerid).." WHERE `mapid`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 end
 
+function mysql.removeallrecords()
+    cur = assert(con:execute("TRUNCATE `records`"))
+end
+
 function mysql.removerecords(mapid)
     cur = assert(con:execute("DELETE FROM `records` WHERE `mapid`="..tonumber(mapid)..""))
 end
@@ -128,10 +132,6 @@ end
 
 function mysql.getplayerid(clientid)
     return mysql.getplayer(stats.get(clientid, "playerGUID"))["id"]
-end
-
-function mysql.isplayerbot(clientid)
-    return mysql.getplayer(stats.get(clientid, "playerGUID"))["bot"] == 1
 end
 
 function mysql.getplayer(guid)

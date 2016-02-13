@@ -45,31 +45,35 @@ function greetings.get(clientId)
 end
 
 function greetings.show(clientId)
-    local greetingText = greetings.get(clientId)
+    local greeting = greetings.get(clientId)
     
-    if greetingText then
+    if greeting then
         local prefix = (util.getAreaName(settings.get("g_greetingArea")) ~= "cp") and "^dgreeting: ^9" or "^7"
-        local greeting = prefix..greetingText:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
+        local text = prefix..greeting["text"]:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
         local out = ""
         
-        while util.getAreaName(settings.get("g_greetingArea")) == "cp" and string.len(greeting) > constants.MAX_LENGTH_CP do
-            local sub = greeting:sub(1, constants.MAX_LENGTH_CP)
+        while util.getAreaName(settings.get("g_greetingArea")) == "cp" and string.len(text) > constants.MAX_LENGTH_CP do
+            local sub = text:sub(1, constants.MAX_LENGTH_CP)
             local rev = sub:reverse()
 
             local pos = rev:find(" [^^]") -- some epic smiley exclusion here
 
             if pos then
                 pos = constants.MAX_LENGTH_CP - pos
-                out = out..greeting:sub(1, pos).."\\n"
-                greeting = greeting:sub(pos + 2)
+                out = out..text:sub(1, pos).."\\n"
+                text = text:sub(pos + 2)
             else
                 pos = sub:len()
-                out = out..greeting:sub(1, pos).."\\n"
-                greeting = greeting:sub(pos + 1)
+                out = out..text:sub(1, pos).."\\n"
+                text = text:sub(pos + 1)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, util.getAreaName(settings.get("g_greetingArea")).." \""..out..greeting.."\";")
+        if greeting["sound"] then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"/sound/"..greeting["sound"].."\";")
+        end
+        
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, util.getAreaName(settings.get("g_greetingArea")).." \""..out..text.."\";")
     end
 end
 
@@ -81,11 +85,17 @@ function greetings.load()
     if amount == 0 then return 0 end
     
     for id, greeting in ipairs(array["level"]) do
-        levelGreetings[tonumber(greeting["level"])] = greeting["greeting"]
+        levelGreetings[tonumber(greeting["level"])] = {
+            ["text"] = greeting["greeting"],
+            ["sound"] = greeting["sound"],
+        }
     end
     
     for id, greeting in ipairs(array["user"]) do
-        userGreetings[greeting["guid"]] = greeting["greeting"]
+        userGreetings[greeting["guid"]] = {
+            ["text"] = greeting["greeting"],
+            ["sound"] = greeting["sound"],
+        }
     end
     
     return amount

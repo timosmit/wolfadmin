@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require "luascripts.wolfadmin.util.debug"
+
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
@@ -187,7 +189,44 @@ function commands.onclientcommand(clientId, cmdText)
     local shrubArguments = {}
     local shrubArgumentsOffset = 0
     
-    if wolfCmd == "adminchat" or wolfCmd == "ac" then
+    if wolfCmd == "m" or wolfCmd == "pm" then
+        if et.trap_Argc() > 2 then
+            local cmdClient
+            
+            if tonumber(et.trap_Argv(1)) == nil then
+                cmdClient = et.ClientNumberFromString(et.trap_Argv(1))
+            else
+                cmdClient = tonumber(et.trap_Argv(1))
+            end
+            
+            if cmdClient ~= -1 and et.gentity_get(cmdClient, "pers.netname") then
+                stats.set(cmdClient, "lastMessageFrom", clientId)
+                
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..cmdClient.." \"^9reply: ^7r [^2message^7]\";")
+            end
+        end
+    elseif wolfCmd == "r" then
+        if et.trap_Argc() == 1 then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: ^7"..wolfCmd.." [^2message^7]\";")
+        else
+            local recipient = stats.get(clientId, "lastMessageFrom")
+            
+            if et.gentity_get(recipient, "pers.netname") then
+                local message = {}
+                
+                for i = 1, et.trap_Argc() - 1 do
+                    message[i] = et.trap_Argv(i)
+                end
+                
+                stats.set(recipient, "lastMessageFrom", clientId)
+                
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient.." (1 recipients): ^3"..table.concat(message, " ").."\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
+            end
+        end
+        
+        return 1
+    elseif wolfCmd == "adminchat" or wolfCmd == "ac" then
         if et.G_shrubbot_permission(clientId, "~") == 1 then
             if et.trap_Argc() == 1 then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: ^7"..wolfCmd.." [^2message^7]\";")

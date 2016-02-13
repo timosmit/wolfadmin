@@ -63,6 +63,10 @@ function cfg.updaterecord(mapid, recorddate, recordtype, record, playerid)
     records[mapid][typestr.."name"] = playerid
 end
 
+function cfg.removeallrecords()
+    records = {}
+end
+
 function cfg.removerecords(mapid)
     records[mapid] = {
         ["map"] = records[mapid]["map"],

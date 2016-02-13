@@ -16,7 +16,7 @@ REQUIREMENTS
 
 INSTRUCTIONS (NEW)
 
-  * Unpack the /luascripts folder into your /nq directory
+  * Unpack the /luascripts folder into /nq/luascripts/wolfadmin
   * Unpack the contents of the /config folder into your /nq directory (or 
     /.etwolf/nq on Linux systems)
   * Optionally, copy the contents of the cvars.cfg to your own server 
