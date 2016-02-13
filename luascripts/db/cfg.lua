@@ -118,7 +118,7 @@ function cfg.getplayerid(clientid)
     return clientid
 end
 
-function mysql.isplayerbot(clientid)
+function cfg.isplayerbot(clientid)
     return string.match(stats.get(clientid, "playerGUID"), 'OMNIBOT%d%d%d+')
 end
 
