@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2016 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
