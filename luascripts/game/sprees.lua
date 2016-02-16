@@ -112,10 +112,10 @@ end
 events.handle("onClientConnect", sprees.onconnect)
 
 function sprees.ongamestatechange(gameState)
-    if gameState == constants.GAME_RUNNING then
+    if gameState == constants.GAME_STATE_RUNNING then
         events.handle("onPlayerDeath", sprees.ondeath)
         events.handle("onPlayerRevive", sprees.onrevive)
-    elseif gameState == constants.GAME_INTERMISSION then
+    elseif gameState == constants.GAME_STATE_INTERMISSION then
         if currentRecords["ksrecord"] and currentRecords["ksrecord"] > 0 then
             if db.getrecord(currentMapId, constants.RECORD_KILL) then
                 db.updaterecord(currentMapId, os.time(), constants.RECORD_KILL, currentRecords["ksrecord"], currentRecords["ksplayer"])

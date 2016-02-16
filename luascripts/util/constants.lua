@@ -17,8 +17,8 @@
 
 local constants = {}
 
-constants.GAME_RUNNING = 0
-constants.GAME_WARMUP = 1
+constants.GAME_STATE_RUNNING = 0
+constants.GAME_STATE_WARMUP = 1
 constants.GAME_STATE_INTERMISSION = 3
 
 constants.COLOR_MAIN = "^7"
