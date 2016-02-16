@@ -211,7 +211,9 @@ function commands.onclientcommand(clientId, cmdText)
         else
             local recipient = stats.get(clientId, "lastMessageFrom")
             
-            if et.gentity_get(recipient, "pers.netname") then
+            if not (recipient and et.gentity_get(recipient, "pers.netname")) then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
+            else
                 local message = {}
                 
                 for i = 1, et.trap_Argc() - 1 do
