@@ -15,12 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
-local balancer = require "luascripts.wolfadmin.admin.balancer"
+local util = require "luascripts.wolfadmin.util.util"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local settings = require "luascripts.wolfadmin.util.settings"
+local greetings = require "luascripts.wolfadmin.players.greetings"
 
-function commandBalance(clientId, cmdArguments)
-    balancer.balance(true, (cmdArguments[1] and cmdArguments[1] == "force"))
+function commandGreeting(clientId, cmdArguments)
+    local greeting = greetings.get(clientId)
     
-    return true
+    if greeting then
+        greetings.show(clientId)
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgreeting: ^9you do not have a personal greeting.\";")
+    end
 end
-commands.register("balance", commandBalance, "p", "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")
+commands.addadmin("greeting", commandGreeting, "Q", "display your personal greeting, if you have one")

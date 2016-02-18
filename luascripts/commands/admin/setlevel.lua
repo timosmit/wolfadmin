@@ -16,7 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local settings = require "luascripts.wolfadmin.util.settings"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
 
 function commandSetLevel(clientId, cmdArguments)
@@ -45,4 +45,4 @@ function commandSetLevel(clientId, cmdArguments)
     
     return false
 end
-commands.register("setlevel", commandSetLevel, "s", "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true)
+commands.addadmin("setlevel", commandSetLevel, "s", "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true)

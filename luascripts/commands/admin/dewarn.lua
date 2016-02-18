@@ -16,7 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local settings = require "luascripts.wolfadmin.util.settings"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandRemoveWarn(clientId, cmdArguments)
@@ -25,7 +25,7 @@ function commandRemoveWarn(clientId, cmdArguments)
         
         return true
     elseif #cmdArguments < 2 or tonumber(cmdArguments[2]) == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^ddewarn usage: "..commands.get("dewarn")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^ddewarn usage: "..commands.getadmin("dewarn")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -56,4 +56,4 @@ function commandRemoveWarn(clientId, cmdArguments)
     
     return true
 end
-commands.register("dewarn", commandRemoveWarn, "R", "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
+commands.addadmin("dewarn", commandRemoveWarn, "R", "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)

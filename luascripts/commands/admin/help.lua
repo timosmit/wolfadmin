@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 
 function commandHelp(clientId, cmdArguments)
-    local cmds = commands.get()
+    local cmds = commands.getadmin()
     
     if #cmdArguments == 0 then
         local availableCommands = {}
@@ -66,4 +66,4 @@ function commandHelp(clientId, cmdArguments)
     
     return false
 end
-commands.register("help", commandHelp, "h", "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)
+commands.addadmin("help", commandHelp, "h", "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)

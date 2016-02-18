@@ -30,7 +30,7 @@ local balancer = require "luascripts.wolfadmin.admin.balancer"
 local rules = require "luascripts.wolfadmin.admin.rules"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 
 local game = require "luascripts.wolfadmin.game.game"
 local bots = require "luascripts.wolfadmin.game.bots"

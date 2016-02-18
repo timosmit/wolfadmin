@@ -15,18 +15,21 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local settings = require "luascripts.wolfadmin.util.settings"
-local commands = require "luascripts.wolfadmin.commands"
-local rules = require "luascripts.wolfadmin.admin.rules"
-local greetings = require "luascripts.wolfadmin.players.greetings"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local game = require "luascripts.wolfadmin.game.game"
+local sprees = require "luascripts.wolfadmin.game.sprees"
 
-function commandReadconfig(clientId, cmdArguments)
-    settings.load()
-    local rulesCount = rules.load()
-    local greetingsCount = greetings.load()
+function commandResetSprees(clientId, cmdArguments)
+    if cmdArguments[1] and cmdArguments[1] == "all" then
+        sprees.reset(true)
+        
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9all spree records have been reset.\";")
+    else
+        sprees.reset()
+        
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.\";")
+    end
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
-    
-    return false
+    return true
 end
-commands.register("readconfig", commandReadconfig, "G", "reloads the shrubbot config file and refreshes user flags", nil, true)
+commands.addadmin("resetsprees", commandResetSprees, "G", "resets the spree records")

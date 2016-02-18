@@ -15,18 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luascripts.wolfadmin.util.util"
-local commands = require "luascripts.wolfadmin.commands"
-local settings = require "luascripts.wolfadmin.util.settings"
-local greetings = require "luascripts.wolfadmin.players.greetings"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local voting = require "luascripts.wolfadmin.game.voting"
 
-function commandGreeting(clientId, cmdArguments)
-    local greeting = greetings.get(clientId)
+function commandEnableVote(clientId, cmdArguments)
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^denablevote: ^9next map voting has been enabled.\";")
     
-    if greeting then
-        greetings.show(clientId)
-    else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgreeting: ^9you do not have a personal greeting.\";")
-    end
+    voting.force("nextmap")
+    
+    return true
 end
-commands.register("greeting", commandGreeting, "Q", "display your personal greeting, if you have one")
+commands.addadmin("enablevote", commandEnableVote, "c", "enables next map voting")

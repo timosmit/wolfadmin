@@ -16,11 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local util = require "luascripts.wolfadmin.util.util"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 
 function commandShowStats(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats usage: "..commands.get("stats")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats usage: "..commands.getadmin("stats")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -94,4 +94,4 @@ function commandShowStats(clientId, cmdArguments)
     
     return true
 end
-commands.register("stats", commandShowStats, "I", "display the statistics for a specific player", "^9[^3name|slot#^9]")
+commands.addadmin("stats", commandShowStats, "I", "display the statistics for a specific player", "^9[^3name|slot#^9]")

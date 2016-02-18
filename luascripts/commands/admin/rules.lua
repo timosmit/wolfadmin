@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local rules = require "luascripts.wolfadmin.admin.rules"
 
 function commandRules(clientId, cmdArguments)
@@ -42,4 +42,4 @@ function commandRules(clientId, cmdArguments)
     
     return true
 end
-commands.register("rules", commandRules, "C", "display the rules on the server", "^9(^hrule^9)")
+commands.addadmin("rules", commandRules, "C", "display the rules on the server", "^9(^hrule^9)")

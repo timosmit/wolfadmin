@@ -26,19 +26,51 @@ local stats = require "luascripts.wolfadmin.players.stats"
 local commands = {}
 
 -- available shrubflags: lqyFHY
-local data = {}
+local clientcmds = {}
+local servercmds = {}
+local admincmds = {}
 
-function commands.get(command)
+function commands.getclient(command)
     if command then
-        return data[command]
+        return clientcmds[command]
     end
     
-    return data
+    return clientcmds
 end
 
-function commands.register(command, func, flag, help, syntax, hidden)
-    data[command] = {
-        ["function"] = func, 
+function commands.getserver(command)
+    if command then
+        return servercmds[command]
+    end
+    
+    return servercmds
+end
+
+function commands.getadmin(command)
+    if command then
+        return admincmds[command]
+    end
+    
+    return admincmds
+end
+
+function commands.addclient(command, func, flag, syntax)
+    clientcmds[command] = {
+        ["function"] = func,
+        ["flag"] = flag,
+        ["syntax"] = "^2!"..command..(syntax and " "..syntax or ""),
+    }
+end
+
+function commands.addserver(command, func)
+    servercmds[command] = {
+        ["function"] = func,
+    }
+end
+
+function commands.addadmin(command, func, flag, help, syntax, hidden)
+    admincmds[command] = {
+        ["function"] = func,
         ["flag"] = flag,
         ["help"] = help or "N/A",
         ["syntax"] = "^2!"..command..(syntax and " "..syntax or ""),
@@ -46,22 +78,33 @@ function commands.register(command, func, flag, help, syntax, hidden)
     }
 end
 
-function commands.load()
-    local functionStart = et.trap_Milliseconds()
-    local files = files.ls("commands/")
+function commands.loadfiles(dir)
     local amount = 0
+    local files = files.ls("commands/"..dir.."/")
     
     for _, file in pairs(files) do
         if string.match(string.lower(file), "^[a-z]+%.lua$") then
-            require("luascripts/wolfadmin/commands/"..string.sub(file, 1, string.len(file) - 4))
+            require("luascripts/wolfadmin/commands/"..dir.."/"..string.sub(file, 1, string.len(file) - 4))
             
             amount = amount + 1
         end
     end
     
-    outputDebug("commands.load(): "..amount.." entries loaded in "..et.trap_Milliseconds() - functionStart.." ms")
-    
     return amount
+end
+
+function commands.load()
+    local functionStart = et.trap_Milliseconds()
+    
+    local clientAmount = commands.loadfiles("client")
+    local serverAmount = commands.loadfiles("server")
+    local adminAmount = commands.loadfiles("admin")
+    
+    local totalAmount = clientAmount + serverAmount + adminAmount
+    
+    outputDebug("commands.load(): "..totalAmount.." entries loaded in "..et.trap_Milliseconds() - functionStart.." ms")
+    
+    return totalAmount
 end
 
 function commands.log(clientId, command, cmdArguments)
@@ -168,14 +211,14 @@ function commands.onservercommand(cmdText)
             shrubCmd = string.lower(string.sub(cmdText, 2, string.len(cmdText)))
         end
         
-        if data[shrubCmd] and data[shrubCmd]["function"] and data[shrubCmd]["flag"] then
+        if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
             for i = 1, et.trap_Argc() - shrubArgumentsOffset do
                 shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
             end
             
-            data[shrubCmd]["function"](-1337, shrubArguments)
+            admincmds[shrubCmd]["function"](-1337, shrubArguments)
             
-            if not data[shrubCmd]["hidden"] then
+            if not admincmds[shrubCmd]["hidden"] then
                 commands.log(-1, shrubCmd, shrubArguments)
             end
         end
@@ -326,12 +369,12 @@ function commands.onclientcommand(clientId, cmdText)
     if shrubCmd then
         shrubCmd = string.lower(shrubCmd)
         
-        if data[shrubCmd] and data[shrubCmd]["function"] and data[shrubCmd]["flag"] then
+        if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
             if wolfCmd == "say" or (((wolfCmd == "say_team" and et.gentity_get(cmdClient, "sess.sessionTeam") ~= et.TEAM_SPECTATORS) or wolfCmd == "say_buddy") and et.G_shrubbot_permission(clientId, "9") == 1) or (wolfCmd == "!"..shrubCmd and et.G_shrubbot_permission(clientId, "3") == 1) then
-                if data[shrubCmd]["flag"] ~= "" and et.G_shrubbot_permission(clientId, data[shrubCmd]["flag"]) == 1 then
-                    local isFinished = data[shrubCmd]["function"](clientId, shrubArguments)
+                if admincmds[shrubCmd]["flag"] ~= "" and et.G_shrubbot_permission(clientId, admincmds[shrubCmd]["flag"]) == 1 then
+                    local isFinished = admincmds[shrubCmd]["function"](clientId, shrubArguments)
                     
-                    if not data[shrubCmd]["hidden"] then
+                    if not admincmds[shrubCmd]["hidden"] then
                         commands.log(clientId, shrubCmd, shrubArguments)
                     end
                     

@@ -15,24 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luascripts.wolfadmin.util.util"
-local commands = require "luascripts.wolfadmin.commands"
-local game = require "luascripts.wolfadmin.game.game"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local bots = require "luascripts.wolfadmin.game.bots"
 
-function commandListMaps(clientId, cmdArguments)
-    local output = ""
+function commandBotsOn(clientId, cmdArguments)
+    bots.enable(true)
     
-    local maps = game.getMaps()
-    
-    for _, map in ipairs(maps) do
-        local prefix = "^9"
-        if map == game.getMap() then prefix = "^7" end
-        
-        output = (output ~= "") and output.." "..prefix..map or map
-    end
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlistmaps: ^9"..output.. "\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dneedbots: ^9bots were toggled on.\";")
     
     return true
 end
-commands.register("listmaps", commandListMaps, "C", "display the maps in the rotation")
+commands.addadmin("needbots", commandBotsOn, "O", "adds bots to the game")

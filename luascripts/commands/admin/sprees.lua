@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local sprees = require "luascripts.wolfadmin.game.sprees"
 
 function commandShowSprees(clientId, cmdArguments)
@@ -37,4 +37,4 @@ function commandShowSprees(clientId, cmdArguments)
     
     return true
 end
-commands.register("sprees", commandShowSprees, "I", "display the current spree records")
+commands.addadmin("sprees", commandShowSprees, "I", "display the current spree records")

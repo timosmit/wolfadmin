@@ -15,14 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local bots = require "luascripts.wolfadmin.game.bots"
 
-function commandBotsOn(clientId, cmdArguments)
-    bots.enable(true)
+function commandBotsOff(clientId, cmdArguments)
+    bots.enable(false)
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dneedbots: ^9bots were toggled on.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dkickbots: ^9bots were toggled off.\";")
     
     return true
 end
-commands.register("needbots", commandBotsOn, "O", "adds bots to the game")
+commands.addadmin("kickbots", commandBotsOff, "O", "kicks all bots from the game")

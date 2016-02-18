@@ -16,7 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local settings = require "luascripts.wolfadmin.util.settings"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandAddWarn(clientId, cmdArguments)
@@ -40,4 +40,4 @@ function commandAddWarn(clientId, cmdArguments)
     
     return false
 end
-commands.register("warn", commandAddWarn, "R", "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true)
+commands.addadmin("warn", commandAddWarn, "R", "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true)

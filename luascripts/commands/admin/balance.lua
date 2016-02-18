@@ -15,21 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
-local game = require "luascripts.wolfadmin.game.game"
-local sprees = require "luascripts.wolfadmin.game.sprees"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local balancer = require "luascripts.wolfadmin.admin.balancer"
 
-function commandResetSprees(clientId, cmdArguments)
-    if cmdArguments[1] and cmdArguments[1] == "all" then
-        sprees.reset(true)
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9all spree records have been reset.\";")
-    else
-        sprees.reset()
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.\";")
-    end
+function commandBalance(clientId, cmdArguments)
+    balancer.balance(true, (cmdArguments[1] and cmdArguments[1] == "force"))
     
     return true
 end
-commands.register("resetsprees", commandResetSprees, "G", "resets the spree records")
+commands.addadmin("balance", commandBalance, "p", "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")

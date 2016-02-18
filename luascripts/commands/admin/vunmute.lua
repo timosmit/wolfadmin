@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
 
 function commandVoiceUnmute(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute usage: "..commands.get("vunmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute usage: "..commands.getadmin("vunmute")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -51,4 +51,4 @@ function commandVoiceUnmute(clientId, cmdArguments)
     
     return true
 end
-commands.register("vunmute", commandVoiceUnmute, "m", "unvoicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("vunmute", commandVoiceUnmute, "m", "unvoicemutes a player", "^9[^3name|slot#^9]")

@@ -18,7 +18,7 @@
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local db = require "luascripts.wolfadmin.db.db"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandListLevels(clientId, cmdArguments)
@@ -88,4 +88,4 @@ function commandListLevels(clientId, cmdArguments)
     
     return true
 end
-commands.register("listlevels", commandListLevels, "s", "display all levels on the server")
+commands.addadmin("listlevels", commandListLevels, "s", "display all levels on the server")

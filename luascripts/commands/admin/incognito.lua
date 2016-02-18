@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandIncognito(clientId, cmdArguments)
@@ -74,4 +74,4 @@ function commandIncognito(clientId, cmdArguments)
     
     return true
 end
-commands.register("incognito", commandIncognito, "s", "fakes your level to guest (no aka)")
+commands.addadmin("incognito", commandIncognito, "s", "fakes your level to guest (no aka)")

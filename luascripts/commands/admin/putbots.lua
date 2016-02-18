@@ -17,12 +17,12 @@
 
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local bots = require "luascripts.wolfadmin.game.bots"
 
 function commandPutBots(clientId, cmdArguments)
     if cmdArguments[1] == nil and cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.get("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
     end
@@ -44,4 +44,4 @@ function commandPutBots(clientId, cmdArguments)
     
     return true
 end
-commands.register("putbots", commandPutBots, "p", "puts all bots into a specific team", "^9[r|b|s]")
+commands.addadmin("putbots", commandPutBots, "p", "puts all bots into a specific team", "^9[r|b|s]")

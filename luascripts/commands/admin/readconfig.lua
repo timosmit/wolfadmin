@@ -15,14 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
-local bots = require "luascripts.wolfadmin.game.bots"
+local settings = require "luascripts.wolfadmin.util.settings"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local rules = require "luascripts.wolfadmin.admin.rules"
+local greetings = require "luascripts.wolfadmin.players.greetings"
 
-function commandBotsOff(clientId, cmdArguments)
-    bots.enable(false)
+function commandReadconfig(clientId, cmdArguments)
+    settings.load()
+    local rulesCount = rules.load()
+    local greetingsCount = greetings.load()
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dkickbots: ^9bots were toggled off.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
     
-    return true
+    return false
 end
-commands.register("kickbots", commandBotsOff, "O", "kicks all bots from the game")
+commands.addadmin("readconfig", commandReadconfig, "G", "reloads the shrubbot config file and refreshes user flags", nil, true)

@@ -16,13 +16,13 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local util = require "luascripts.wolfadmin.util.util"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandPlayerUnlock(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock usage: "..commands.get("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -53,4 +53,4 @@ function commandPlayerUnlock(clientId, cmdArguments)
     
     return true
 end
-commands.register("punlock", commandPlayerUnlock, "K", "unlocks a player", "^9[^3name|slot#^9]")
+commands.addadmin("punlock", commandPlayerUnlock, "K", "unlocks a player", "^9[^3name|slot#^9]")

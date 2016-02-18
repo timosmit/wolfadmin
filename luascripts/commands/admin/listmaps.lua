@@ -15,14 +15,24 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands"
-local voting = require "luascripts.wolfadmin.game.voting"
+local util = require "luascripts.wolfadmin.util.util"
+local commands = require "luascripts.wolfadmin.commands.commands"
+local game = require "luascripts.wolfadmin.game.game"
 
-function commandEnableVote(clientId, cmdArguments)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^denablevote: ^9next map voting has been enabled.\";")
+function commandListMaps(clientId, cmdArguments)
+    local output = ""
     
-    voting.force("nextmap")
+    local maps = game.getMaps()
+    
+    for _, map in ipairs(maps) do
+        local prefix = "^9"
+        if map == game.getMap() then prefix = "^7" end
+        
+        output = (output ~= "") and output.." "..prefix..map or map
+    end
+    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlistmaps: ^9"..output.. "\";")
     
     return true
 end
-commands.register("enablevote", commandEnableVote, "c", "enables next map voting")
+commands.addadmin("listmaps", commandListMaps, "C", "display the maps in the rotation")

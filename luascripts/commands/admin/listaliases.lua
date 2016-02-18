@@ -18,7 +18,7 @@
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local db = require "luascripts.wolfadmin.db.db"
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandListAliases(clientId, cmdArguments)
@@ -27,7 +27,7 @@ function commandListAliases(clientId, cmdArguments)
         
         return true
     elseif cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases usage: "..commands.get("listaliases")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases usage: "..commands.getadmin("listaliases")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -71,4 +71,4 @@ function commandListAliases(clientId, cmdArguments)
     
     return true
 end
-commands.register("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9]", function() return (settings.get("db_type") == "cfg") end)
+commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9]", function() return (settings.get("db_type") == "cfg") end)

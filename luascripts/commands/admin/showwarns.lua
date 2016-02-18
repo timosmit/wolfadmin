@@ -19,7 +19,7 @@ local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local db = require "luascripts.wolfadmin.db.db"
 
-local commands = require "luascripts.wolfadmin.commands"
+local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandShowWarns(clientId, cmdArguments)
@@ -28,7 +28,7 @@ function commandShowWarns(clientId, cmdArguments)
         
         return true
     elseif cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowwarns usage: "..commands.get("showwarns")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowwarns usage: "..commands.getadmin("showwarns")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -62,4 +62,4 @@ function commandShowWarns(clientId, cmdArguments)
     
     return true
 end
-commands.register("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
+commands.addadmin("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
