@@ -155,72 +155,35 @@ end
 events.handle("onGameInit", commands.oninit)
 
 function commands.onservercommand(cmdText)
-    -- this if statement definitely sucks.
-    if string.lower(et.trap_Argv(0)) == "csay" and et.trap_Argc() >= 3 then
-        local clientId = tonumber(et.trap_Argv(1))
-        
-        if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-            et.trap_SendServerCommand(clientId, "print \""..et.trap_Argv(2).."\n\";")
-        elseif clientId then
-            et.G_Print(util.removeColors(et.trap_Argv(2)).."\n")
-        end
-    elseif string.lower(et.trap_Argv(0)) == "ccpm" and et.trap_Argc() >= 3 then
-        local clientId = tonumber(et.trap_Argv(1))
-        
-        if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-            et.trap_SendServerCommand(clientId, "cpm \""..et.trap_Argv(2).."\";")
-        elseif clientId then
-            et.G_Print(util.removeColors(et.trap_Argv(2)).."\n")
-        end
-    elseif string.lower(et.trap_Argv(0)) == "cchat" and et.trap_Argc() >= 3 then
-        local clientId = tonumber(et.trap_Argv(1))
-        
-        if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-            et.trap_SendServerCommand(clientId, "chat \""..et.trap_Argv(2).."\";")
-        elseif clientId then
-            et.G_Print(util.removeColors(et.trap_Argv(2)).."\n")
-        end
-    elseif string.lower(et.trap_Argv(0)) == "cannounce" and et.trap_Argc() >= 3 then
-        local clientId = tonumber(et.trap_Argv(1))
-        
-        if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-            et.trap_SendServerCommand(clientId, "announce \""..et.trap_Argv(2).."\";")
-        elseif clientId then
-            et.G_Print(util.removeColors(et.trap_Argv(2)).."\n")
-        end
-    elseif string.lower(et.trap_Argv(0)) == "cmusic" and et.trap_Argc() >= 3 then
-        local clientId = tonumber(et.trap_Argv(1))
-        
-        if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-            et.trap_SendServerCommand(clientId, "mu_play \""..et.trap_Argv(2).."\";")
-        elseif clientId then
-            et.G_Print(util.removeColors(et.trap_Argv(2)).."\n")
-        end
-    elseif et.trap_Argv(0) == "cmdclient" then
-        local cmd = et.trap_Argv(1)
-        local clientId = tonumber(et.trap_Argv(2))
-        
-        et.trap_SendServerCommand(clientId, cmd.." \""..et.trap_Argv(3).."\n\";")
-    else
-        -- TODO: merge with commands.onclientcommand
-        local shrubCmd = cmdText
-        local shrubArgumentsOffset = 1
-        local shrubArguments = {}
-        
-        if string.find(cmdText, "!") == 1 then
-            shrubCmd = string.lower(string.sub(cmdText, 2, string.len(cmdText)))
+    local wolfCmd = string.lower(et.trap_Argv(0))
+    local cmdArguments = {}
+    
+    if servercmds[wolfCmd] and servercmds[wolfCmd]["function"] then
+        for i = 1, et.trap_Argc() - 1 do
+            cmdArguments[i] = et.trap_Argv(i)
         end
         
-        if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
-            for i = 1, et.trap_Argc() - shrubArgumentsOffset do
-                shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
-            end
-            
-            admincmds[shrubCmd]["function"](-1337, shrubArguments)
-            
-            if not admincmds[shrubCmd]["hidden"] then
-                commands.log(-1, shrubCmd, shrubArguments)
-            end
+        return servercmds[wolfCmd]["function"](clientId, cmdArguments) and 1 or 0
+    end
+    
+    -- TODO: merge with commands.onclientcommand
+    local shrubCmd = cmdText
+    local shrubArgumentsOffset = 1
+    local shrubArguments = {}
+    
+    if string.find(cmdText, "!") == 1 then
+        shrubCmd = string.lower(string.sub(cmdText, 2, string.len(cmdText)))
+    end
+    
+    if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
+        for i = 1, et.trap_Argc() - shrubArgumentsOffset do
+            shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
+        end
+        
+        admincmds[shrubCmd]["function"](-1337, shrubArguments)
+        
+        if not admincmds[shrubCmd]["hidden"] then
+            commands.log(-1, shrubCmd, shrubArguments)
         end
     end
 end
@@ -229,86 +192,23 @@ events.handle("onServerCommand", commands.onservercommand)
 function commands.onclientcommand(clientId, cmdText)
     local wolfCmd = string.lower(et.trap_Argv(0))
     local shrubCmd = nil
+    local cmdArguments = {}
     local shrubArguments = {}
     local shrubArgumentsOffset = 0
     
-    if wolfCmd == "m" or wolfCmd == "pm" then
-        if et.trap_Argc() > 2 then
-            local cmdClient
-            
-            if tonumber(et.trap_Argv(1)) == nil then
-                cmdClient = et.ClientNumberFromString(et.trap_Argv(1))
-            else
-                cmdClient = tonumber(et.trap_Argv(1))
+    -- mod-specific or custom commands loading
+    if clientcmds[wolfCmd] and clientcmds[wolfCmd]["function"] and clientcmds[wolfCmd]["flag"] then
+        if clientcmds[wolfCmd]["flag"] == "" or et.G_shrubbot_permission(clientId, clientcmds[wolfCmd]["flag"]) == 1 then        
+            for i = 1, et.trap_Argc() - 1 do
+                cmdArguments[i] = et.trap_Argv(i)
             end
             
-            if cmdClient ~= -1 and et.gentity_get(cmdClient, "pers.netname") then
-                stats.set(cmdClient, "lastMessageFrom", clientId)
-                
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..cmdClient.." \"^9reply: ^7r [^2message^7]\";")
-            end
+            return clientcmds[wolfCmd]["function"](clientId, cmdArguments) and 1 or 0
         end
-    elseif wolfCmd == "r" then
-        if et.trap_Argc() == 1 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: ^7"..wolfCmd.." [^2message^7]\";")
-        else
-            local recipient = stats.get(clientId, "lastMessageFrom")
-            
-            if not (recipient and et.gentity_get(recipient, "pers.netname")) then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
-            else
-                local message = {}
-                
-                for i = 1, et.trap_Argc() - 1 do
-                    message[i] = et.trap_Argv(i)
-                end
-                
-                stats.set(recipient, "lastMessageFrom", clientId)
-                
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient.." (1 recipients): ^3"..table.concat(message, " ").."\";")
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
-            end
-        end
-        
-        return 1
-    elseif wolfCmd == "adminchat" or wolfCmd == "ac" then
-        if et.G_shrubbot_permission(clientId, "~") == 1 then
-            if et.trap_Argc() == 1 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: ^7"..wolfCmd.." [^2message^7]\";")
-            else
-                local message = {}
-                local recipients = {}
-                
-                for i = 1, et.trap_Argc() - 1 do
-                    message[i] = et.trap_Argv(i)
-                end
-                
-                for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-                    if wolfa_isPlayer(playerId) and et.G_shrubbot_permission(playerId, "~") == 1 then
-                        table.insert(recipients, playerId) 
-                    end
-                end
-                
-                for _, recipient in ipairs(recipients) do
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> adminchat ("..#recipients.." recipients): ^a"..table.concat(message, " ").."\";")
-                    et.trap_SendServerCommand(recipient, "cp \"^jadminchat message from ^7"..et.gentity_get(clientId, "pers.netname"))
-                end
-                
-                et.G_LogPrint("adminchat: "..et.gentity_get(clientId, "pers.netname")..": "..table.concat(message, " ").."\n")
-            end
-        end
-        
-        return 1
-    elseif wolfCmd == "wolfadmin" then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3This server is running ^7Wolf^1Admin ^7"..wolfa_getVersion().." ^3("..wolfa_getRelease().."^3)\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Created by ^7Timo '^aTimo^qthy^7' ^7Smit^3. More info on\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"    ^7http://dev.timosmit.com/wolfadmin/\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Thanks for using!\";")
-        
-        return 1
-    elseif wolfCmd == "team" then
+    end
+    
+    -- all Wolfenstein-related commands defined separately for now
+    if wolfCmd == "team" then
         if admin.isPlayerLocked(clientId) then
             local clientTeam = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
             local teamName = util.getTeamName(clientTeam)
