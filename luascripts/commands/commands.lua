@@ -168,22 +168,20 @@ function commands.onservercommand(cmdText)
     
     -- TODO: merge with commands.onclientcommand
     local shrubCmd = cmdText
-    local shrubArgumentsOffset = 1
-    local shrubArguments = {}
     
     if string.find(cmdText, "!") == 1 then
         shrubCmd = string.lower(string.sub(cmdText, 2, string.len(cmdText)))
     end
     
     if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
-        for i = 1, et.trap_Argc() - shrubArgumentsOffset do
-            shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
+        for i = 1, et.trap_Argc() - 1 do
+            cmdArguments[i] = et.trap_Argv(i)
         end
         
-        admincmds[shrubCmd]["function"](-1337, shrubArguments)
+        admincmds[shrubCmd]["function"](-1337, cmdArguments)
         
         if not admincmds[shrubCmd]["hidden"] then
-            commands.log(-1, shrubCmd, shrubArguments)
+            commands.log(-1, shrubCmd, cmdArguments)
         end
     end
 end
@@ -191,10 +189,7 @@ events.handle("onServerCommand", commands.onservercommand)
 
 function commands.onclientcommand(clientId, cmdText)
     local wolfCmd = string.lower(et.trap_Argv(0))
-    local shrubCmd = nil
     local cmdArguments = {}
-    local shrubArguments = {}
-    local shrubArgumentsOffset = 0
     
     -- mod-specific or custom commands loading
     if clientcmds[wolfCmd] and clientcmds[wolfCmd]["function"] and clientcmds[wolfCmd]["flag"] then
@@ -243,26 +238,32 @@ function commands.onclientcommand(clientId, cmdText)
         end
     end
     
+    -- shrub cmds
+    local shrubCmd = nil
+    
+    -- say and say_*
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "!") == 1 then
-        shrubArguments = util.split(et.trap_Argv(1), " ")
-        if #shrubArguments > 1 then
-            shrubCmd = string.sub(shrubArguments[1], 2, string.len(shrubArguments[1]))
-            table.remove(shrubArguments, 1)
+        cmdArguments = util.split(et.trap_Argv(1), " ")
+        
+        -- say "!command param1 param2 paramN"
+        if #cmdArguments > 1 then
+            shrubCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
+            table.remove(cmdArguments, 1)
+        -- say !command param1 param2 paramN
         else
             shrubCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
-            shrubArgumentsOffset = 2
             
-            for i = 1, et.trap_Argc() - shrubArgumentsOffset do
-                shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
+            for i = 2, et.trap_Argc() - 1 do
+                cmdArguments[(i - 1)] = et.trap_Argv(i)
             end
-            if shrubArguments[1] == et.trap_Argv(1) then table.remove(shrubArguments, 1) end
+            if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
         end
+    -- !command
     elseif string.find(wolfCmd, "!") == 1 then
         shrubCmd = string.sub(wolfCmd, 2, string.len(wolfCmd))
-        shrubArgumentsOffset = 1
         
-        for i = 1, et.trap_Argc() - shrubArgumentsOffset do
-            shrubArguments[i] = et.trap_Argv(i + shrubArgumentsOffset - 1)
+        for i = 1, et.trap_Argc() - 1 do
+            cmdArguments[i] = et.trap_Argv(i)
         end
     end
     
@@ -272,10 +273,10 @@ function commands.onclientcommand(clientId, cmdText)
         if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
             if wolfCmd == "say" or (((wolfCmd == "say_team" and et.gentity_get(cmdClient, "sess.sessionTeam") ~= et.TEAM_SPECTATORS) or wolfCmd == "say_buddy") and et.G_shrubbot_permission(clientId, "9") == 1) or (wolfCmd == "!"..shrubCmd and et.G_shrubbot_permission(clientId, "3") == 1) then
                 if admincmds[shrubCmd]["flag"] ~= "" and et.G_shrubbot_permission(clientId, admincmds[shrubCmd]["flag"]) == 1 then
-                    local isFinished = admincmds[shrubCmd]["function"](clientId, shrubArguments)
+                    local isFinished = admincmds[shrubCmd]["function"](clientId, cmdArguments)
                     
                     if not admincmds[shrubCmd]["hidden"] then
-                        commands.log(clientId, shrubCmd, shrubArguments)
+                        commands.log(clientId, shrubCmd, cmdArguments)
                     end
                     
                     if isFinished and "!"..shrubCmd == wolfCmd then -- silent command via console, removes "unknown command" message
