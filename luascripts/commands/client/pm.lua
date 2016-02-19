@@ -35,5 +35,5 @@ function commandPersonalMessage(clientId, cmdArguments)
         end
     end
 end
-commands.addclient("pm", commandPersonalMessage, "", "")
-commands.addclient("m", commandPersonalMessage, "", "")
+commands.addclient("pm", commandPersonalMessage, "", "", true)
+commands.addclient("m", commandPersonalMessage, "", "", true)

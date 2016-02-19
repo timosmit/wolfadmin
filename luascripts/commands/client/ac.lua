@@ -44,5 +44,5 @@ function commandAdminChat(clientId, cmdArguments)
     
     return true
 end
-commands.addclient("adminchat", commandAdminChat, "~", "[^2message^7]")
-commands.addclient("ac", commandAdminChat, "~", "[^2message^7]")
+commands.addclient("adminchat", commandAdminChat, "~", "[^2message^7]", true)
+commands.addclient("ac", commandAdminChat, "~", "[^2message^7]", true)

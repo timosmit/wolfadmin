@@ -42,4 +42,4 @@ function commandR(clientId, cmdArguments)
     
     return true
 end
-commands.addclient("r", commandR, "", "[^2message^7]")
+commands.addclient("r", commandR, "", "[^2message^7]", true)

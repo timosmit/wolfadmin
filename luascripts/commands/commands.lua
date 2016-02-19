@@ -54,11 +54,12 @@ function commands.getadmin(command)
     return admincmds
 end
 
-function commands.addclient(command, func, flag, syntax)
+function commands.addclient(command, func, flag, syntax, chat)
     clientcmds[command] = {
         ["function"] = func,
         ["flag"] = flag,
-        ["syntax"] = "^2!"..command..(syntax and " "..syntax or ""),
+        ["syntax"] = "^7"..command..(syntax and " "..syntax or ""),
+        ["chat"] = chat,
     }
 end
 
@@ -235,6 +236,45 @@ function commands.onclientcommand(clientId, cmdText)
             et.trap_SendServerCommand(clientId, "cp \"^1You are voicemuted\"")
             
             return 1
+        end
+    end
+    
+    -- client cmds
+    local clientCmd = nil
+    
+    -- say and say_*
+    if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "/") == 1 then
+        cmdArguments = util.split(et.trap_Argv(1), " ")
+        
+        -- say "/command param1 param2 paramN"
+        if #cmdArguments > 1 then
+            clientCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
+            table.remove(cmdArguments, 1)
+        -- say /command param1 param2 paramN
+        else
+            clientCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
+            
+            for i = 2, et.trap_Argc() - 1 do
+                cmdArguments[(i - 1)] = et.trap_Argv(i)
+            end
+            if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
+        end
+    -- !command
+    elseif string.find(wolfCmd, "!") == 1 then
+        clientCmd = string.sub(wolfCmd, 2, string.len(wolfCmd))
+        
+        for i = 1, et.trap_Argc() - 1 do
+            cmdArguments[i] = et.trap_Argv(i)
+        end
+    end
+    
+    if clientCmd then
+        clientCmd = string.lower(clientCmd)
+        
+        if clientcmds[clientCmd] and clientcmds[clientCmd]["function"] and clientcmds[clientCmd]["chat"] then
+            if clientcmds[clientCmd]["flag"] == "" or et.G_shrubbot_permission(clientId, clientcmds[clientCmd]["flag"]) == 1 then
+                return clientcmds[clientCmd]["function"](clientId, cmdArguments) and 1 or 0
+            end
         end
     end
     
