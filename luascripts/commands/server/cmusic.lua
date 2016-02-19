@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local util = require "luascripts.wolfadmin.util.util"
 
 function commandClientPlayMusic(clientId, cmdArguments)
     local clientId = tonumber(cmdArguments[1])
