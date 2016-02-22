@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local constants = require "luascripts.wolfadmin.util.constants"
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
 local files = require "luascripts.wolfadmin.util.files"
@@ -22,6 +23,12 @@ local db = require "luascripts.wolfadmin.db.db"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 local admin = {}
+
+local teamLocks = {
+    [constants.TEAM_AXIS] = false,
+    [constants.TEAM_ALLIES] = false,
+    [constants.TEAM_SPECTATORS] = false,
+}
 
 function admin.isVoiceMuted(clientId)
     if stats.get(clientId, "voiceMute") then
@@ -49,6 +56,14 @@ end
 
 function admin.unmuteVoice(clientId)
     stats.set(clientId, "voiceMute", false)
+end
+
+function admin.lockTeam(teamId)
+    teamLocks[teamId] = false
+end
+
+function admin.unlockTeam(teamId)
+    teamLocks[teamId] = false
 end
 
 function admin.lockPlayer(clientId)

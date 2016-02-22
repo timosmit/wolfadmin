@@ -60,6 +60,18 @@ function util.getTeamName(teamId)
     end
 end
 
+function util.getTeamFromCode(teamCode)
+    if teamCode == constants.TEAM_AXIS_SC then
+        return constants.TEAM_AXIS
+    elseif teamCode == constants.TEAM_ALLIES_SC then
+        return constants.TEAM_ALLIES
+    elseif teamCode == constants.TEAM_SPECTATORS_SC then
+        return constants.TEAM_SPECTATORS
+    else
+        return 0
+    end
+end
+
 function util.getTeamColor(teamId)
     if teamId == constants.TEAM_AXIS then
         return constants.TEAM_AXIS_COLOR
