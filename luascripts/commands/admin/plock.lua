@@ -57,7 +57,7 @@ function commandPlayerLock(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team\";")
     
-    stats.set(cmdClient, "playerLock", true)
+    admin.lockPlayer(cmdClient)
     
     return true
 end

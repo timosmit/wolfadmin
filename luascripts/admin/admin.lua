@@ -36,7 +36,7 @@ function admin.isVoiceMuted(clientId)
 end
 
 function admin.isPlayerLocked(clientId)
-    if stats.get(clientId, "playerLock") then
+    if stats.get(clientId, "teamLock") then
         return true
     end
     
@@ -51,12 +51,12 @@ function admin.unmuteVoice(clientId)
     stats.set(clientId, "voiceMute", false)
 end
 
-function admin.lockTeam(clientId, team)
-    stats.set(clientId, "voiceMute", length)
+function admin.lockPlayer(clientId)
+    stats.set(clientId, "teamLock", true)
 end
 
-function admin.unlockTeam(clientId)
-    stats.set(clientId, "voiceMute", length)
+function admin.unlockPlayer(clientId)
+    stats.set(clientId, "teamLock", false)
 end
 
 function admin.updatePlayer(clientId)

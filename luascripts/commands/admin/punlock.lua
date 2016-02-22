@@ -49,7 +49,7 @@ function commandPlayerUnlock(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dpunlock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unlocked from his team\";")
     
-    stats.set(cmdClient, "playerLock", false)
+    admin.unlockPlayer(cmdClient)
     
     return true
 end
