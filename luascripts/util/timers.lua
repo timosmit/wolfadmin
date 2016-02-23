@@ -46,6 +46,8 @@ function timers.remove(id)
     for i = 1, #data do
         if data[i]["id"] == id then
             table.remove(data, i)
+            
+            return
         end
     end
 end
