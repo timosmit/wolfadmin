@@ -35,6 +35,7 @@ local data = {
     ["g_welcomeArea"] = 3,
     ["g_evenerMinDifference"] = 2,
     ["g_evenerMaxDifference"] = 5,
+    ["g_evenerPlayerSelection"] = 0,
     ["g_evenerInterval"] = 30,
     ["g_voteNextMapTimeout"] = 0,
     ["g_restrictedVotes"] = "",

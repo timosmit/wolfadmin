@@ -17,88 +17,144 @@
 
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
+local bits = require "luascripts.wolfadmin.util.bits"
+local tables = require "luascripts.wolfadmin.util.tables"
 local events = require "luascripts.wolfadmin.util.events"
 local timers = require "luascripts.wolfadmin.util.timers"
 local settings = require "luascripts.wolfadmin.util.settings"
 
+local admin = require "luascripts.wolfadmin.admin.admin"
+
+local teams = require "luascripts.wolfadmin.game.teams"
+
 local balancer = {}
 
+balancer.BALANCE_RANDOM = 0
+balancer.BALANCE_LAST_JOINED = 1
+balancer.BALANCE_ONLY_DEAD = 2
+balancer.BALANCE_NOT_OBJECTIVE = 4
+
+local lastJoined = {[constants.TEAM_AXIS] = {}, [constants.TEAM_ALLIES] = {}, [constants.TEAM_SPECTATORS] = {}}
 local evenerCount = 0
 
 function balancer.balance(byAdmin, forceBalance)
-    local teams = {
-        [1] = {}, 
-        [2] = {}, 
-        [3] = {}
-    }
-    
-    for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-        if wolfa_isPlayer(playerId) then
-            local team = tonumber(et.gentity_get(playerId, "sess.sessionTeam"))
-            
-            table.insert(teams[team], playerId)
+    local teamsData = teams.get()
+    local teamsDifference = teams.difference()
+
+    if teamsDifference == 0 then
+        evenerCount = 0
+
+        if byAdmin then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9teams are even.\";")
         end
+
+        return
     end
-    
-    local teamGreater = constants.TEAM_SPECTATORS
-    local teamSmaller = constants.TEAM_SPECTATORS
-    
-    local teamsDifference = math.abs(#teams[constants.TEAM_AXIS] - #teams[constants.TEAM_ALLIES])
-    
-    if #teams[constants.TEAM_AXIS] > #teams[constants.TEAM_ALLIES] then
+
+    local teamGreater, teamSmaller
+
+    if teams.count(constants.TEAM_AXIS) > teams.count(constants.TEAM_ALLIES) then
         teamGreater = constants.TEAM_AXIS
         teamSmaller = constants.TEAM_ALLIES
-    elseif #teams[constants.TEAM_ALLIES] > #teams[constants.TEAM_AXIS] then
+    elseif teams.count(constants.TEAM_ALLIES) > teams.count(constants.TEAM_AXIS) then
         teamGreater = constants.TEAM_ALLIES
         teamSmaller = constants.TEAM_AXIS
     end
-    
-    local teamGreaterName = util.getTeamName(teamGreater)
-    local teamSmallerName = util.getTeamName(teamSmaller)
-    
-    local teamGreaterColor = util.getTeamColor(teamGreater)
-    local teamSmallerColor = util.getTeamColor(teamSmaller)
-    
+
     if settings.get("g_evenerMaxDifference") > 0 and teamsDifference >= settings.get("g_evenerMaxDifference") then
         evenerCount = evenerCount + 1
-        
+
         if forceBalance or evenerCount >= 2 then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "!shuffle;")
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cpm \"^devener: ^7THE TEAMS HAVE BEEN ^qSHUFFLED^7!\";")
-            
+
             evenerCount = 0
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cpm \"^devener: ^1EVEN THE TEAMS ^7OR ^1SHUFFLE\";")
         end
     elseif teamsDifference >= settings.get("g_evenerMinDifference") then
         evenerCount = evenerCount + 1
-        
+
         if forceBalance or evenerCount >= 3 then
-            for i = 1, (teamsDifference / 2) do
-                local rand = math.random(#teams[teamGreater])
-                
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..teams[teamGreater][rand].." "..(teamGreater == constants.TEAM_AXIS and constants.TEAM_ALLIES_SC or constants.TEAM_AXIS_SC)..";")
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9thank you, ^7"..et.gentity_get(teams[teamGreater][rand], "pers.netname")..", ^9for helping to even the teams.\";")
-                
-                teams[teamSmaller][rand] = teams[teamGreater][rand]
-                teams[teamGreater][rand] = nil
+            for i = 1, math.floor(teamsDifference / 2) do
+                local player = balancer.findPlayer(teamsData[teamGreater], teamGreater, teamSmaller)
+
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..player.." "..(teamGreater == constants.TEAM_AXIS and constants.TEAM_ALLIES_SC or constants.TEAM_AXIS_SC)..";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9thank you, ^7"..et.gentity_get(player, "pers.netname")..", ^9for helping to even the teams.\";")
+
+                teamsData = teams.get()
             end
-            
+
             evenerCount = 0
         else
+            local teamGreaterName, teamSmallerName = util.getTeamName(teamGreater), util.getTeamName(teamSmaller)
+            local teamGreaterColor, teamSmallerColor = util.getTeamColor(teamGreater), util.getTeamColor(teamSmaller)
+
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9teams seem unfair, would someone from "..teamGreaterColor..teamGreaterName.." ^9please switch to "..teamSmallerColor..teamSmallerName.."^9?\";")
-        end
-    else
-        evenerCount = 0
-        
-        if byAdmin then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9teams are even.\";")
         end
     end
 end
 
+function balancer.findPlayer(team, teamGreater, teamSmaller)
+    local playerSelection = settings.get("g_evenerPlayerSelection")
+
+    if bits.hasbit(playerSelection, balancer.BALANCE_LAST_JOINED) then
+        if #lastJoined[teamGreater] > 0 then
+            return lastJoined[teamGreater][#lastJoined[teamGreater]]
+        end
+    end
+
+    local players = {}
+
+    for _, playerId in ipairs(team) do
+        local health = tonumber(et.gentity_get(playerId, "health"))
+
+        if
+            (not bits.hasbit(playerSelection, balancer.BALANCE_ONLY_DEAD) or health <= 0)
+        -- TODO: find secure way to check for objective drops
+        -- and
+            -- (not bits.hasbit(playerSelection, balancer.BALANCE_NOT_OBJECTIVE) or stats.get(playerId, "hasObjective"))
+        then
+            table.insert(players, playerId)
+        end
+    end
+
+    if bits.hasbit(playerSelection, balancer.BALANCE_ONLY_DEAD) and #players == 0 then
+        players = team
+    end
+
+    local rand = math.random(#players)
+
+    return players[rand]
+end
+
+function balancer.onclientteamchange(clientId, old, new)
+    local idx = tables.find(lastJoined[old], clientId)
+
+    if idx then
+        table.remove(lastJoined[old], idx)
+    end
+
+    if #lastJoined[new] == 10 then
+        table.remove(lastJoined[new], 1)
+    end
+
+    lastJoined[new][#lastJoined[new] + 1] = clientId
+end
+events.handle("onClientTeamChange", balancer.onclientteamchange)
+
+function balancer.onclientdisconnect(clientId)
+    local team = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
+    local idx = tables.find(lastJoined[team], clientId)
+
+    if idx then
+        table.remove(lastJoined[team], idx)
+    end
+end
+events.handle("onClientDisconnect", balancer.onclientdisconnect)
+
 function balancer.oninit()
-    if settings.get("g_evenerInterval") > 0 then
+    if settings.get("g_balancedteams") ~= 0 and settings.get("g_evenerInterval") > 0 then
         timers.add(balancer.balance, settings.get("g_evenerInterval") * 1000, 0, false, false)
     end
 end
