@@ -46,7 +46,7 @@ function commandShowStats(clientId, cmdArguments)
         ["slot"] = cmdClient, 
         ["team"] = et.gentity_get(cmdClient, "sess.sessionTeam"),
         ["class"] = et.gentity_get(cmdClient, "sess.playerType"), 
-        ["health"] = et.gentity_get(cmdClient, "ps.stats"), -- -10 = ungibbed, -30 = gibbed
+        ["health"] = et.gentity_get(cmdClient, "health"),
         ["kills"] = et.gentity_get(cmdClient, "sess.kills"),
         ["teamkills"] = et.gentity_get(cmdClient, "sess.team_kills"), 
         ["totalkills"] = et.gentity_get(cmdClient, "sess.kills") + et.gentity_get(cmdClient, "sess.team_kills"), 
