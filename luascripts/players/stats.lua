@@ -81,6 +81,7 @@ function stats.onconnect(clientId, firstTime, isBot)
     stats.set(clientId, "playerName", et.Info_ValueForKey(clientInfo, "name"))
     stats.set(clientId, "playerGUID", et.Info_ValueForKey(clientInfo, "cl_guid"))
     stats.set(clientId, "playerIP", string.gsub(et.Info_ValueForKey(clientInfo, "ip"), ":%d*", ""))
+    stats.set(clientId, "playerTeam", tonumber(et.gentity_get(clientId, "sess.sessionTeam")))
     stats.set(clientId, "isBot", isBot)
     
     if firstTime then
@@ -93,5 +94,18 @@ function stats.ondisconnect(clientId)
     stats.remove(clientId)
 end
 events.handle("onClientDisconnect", stats.ondisconnect)
+
+function stats.onteamchange(clientId)
+    local clientInfo = et.trap_GetUserinfo(clientId)
+    local old = stats.get(clientId, "playerTeam")
+    local new = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
+
+    if new ~= old then
+        stats.set(clientId, "playerTeam", new)
+
+        events.trigger("onClientTeamChange", clientId, old, new)
+    end
+end
+events.handle("onClientInfoChange", stats.onteamchange)
 
 return stats

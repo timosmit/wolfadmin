@@ -110,6 +110,7 @@ events.add("onClientBegin")
 events.add("onClientCommand")
 events.add("onClientInfoChange")
 events.add("onClientNameChange")
+events.add("onClientTeamChange")
 
 events.add("onGameInit")
 events.add("onGameStateChange")

@@ -35,6 +35,7 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local game = require "luascripts.wolfadmin.game.game"
 local bots = require "luascripts.wolfadmin.game.bots"
 local sprees = require "luascripts.wolfadmin.game.sprees"
+local teams = require "luascripts.wolfadmin.game.teams"
 local voting = require "luascripts.wolfadmin.game.voting"
 
 local stats = require "luascripts.wolfadmin.players.stats"
