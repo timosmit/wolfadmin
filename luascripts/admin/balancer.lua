@@ -80,7 +80,7 @@ function balancer.balance(byAdmin, forceBalance)
                 local player = balancer.findPlayer(teamsData[teamGreater], teamGreater, teamSmaller)
 
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..player.." "..(teamGreater == constants.TEAM_AXIS and constants.TEAM_ALLIES_SC or constants.TEAM_AXIS_SC)..";")
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9thank you, ^7"..et.gentity_get(player, "pers.netname")..", ^9for helping to even the teams.\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9thank you, ^7"..et.gentity_get(player, "pers.netname").."^9, for helping to even the teams.\";")
 
                 teamsData = teams.get()
             end
