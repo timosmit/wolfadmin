@@ -29,6 +29,134 @@ local env = assert(luasql.mysql())
 local con = nil
 local cur = nil
 
+-- players
+function mysql.addplayer(guid, ip)
+    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
+end
+
+function mysql.updateplayer(guid, ip)
+    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+end
+
+function mysql.getplayerid(clientid)
+    return mysql.getplayer(stats.get(clientid, "playerGUID"))["id"]
+end
+
+function mysql.getplayer(guid)
+    cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
+    
+    local player = cur:fetch({}, "a")
+    cur:close()
+    
+    return player
+end
+
+-- aliases
+function mysql.addalias(playerid, alias, lastused)
+    cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
+end
+
+function mysql.updatecleanalias(aliasid, alias)
+    cur = assert(con:execute("UPDATE `alias` SET `cleanalias`='"..util.escape(util.removeColors(alias)).."' WHERE `id`='"..util.escape(aliasid).."'"))
+end
+
+function mysql.updatealias(aliasid, lastused)
+    cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
+end
+
+function mysql.getaliases(playerid)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC"))
+    local numrows = cur:numrows()
+    local aliases = {}
+    
+    for i = 1, numrows do
+        aliases[i] = cur:fetch({}, "a")
+    end
+    
+    cur:close()
+    
+    return aliases
+end
+
+function mysql.getaliasbyid(aliasid)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `id`="..tonumber(aliasid)..""))
+    
+    local alias = cur:fetch({}, "a")
+    cur:close()
+    
+    return alias
+end
+
+function mysql.getaliasbyname(playerid, aliasname)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
+    
+    local alias = cur:fetch({}, "a")
+    cur:close()
+    
+    return alias
+end
+
+function mysql.getlastalias(playerid)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
+    
+    local alias = cur:fetch({}, "a")
+    cur:close()
+    
+    return alias
+end
+
+-- setlevels
+function mysql.addsetlevel(playerid, level, adminid, datetime)
+    cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+end
+
+function mysql.getlevels(playerid)
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
+    local numrows = cur:numrows()
+    local levels = {}
+    
+    for i = 1, numrows do
+        levels[i] = cur:fetch({}, "a")
+    end
+    
+    cur:close()
+    
+    return levels
+end
+
+-- warns
+function mysql.addwarn(playerid, reason, adminid, datetime)
+    cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+end
+
+function mysql.removewarn(warnid)
+    cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+end
+
+function mysql.getwarns(playerid)
+    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
+    local numrows = cur:numrows()
+    local warns = {}
+    
+    for i = 1, numrows do
+        warns[i] = cur:fetch({}, "a")
+    end
+    
+    cur:close()
+    
+    return warns
+end
+
+function mysql.getwarn(warnid)
+    cur = assert(con:execute("SELECT * FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+    
+    local warn = cur:fetch({}, "a")
+    cur:close()
+    
+    return warn
+end
+
+-- maps
 function mysql.addmap(mapname, lastplayed)
     cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..util.escape(mapname).."', "..tonumber(lastplayed)..")"))
 end
@@ -46,6 +174,7 @@ function mysql.getmap(mapname)
     return map
 end
 
+-- records
 function mysql.addrecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("INSERT INTO `record` (`map_id`, `date`, `type`, `record`, `player_id`) VALUES ("..tonumber(mapid)..", "..tonumber(recorddate)..", "..tonumber(recordtype)..", "..tonumber(record)..", "..tonumber(playerid)..")"))
 end
@@ -119,129 +248,6 @@ function mysql.getrecord(mapid, recordtype)
         
         return record
     end
-end
-
-function mysql.addplayer(guid, ip)
-    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
-end
-
-function mysql.updateplayer(guid, ip)
-    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
-end
-
-function mysql.getplayerid(clientid)
-    return mysql.getplayer(stats.get(clientid, "playerGUID"))["id"]
-end
-
-function mysql.getplayer(guid)
-    cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
-    
-    local player = cur:fetch({}, "a")
-    cur:close()
-    
-    return player
-end
-
-function mysql.addalias(playerid, alias, lastused)
-    cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
-end
-
-function mysql.updatecleanalias(aliasid, alias)
-    cur = assert(con:execute("UPDATE `alias` SET `cleanalias`='"..util.escape(util.removeColors(alias)).."' WHERE `id`='"..util.escape(aliasid).."'"))
-end
-
-function mysql.updatealias(aliasid, lastused)
-    cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
-end
-
-function mysql.getaliases(playerid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC"))
-    local numrows = cur:numrows()
-    local aliases = {}
-    
-    for i = 1, numrows do
-        aliases[i] = cur:fetch({}, "a")
-    end
-    
-    cur:close()
-    
-    return aliases
-end
-
-function mysql.getaliasbyid(aliasid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `id`="..tonumber(aliasid)..""))
-    
-    local alias = cur:fetch({}, "a")
-    cur:close()
-    
-    return alias
-end
-
-function mysql.getaliasbyname(playerid, aliasname)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
-    
-    local alias = cur:fetch({}, "a")
-    cur:close()
-    
-    return alias
-end
-
-function mysql.getlastalias(playerid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
-    
-    local alias = cur:fetch({}, "a")
-    cur:close()
-    
-    return alias
-end
-
-function mysql.addsetlevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
-end
-
-function mysql.getlevels(playerid)
-    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
-    local numrows = cur:numrows()
-    local levels = {}
-    
-    for i = 1, numrows do
-        levels[i] = cur:fetch({}, "a")
-    end
-    
-    cur:close()
-    
-    return levels
-end
-
-function mysql.addwarn(playerid, reason, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
-end
-
-function mysql.removewarn(warnid)
-    cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
-end
-
-function mysql.getwarns(playerid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
-    local numrows = cur:numrows()
-    local warns = {}
-    
-    for i = 1, numrows do
-        warns[i] = cur:fetch({}, "a")
-    end
-    
-    cur:close()
-    
-    return warns
-end
-
-function mysql.getwarn(warnid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `id`="..tonumber(warnid)..""))
-    
-    local warn = cur:fetch({}, "a")
-    cur:close()
-    
-    return warn
 end
 
 function mysql.isconnected()
