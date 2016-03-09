@@ -64,8 +64,20 @@ function mysql.updatealias(aliasid, lastused)
     cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
 end
 
-function mysql.getaliases(playerid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC"))
+function mysql.getaliasescount(playerid)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `alias` WHERE `player_id`="..tonumber(playerid)..""))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getaliases(playerid, limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
     local numrows = cur:numrows()
     local aliases = {}
     
@@ -110,8 +122,20 @@ function mysql.addsetlevel(playerid, level, adminid, datetime)
     cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
-function mysql.getlevels(playerid)
-    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
+function mysql.getlevelscount(playerid)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getlevels(playerid, limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
     local numrows = cur:numrows()
     local levels = {}
     
@@ -133,8 +157,21 @@ function mysql.removewarn(warnid)
     cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
 end
 
-function mysql.getwarns(playerid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
+function mysql.getwarnscount(playerid)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getwarns(playerid, limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
     local numrows = cur:numrows()
     local warns = {}
     

@@ -34,6 +34,18 @@ function warns.get(clientId, warnId)
     end
 end
 
+function warns.getcount(clientId)
+    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+
+    return db.getwarnscount(playerid)
+end
+
+function warns.getlimit(clientId, start, limit)
+    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+
+    return db.getwarns(playerid, start, limit)
+end
+
 function warns.add(clientId, reason, adminId, datetime)
     local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
     local adminid = db.getplayer(stats.get(adminId, "playerGUID"))["id"]

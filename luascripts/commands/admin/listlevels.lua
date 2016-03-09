@@ -17,6 +17,7 @@
 
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
+local pagination = require "luascripts.wolfadmin.util.pagination"
 local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
@@ -73,7 +74,10 @@ function commandListLevels(clientId, cmdArguments)
     end
     
     local player = db.getplayer(stats.get(cmdClient, "playerGUID"))["id"]
-    local levels = db.getlevels(player)
+    
+    local count = db.getlevelscount(player)
+    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local levels = db.getlevels(player, limit, offset)
     
     if not (levels and #levels > 0) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9there are no recorded levels for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.\";")
@@ -83,9 +87,10 @@ function commandListLevels(clientId, cmdArguments)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", level["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(level["admin_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", level["datetime"]).." ^7"..level["level"].."\";")
         end
         
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistlevels: ^9recorded levels for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
     end
     
     return true
 end
-commands.addadmin("listlevels", commandListLevels, "s", "display all levels on the server")
+commands.addadmin("listlevels", commandListLevels, "s", "display all levels on the server", (settings.get("db_type") == "cfg" and nil or "^9(^3name|slot#^9) ^9(^hoffset^9)"))

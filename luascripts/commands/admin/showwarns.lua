@@ -17,6 +17,7 @@
 
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
+local pagination = require "luascripts.wolfadmin.util.pagination"
 local db = require "luascripts.wolfadmin.db.db"
 
 local commands = require "luascripts.wolfadmin.commands.commands"
@@ -47,7 +48,9 @@ function commandShowWarns(clientId, cmdArguments)
         return true
     end
     
-    local playerWarns = warns.get(cmdClient)
+    local count = warns.getcount(cmdClient)
+    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local playerWarns = warns.getlimit(cmdClient, limit, offset)
     
     if not (playerWarns and #playerWarns > 0) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowwarns: ^9there are no warnings for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.\";")
@@ -57,9 +60,10 @@ function commandShowWarns(clientId, cmdArguments)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", warn["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(warn["admin_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", warn["datetime"]).." ^7"..warn["reason"].."\";")
         end
         
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowwarns: ^9warnings for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
     end
     
     return true
 end
-commands.addadmin("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
+commands.addadmin("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)

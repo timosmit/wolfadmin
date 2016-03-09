@@ -17,6 +17,7 @@
 
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
+local pagination = require "luascripts.wolfadmin.util.pagination"
 local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
@@ -57,7 +58,10 @@ function commandListAliases(clientId, cmdArguments)
     end
     
     local player = db.getplayer(stats.get(cmdClient, "playerGUID"))["id"]
-    local aliases = db.getaliases(player)
+    
+    local count = db.getaliasescount(player)
+    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local aliases = db.getaliases(player, limit, offset)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
     for _, alias in pairs(aliases) do
@@ -67,8 +71,9 @@ function commandListAliases(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..spaces..alias["alias"].." ^7"..string.format("%8s", alias["used"]).." times\";")
     end
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistaliases: ^9"..#aliases.." known aliases for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9 (open console for the full list).\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistaliases: ^9aliases for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
     
     return true
 end
-commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9]", function() return (settings.get("db_type") == "cfg") end)
+commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("db_type") == "cfg") end)
