@@ -79,7 +79,7 @@ function mysql.getrecords(mapid)
             typestr = "rs"
         end
         
-        records[typestr.."player"] = tonumber(record["player"])
+        records[typestr.."player"] = tonumber(record["player_id"])
         records[typestr.."record"] = tonumber(record["record"])
     end
     

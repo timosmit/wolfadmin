@@ -54,7 +54,7 @@ function commandShowWarns(clientId, cmdArguments)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dWarns for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
         for _, warn in pairs(playerWarns) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", warn["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(warn["admin"])["alias"])).." ^f"..os.date("%d/%m/%Y", warn["datetime"]).." ^7"..warn["reason"].."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", warn["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(warn["admin_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", warn["datetime"]).." ^7"..warn["reason"].."\";")
         end
         
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowwarns: ^9warnings for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
