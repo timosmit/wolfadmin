@@ -47,11 +47,11 @@ function mysql.getmap(mapname)
 end
 
 function mysql.addrecord(mapid, recorddate, recordtype, record, playerid)
-    cur = assert(con:execute("INSERT INTO `record` (`mapid`, `date`, `type`, `record`, `player`) VALUES ("..tonumber(mapid)..", "..tonumber(recorddate)..", "..tonumber(recordtype)..", "..tonumber(record)..", "..tonumber(playerid)..")"))
+    cur = assert(con:execute("INSERT INTO `record` (`map_id`, `date`, `type`, `record`, `player_id`) VALUES ("..tonumber(mapid)..", "..tonumber(recorddate)..", "..tonumber(recordtype)..", "..tonumber(record)..", "..tonumber(playerid)..")"))
 end
 
 function mysql.updaterecord(mapid, recorddate, recordtype, record, playerid)
-    cur = assert(con:execute("UPDATE `record` SET `date`="..tonumber(recorddate)..", `record`="..tonumber(record)..", `player`="..tonumber(playerid).." WHERE `mapid`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
+    cur = assert(con:execute("UPDATE `record` SET `date`="..tonumber(recorddate)..", `record`="..tonumber(record)..", `player_id`="..tonumber(playerid).." WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 end
 
 function mysql.removeallrecords()
@@ -59,11 +59,11 @@ function mysql.removeallrecords()
 end
 
 function mysql.removerecords(mapid)
-    cur = assert(con:execute("DELETE FROM `record` WHERE `mapid`="..tonumber(mapid)..""))
+    cur = assert(con:execute("DELETE FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
 end
 
 function mysql.getrecords(mapid)
-    cur = assert(con:execute("SELECT * FROM `record` WHERE `mapid`="..tonumber(mapid)..""))
+    cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
     local numrows = cur:numrows()
     local records = {}
     
@@ -89,7 +89,7 @@ function mysql.getrecords(mapid)
 end
 
 function mysql.getrecordscount(mapid)
-    cur = assert(con:execute("SELECT COUNT(*) AS `count` FROM `record` WHERE `mapid`="..tonumber(mapid)..""))
+    cur = assert(con:execute("SELECT COUNT(*) AS `count` FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
     
     local count = cur:fetch({}, "a")
     cur:close()
@@ -98,7 +98,7 @@ function mysql.getrecordscount(mapid)
 end
 
 function mysql.getrecord(mapid, recordtype)
-    cur = assert(con:execute("SELECT * FROM `record` WHERE `mapid`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
+    cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
     
     local row = cur:fetch({}, "a")
     cur:close()
@@ -143,7 +143,7 @@ function mysql.getplayer(guid)
 end
 
 function mysql.addalias(playerid, alias, lastused)
-    cur = assert(con:execute("INSERT INTO `alias` (`player`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
+    cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
 end
 
 function mysql.updatecleanalias(aliasid, alias)
@@ -155,7 +155,7 @@ function mysql.updatealias(aliasid, lastused)
 end
 
 function mysql.getaliases(playerid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player`="..tonumber(playerid).." ORDER BY `used` DESC"))
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC"))
     local numrows = cur:numrows()
     local aliases = {}
     
@@ -178,7 +178,7 @@ function mysql.getaliasbyid(aliasid)
 end
 
 function mysql.getaliasbyname(playerid, aliasname)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
     
     local alias = cur:fetch({}, "a")
     cur:close()
@@ -187,7 +187,7 @@ function mysql.getaliasbyname(playerid, aliasname)
 end
 
 function mysql.getlastalias(playerid)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     
     local alias = cur:fetch({}, "a")
     cur:close()
@@ -196,11 +196,11 @@ function mysql.getlastalias(playerid)
 end
 
 function mysql.addsetlevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `level` (`player`, `level`, `admin`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+    cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
 function mysql.getlevels(playerid)
-    cur = assert(con:execute("SELECT * FROM `level` WHERE `player`="..tonumber(playerid)..""))
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
     local numrows = cur:numrows()
     local levels = {}
     
@@ -214,7 +214,7 @@ function mysql.getlevels(playerid)
 end
 
 function mysql.addwarn(playerid, reason, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `warn` (`player`, `reason`, `admin`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+    cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
 function mysql.removewarn(warnid)
@@ -222,7 +222,7 @@ function mysql.removewarn(warnid)
 end
 
 function mysql.getwarns(playerid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player`="..tonumber(playerid)..""))
+    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
     local numrows = cur:numrows()
     local warns = {}
     
