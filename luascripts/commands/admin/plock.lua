@@ -22,7 +22,7 @@ local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandPlayerLock(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock usage: "..commands.getadmin("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock usage: "..commands.getadmin("plock")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
