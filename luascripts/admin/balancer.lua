@@ -34,6 +34,8 @@ balancer.BALANCE_LAST_JOINED = 1
 balancer.BALANCE_ONLY_DEAD = 2
 balancer.BALANCE_NOT_OBJECTIVE = 4
 
+local balancerTimer = nil
+
 local lastJoined = {[constants.TEAM_AXIS] = {}, [constants.TEAM_ALLIES] = {}, [constants.TEAM_SPECTATORS] = {}}
 local evenerCount = 0
 
@@ -155,9 +157,23 @@ function balancer.onclientdisconnect(clientId)
 end
 events.handle("onClientDisconnect", balancer.onclientdisconnect)
 
+function balancer.enable()
+    balancerTimer = timers.add(balancer.balance, settings.get("g_evenerInterval") * 1000, 0, false, false)
+end
+
+function balancer.disable()
+    timers.remove(balancerTimer)
+
+    balancerTimer = nil
+end
+
+function balancer.isRunning()
+    return (balancerTimer ~= nil)
+end
+
 function balancer.oninit()
     if settings.get("g_balancedteams") ~= 0 and settings.get("g_evenerInterval") > 0 then
-        timers.add(balancer.balance, settings.get("g_evenerInterval") * 1000, 0, false, false)
+        balancer.enable()
     end
 end
 events.handle("onGameInit", balancer.oninit)

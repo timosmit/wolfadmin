@@ -17,6 +17,7 @@
 
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
+local balancer = require "luascripts.wolfadmin.admin.balancer"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local bots = require "luascripts.wolfadmin.game.bots"
 
@@ -41,6 +42,12 @@ function commandPutBots(clientId, cmdArguments)
     bots.put(team)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dputbots: ^9all bots were set to ^7"..teamname.." ^9team.\";")
+
+    if (team == constants.TEAM_AXIS or team == constants.TEAM_ALLIES) and balancer.isRunning() then
+        balancer.disable()
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer disabled.\";")
+    end
     
     return true
 end

@@ -19,8 +19,28 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local balancer = require "luascripts.wolfadmin.admin.balancer"
 
 function commandBalance(clientId, cmdArguments)
-    balancer.balance(true, (cmdArguments[1] and cmdArguments[1] == "force"))
-    
+    if cmdArguments[1] == "enable" then
+        if not balancer.isRunning() then
+            balancer.enable()
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer enabled.\";")
+        else
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer is already running.\";")
+        end
+    elseif cmdArguments[1] == "disable" then
+        if balancer.isRunning() then
+            balancer.disable()
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer disabled.\";")
+        else
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer was not running.\";")
+        end
+    elseif cmdArguments[1] == "force" then
+        balancer.balance(true, true)
+    else
+        balancer.balance(true, false)
+    end
+
     return true
 end
 commands.addadmin("balance", commandBalance, "p", "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")
