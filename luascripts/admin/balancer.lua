@@ -109,17 +109,19 @@ function balancer.findPlayer(team, teamGreater, teamSmaller)
     for _, playerId in ipairs(team) do
         local health = tonumber(et.gentity_get(playerId, "health"))
 
+        local blueflag = et.gentity_get(playerId, "ps.powerups", 5) -- bg_public.h enum powerup_t PW_REDFLAG 6 and PW_BLUEFLAG 7
+        local redflag = et.gentity_get(playerId, "ps.powerups", 6)
+
         if
             (not bits.hasbit(playerSelection, balancer.BALANCE_ONLY_DEAD) or health <= 0)
-        -- TODO: find secure way to check for objective drops
-        -- and
-            -- (not bits.hasbit(playerSelection, balancer.BALANCE_NOT_OBJECTIVE) or stats.get(playerId, "hasObjective"))
+        and
+            (not bits.hasbit(playerSelection, balancer.BALANCE_NOT_OBJECTIVE) or (blueflag ~= 0 and redflag ~= 0))
         then
             table.insert(players, playerId)
         end
     end
 
-    if bits.hasbit(playerSelection, balancer.BALANCE_ONLY_DEAD) and #players == 0 then
+    if #players == 0 then
         players = team
     end
 
