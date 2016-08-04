@@ -21,7 +21,7 @@ local settings = require "luascripts.wolfadmin.util.settings"
 
 local stats = require "luascripts.wolfadmin.players.stats"
 
-require "luasql.mysql"
+local luasql = require "luasql.mysql"
 
 local mysql = {}
 
