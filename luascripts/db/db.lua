@@ -27,8 +27,10 @@ local con
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
 function db.oninit()
-    if settings.get("db_type") == "mysql" and settings.get("db_username") ~= "" then
+    if settings.get("db_type") == "mysql" then
         con = require "luascripts.wolfadmin.db.mysql"
+    elseif settings.get("db_type") == "sqlite3" then
+        con = require "luascripts.wolfadmin.db.sqlite3"
     else
         con = require "luascripts.wolfadmin.db.cfg"
     end

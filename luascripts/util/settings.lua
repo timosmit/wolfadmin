@@ -44,6 +44,7 @@ local data = {
     ["g_debugWolfAdmin"] = 0,
     ["omnibot_maxbots"] = 10,
     ["db_type"] = "cfg",
+    ["db_file"] = "wolfadmin.db",
     ["db_hostname"] = "localhost",
     ["db_port"] = 3306,
     ["db_database"] = "wolfadmin",
