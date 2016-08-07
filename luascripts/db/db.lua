@@ -32,7 +32,7 @@ function db.oninit()
     elseif settings.get("db_type") == "sqlite3" then
         con = require "luascripts.wolfadmin.db.sqlite3"
     else
-        con = require "luascripts.wolfadmin.db.cfg"
+        error("invalid database system (choose mysql, sqlite3)")
     end
     
     setmetatable(db, {__index = con})
