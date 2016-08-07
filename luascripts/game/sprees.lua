@@ -91,8 +91,7 @@ end
 
 function sprees.oninit(levelTime, randomSeed, restartMap)
     if
-        (settings.get("db_type") == "cfg" and settings.get("g_fileSprees") ~= "") or
-        (settings.get("db_type") ~= "cfg" and settings.get("g_spreeRecords") ~= 0)
+        (db.isconnected() and settings.get("g_spreeRecords") ~= 0)
     then
         sprees.load()
         

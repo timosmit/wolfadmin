@@ -53,7 +53,7 @@ function commandListLevels(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistlevels: ^9"..levelsCount.." available levels (open console for the full list)\";")
         
         return true
-    elseif settings.get("db_type") == "cfg" then
+    elseif not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9level history is disabled.\";")
         
         return true
@@ -93,4 +93,4 @@ function commandListLevels(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("listlevels", commandListLevels, "s", "display all levels on the server", (settings.get("db_type") == "cfg" and nil or "^9(^3name|slot#^9) ^9(^hoffset^9)"))
+commands.addadmin("listlevels", commandListLevels, "s", "display all levels on the server", (not db.isconnected() and nil or "^9(^3name|slot#^9) ^9(^hoffset^9)"))

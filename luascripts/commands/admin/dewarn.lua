@@ -15,12 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local db = require "luascripts.wolfadmin.db.db"
 local settings = require "luascripts.wolfadmin.util.settings"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandRemoveWarn(clientId, cmdArguments)
-    if settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg" then
+    if settings.get("g_warnHistory") == 0 or not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^ddewarn: ^9warn history is disabled.\";")
         
         return true
@@ -56,4 +57,4 @@ function commandRemoveWarn(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("dewarn", commandRemoveWarn, "R", "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
+commands.addadmin("dewarn", commandRemoveWarn, "R", "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or not db.isconnected()) end)

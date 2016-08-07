@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local settings = require "luascripts.wolfadmin.util.settings"
+local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
 
@@ -37,7 +38,7 @@ function commandSetLevel(clientId, cmdArguments)
     -- plays a promotion sound
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"/sound/vo/general/axis/hq_promogen.wav\";")
     
-    if settings.get("db_type") ~= "cfg" then
+    if db.isconnected() then
         cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
         
         admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)

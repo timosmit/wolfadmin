@@ -24,7 +24,7 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandShowWarns(clientId, cmdArguments)
-    if settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg" then
+    if settings.get("g_warnHistory") == 0 or not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowwarns: ^9warn history is disabled.\";")
         
         return true
@@ -66,4 +66,4 @@ function commandShowWarns(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("g_warnHistory") == 0 or settings.get("db_type") == "cfg") end)
+commands.addadmin("showwarns", commandShowWarns, "R", "display warnings for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("g_warnHistory") == 0 or not db.isconnected()) end)

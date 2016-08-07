@@ -16,11 +16,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local settings = require "luascripts.wolfadmin.util.settings"
+local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandAddWarn(clientId, cmdArguments)
-    if settings.get("g_warnHistory") == 0 then
+    if settings.get("g_warnHistory") == 0 or not db.isconnected() then
         return false
     elseif #cmdArguments < 2 then
         return false

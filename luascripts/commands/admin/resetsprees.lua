@@ -15,11 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local game = require "luascripts.wolfadmin.game.game"
 local sprees = require "luascripts.wolfadmin.game.sprees"
 
 function commandResetSprees(clientId, cmdArguments)
+    if not db.isconnected() then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
+        
+        return true
+    end
+
     if cmdArguments[1] and cmdArguments[1] == "all" then
         sprees.reset(true)
         

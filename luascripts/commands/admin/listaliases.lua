@@ -23,7 +23,7 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandListAliases(clientId, cmdArguments)
-    if settings.get("db_type") == "cfg" then
+    if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")
         
         return true
@@ -76,4 +76,4 @@ function commandListAliases(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("db_type") == "cfg") end)
+commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (not db.isconnected()) end)

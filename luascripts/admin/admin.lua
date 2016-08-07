@@ -124,7 +124,7 @@ function admin.onconnect(clientId, firstTime, isBot)
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
         
-        if settings.get("db_type") ~= "cfg" then
+        if db.isconnected() then
             admin.updatePlayer(clientId)
             admin.updateAlias(clientId)
         end
@@ -160,7 +160,7 @@ function stats.oninfochange(clientId)
             
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..old.." ^7is now known as "..new.."\";")
             
-            if settings.get("db_type") ~= "cfg" then
+            if db.isconnected() then
                 admin.updateAlias(clientId)
             end
             

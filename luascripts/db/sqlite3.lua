@@ -299,7 +299,11 @@ function sqlite3.isconnected()
 end
 
 function sqlite3.start()
-    con = assert(env:connect(settings.get("db_file")))
+    con = env:connect(settings.get("db_file"))
+
+    if not con then
+        return
+    end
 
     -- enable foreign key enforcement
     cur = assert(con:execute("PRAGMA foreign_keys=1"))

@@ -16,9 +16,16 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local db = require "luascripts.wolfadmin.db.db"
 local sprees = require "luascripts.wolfadmin.game.sprees"
 
 function commandShowSprees(clientId, cmdArguments)
+    if not db.isconnected() then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
+        
+        return true
+    end
+
     local records = sprees.get()
     
     if not (records["ksrecord"] or records["dsrecord"] or records["rsrecord"]) then

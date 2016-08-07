@@ -299,7 +299,11 @@ function mysql.isconnected()
 end
 
 function mysql.start()
-    con = assert(env:connect(settings.get("db_database"), settings.get("db_username"), settings.get("db_password"), settings.get("db_hostname"), settings.get("db_port")))
+    con = env:connect(settings.get("db_database"), settings.get("db_username"), settings.get("db_password"), settings.get("db_hostname"), settings.get("db_port"))
+
+    if not con then
+        return
+    end
 end
 
 function mysql.close(doSave)
