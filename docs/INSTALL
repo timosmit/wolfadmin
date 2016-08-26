@@ -1,18 +1,14 @@
 WolfAdmin module for Wolfenstein: Enemy Territory servers.
-Copyright (C) 2015 Timo 'Timothy' Smit
+Copyright (C) 2015-2016 Timo 'Timothy' Smit
 
 REQUIREMENTS
 
   * Wolfenstein: Enemy Territory server
   * NoQuarter mod (1.2.7 or higher, maybe 1.2.5 works as well)
   * Lua 5.1 library and Lua modules enabled (installed binaries)
-  * A MySQL server is required if you want to use alias listing, warn and 
-    level history. Otherwise the module will not work, so please make sure
-    you have one. If you want to make use of a MySQL server, the module 
-    requires an additional MySQL library (luasql.mysql).
-    In case you do not have the LuaSQL MySQL library installed, you are 
-    able to download this library from the WolfAdmin file database at 
-    http://dev.timosmit.com/files/wolfadmin/.
+  * A database is required if you want to use advanced history and
+    other listings. In this case, the module also requires the corresponding
+    LuaSQL binary/module (luasql.sqlite or luasql.mysql).
 
 INSTRUCTIONS (NEW)
 
@@ -38,14 +34,6 @@ INSTRUCTIONS (UPGRADE)
 
 TROUBLESHOOTING
 
-  * libmysqlclient.so.15: cannot open shared object file: No such file or 
-    directory
-      This means you need an additional library for the LuaSQL module, which is 
-      used by WolfAdmin for the database connection. This file can usually be 
-      downloaded via your package manager or from the WolfAdmin file database 
-      at http://dev.timosmit.com/files/wolfadmin/. After downloading you will 
-      have to copy this file to your fs_basepath (usually the root folder of 
-      the server, where the etded file is located).
   * WolfAdmin config will not get loaded/one of greetings/rules is not loaded
       Make sure that there are two empty lines (containing no spaces) at the 
       end of your .cfg files. Due to the loading mechanism WolfAdmin uses, you 
