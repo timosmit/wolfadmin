@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
@@ -31,7 +33,7 @@ local levelGreetings = {}
 function greetings.get(clientId)
     local lvl = et.G_shrubbot_level(clientId)
     
-    if et.G_shrubbot_permission(clientId, "@") ~= 1 then
+    if auth.isallowed(clientId, auth.PERM_INCOGNITO) ~= 1 then
         if userGreetings[stats.get(clientId, "playerGUID")] ~= nil then
             return userGreetings[stats.get(clientId, "playerGUID")]
         elseif levelGreetings[lvl] ~= nil then

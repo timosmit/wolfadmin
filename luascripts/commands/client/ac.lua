@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 
 function commandAdminChat(clientId, cmdArguments)
@@ -29,7 +30,7 @@ function commandAdminChat(clientId, cmdArguments)
         end
         
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-            if wolfa_isPlayer(playerId) and et.G_shrubbot_permission(playerId, "~") == 1 then
+            if wolfa_isPlayer(playerId) and auth.isallowed(playerId, "~") == 1 then
                 table.insert(recipients, playerId) 
             end
         end
@@ -45,5 +46,5 @@ function commandAdminChat(clientId, cmdArguments)
     
     return true
 end
-commands.addclient("adminchat", commandAdminChat, "~", "[^2message^7]", true)
-commands.addclient("ac", commandAdminChat, "~", "[^2message^7]", true)
+commands.addclient("adminchat", commandAdminChat, auth.PERM_ADMINCHAT, "[^2message^7]", true)
+commands.addclient("ac", commandAdminChat, auth.PERM_ADMINCHAT, "[^2message^7]", true)

@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local util = require "luascripts.wolfadmin.util.util"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
@@ -53,4 +54,4 @@ function commandPlayerUnlock(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("punlock", commandPlayerUnlock, "K", "unlocks a player", "^9[^3name|slot#^9]")
+commands.addadmin("punlock", commandPlayerUnlock, auth.PERM_LOCKPLAYER, "unlocks a player", "^9[^3name|slot#^9]")

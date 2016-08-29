@@ -21,6 +21,7 @@ local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
 local admin = require "luascripts.wolfadmin.admin.admin"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 local commands = {}
@@ -194,7 +195,7 @@ function commands.onclientcommand(clientId, cmdText)
     
     -- mod-specific or custom commands loading
     if clientcmds[wolfCmd] and clientcmds[wolfCmd]["function"] and clientcmds[wolfCmd]["flag"] then
-        if clientcmds[wolfCmd]["flag"] == "" or et.G_shrubbot_permission(clientId, clientcmds[wolfCmd]["flag"]) == 1 then        
+        if clientcmds[wolfCmd]["flag"] == "" or auth.isallowed(clientId, clientcmds[wolfCmd]["flag"]) == 1 then        
             for i = 1, et.trap_Argc() - 1 do
                 cmdArguments[i] = et.trap_Argv(i)
             end
@@ -272,7 +273,7 @@ function commands.onclientcommand(clientId, cmdText)
         clientCmd = string.lower(clientCmd)
         
         if clientcmds[clientCmd] and clientcmds[clientCmd]["function"] and clientcmds[clientCmd]["chat"] then
-            if clientcmds[clientCmd]["flag"] == "" or et.G_shrubbot_permission(clientId, clientcmds[clientCmd]["flag"]) == 1 then
+            if clientcmds[clientCmd]["flag"] == "" or auth.isallowed(clientId, clientcmds[clientCmd]["flag"]) == 1 then
                 return clientcmds[clientCmd]["function"](clientId, cmdArguments) and 1 or 0
             end
         end
@@ -311,8 +312,8 @@ function commands.onclientcommand(clientId, cmdText)
         shrubCmd = string.lower(shrubCmd)
         
         if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
-            if wolfCmd == "say" or (((wolfCmd == "say_team" and et.gentity_get(cmdClient, "sess.sessionTeam") ~= et.TEAM_SPECTATORS) or wolfCmd == "say_buddy") and et.G_shrubbot_permission(clientId, "9") == 1) or (wolfCmd == "!"..shrubCmd and et.G_shrubbot_permission(clientId, "3") == 1) then
-                if admincmds[shrubCmd]["flag"] ~= "" and et.G_shrubbot_permission(clientId, admincmds[shrubCmd]["flag"]) == 1 then
+            if wolfCmd == "say" or (((wolfCmd == "say_team" and et.gentity_get(cmdClient, "sess.sessionTeam") ~= et.TEAM_SPECTATORS) or wolfCmd == "say_buddy") and auth.isallowed(clientId, auth.PERM_TEAMCMDS) == 1) or (wolfCmd == "!"..shrubCmd and auth.isallowed(clientId, auth.PERM_SILENTCMDS) == 1) then
+                if admincmds[shrubCmd]["flag"] ~= "" and auth.isallowed(clientId, admincmds[shrubCmd]["flag"]) == 1 then
                     local isFinished = admincmds[shrubCmd]["function"](clientId, cmdArguments)
                     
                     if not admincmds[shrubCmd]["hidden"] then

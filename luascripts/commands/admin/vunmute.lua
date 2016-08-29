@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
 
@@ -51,4 +52,4 @@ function commandVoiceUnmute(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("vunmute", commandVoiceUnmute, "m", "unvoicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("vunmute", commandVoiceUnmute, auth.PERM_VOICEMUTE, "unvoicemutes a player", "^9[^3name|slot#^9]")

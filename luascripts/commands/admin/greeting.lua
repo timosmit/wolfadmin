@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local util = require "luascripts.wolfadmin.util.util"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local settings = require "luascripts.wolfadmin.util.settings"
 local greetings = require "luascripts.wolfadmin.players.greetings"
@@ -29,4 +30,4 @@ function commandGreeting(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgreeting: ^9you do not have a personal greeting.\";")
     end
 end
-commands.addadmin("greeting", commandGreeting, "Q", "display your personal greeting, if you have one")
+commands.addadmin("greeting", commandGreeting, auth.PERM_GREETING, "display your personal greeting, if you have one")

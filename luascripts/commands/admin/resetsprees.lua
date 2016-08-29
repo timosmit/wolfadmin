@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local game = require "luascripts.wolfadmin.game.game"
@@ -39,4 +40,4 @@ function commandResetSprees(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("resetsprees", commandResetSprees, "G", "resets the spree records")
+commands.addadmin("resetsprees", commandResetSprees, auth.PERM_READCONFIG, "resets the spree records")
