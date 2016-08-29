@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandHelp(clientId, cmdArguments)
     local cmds = commands.getadmin()
@@ -29,7 +30,7 @@ function commandHelp(clientId, cmdArguments)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." additional commands (open console for the full list)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") == 0) and "additional " or "").."commands (open console for the full list)\";")
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         

@@ -75,10 +75,6 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     
     basepath = string.gsub(et.trap_Cvar_Get("fs_basepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/luascripts/wolfadmin/"
     
-    if not (et.trap_Cvar_Get("fs_game") == "noquarter" or et.trap_Cvar_Get("fs_game") == "nq") then
-        outputDebug("Warning! Not running NoQuarter, this may cause bugs. Use at your own risk.")
-    end
-    
     currentLevelTime = levelTime
     
     events.trigger("onGameInit", levelTime, randomSeed, (restartMap == 1))
