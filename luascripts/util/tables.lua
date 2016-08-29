@@ -17,6 +17,14 @@
 
 local tables = {}
 
+function tables.unpack(table)
+    if table.unpack ~= nil then
+        return table.unpack(table)
+    elseif unpack ~= nil then
+        return unpack(table)
+    end
+end
+
 function tables.contains(table, needle)
     for key, value in pairs(table) do
         if value == needle then

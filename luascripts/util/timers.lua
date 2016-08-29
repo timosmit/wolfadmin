@@ -18,6 +18,7 @@
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
+local tables = require "luascripts.wolfadmin.util.tables"
 
 local timers = {}
 
@@ -55,7 +56,7 @@ end
 function timers.ongameframe(levelTime)
     for id, timer in pairs(data) do
         if (et.trap_Milliseconds() - timer["start"]) > timer["interval"] then
-            timer["function"](unpack(timer["args"]))
+            timer["function"](tables.unpack(timer["args"]))
             timer["iteration"] = timer["iteration"] + 1
             
             if timer["repeat"] == 0 or timer["iteration"] < timer["repeat"] then

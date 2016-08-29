@@ -45,7 +45,7 @@ function util.escape(str)
 end
 
 function util.removeColors(str)
-    return string.gsub(str, "(\^[%a%d%p])", "")
+    return string.gsub(str, "(^[%a%d%p])", "")
 end
 
 function util.getTeamName(teamId)
