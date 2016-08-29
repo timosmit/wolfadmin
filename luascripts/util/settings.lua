@@ -41,6 +41,7 @@ local data = {
     ["g_restrictedVotes"] = "",
     ["g_renameLimit"] = 3,
     ["g_renameInterval"] = 60,
+    ["g_standalone"] = 1,
     ["g_debugWolfAdmin"] = 0,
     ["omnibot_maxbots"] = 10,
     ["db_type"] = "sqlite",
