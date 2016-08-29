@@ -38,4 +38,8 @@ function acl.isallowed(clientId, permission)
     return 1
 end
 
+function acl.getlevel(clientId)
+    -- returns level for client
+end
+
 return acl

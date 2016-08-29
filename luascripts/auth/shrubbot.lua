@@ -111,4 +111,8 @@ function shrubbot.isallowed(clientId, permission)
     return et.G_shrubbot_permission(clientId, flags[permission])
 end
 
+function shrubbot.getlevel(clientId)
+    return et.G_shrubbot_level(clientId)
+end
+
 return shrubbot
