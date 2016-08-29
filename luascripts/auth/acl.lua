@@ -40,6 +40,8 @@ end
 
 function acl.getlevel(clientId)
     -- returns level for client
+
+    return 0
 end
 
 return acl
