@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local util = require "luascripts.wolfadmin.util.util"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local game = require "luascripts.wolfadmin.game.game"
@@ -35,4 +36,4 @@ function commandListMaps(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("listmaps", commandListMaps, "C", "display the maps in the rotation")
+commands.addadmin("listmaps", commandListMaps, auth.PERM_LISTMAPS, "display the maps in the rotation")

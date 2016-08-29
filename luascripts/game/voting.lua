@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
@@ -88,7 +89,7 @@ events.handle("onGameStateChange", voting.ongamestatechange)
 function voting.oncallvote(clientId, type, args)
     if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or args[1] == "?" then
         return 0
-    elseif voting.isrestricted(type) and et.G_shrubbot_permission(clientId, "%") ~= 1 then
+    elseif voting.isrestricted(type) and auth.isallowed(clientId, PERM_NOVOTELIMIT) ~= 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"callvote: you are not allowed to call this type of vote.\";")
         et.trap_SendServerCommand(clientId, "cp \"You are not allowed to call this type of vote.")
         

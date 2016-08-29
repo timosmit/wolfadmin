@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local settings = require "luascripts.wolfadmin.util.settings"
 local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
@@ -46,4 +47,4 @@ function commandSetLevel(clientId, cmdArguments)
     
     return false
 end
-commands.addadmin("setlevel", commandSetLevel, "s", "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true)
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true)

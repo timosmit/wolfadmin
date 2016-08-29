@@ -15,15 +15,27 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luascripts.wolfadmin.auth.auth"
-local commands = require "luascripts.wolfadmin.commands.commands"
-local bots = require "luascripts.wolfadmin.game.bots"
+local events = require "luascripts.wolfadmin.util.events"
+local files = require "luascripts.wolfadmin.util.files"
 
-function commandBotsOn(clientId, cmdArguments)
-    bots.enable(true)
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dneedbots: ^9bots were toggled on.\";")
-    
-    return true
+local auth = require "luascripts.wolfadmin.auth.auth"
+
+local acl = {}
+
+function acl.readpermissions()
+    -- read level permissions into a cache file (can be loaded at mod start)
+    -- should probably cache current players' permissions as well, then
+    -- read in new players' permissions as they join the server
 end
-commands.addadmin("needbots", commandBotsOn, auth.PERM_BOTADMIN, "adds bots to the game")
+
+function acl.clearcache()
+    -- clear cache whenever database is updated, or do this manually
+end
+
+function acl.isallowed(clientId, permission)
+    -- stub function, reads from cache
+
+    return 1
+end
+
+return acl

@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local auth = require "luascripts.wolfadmin.auth.auth"
 
 function commandHelp(clientId, cmdArguments)
     local cmds = commands.getadmin()
@@ -24,7 +25,7 @@ function commandHelp(clientId, cmdArguments)
         local availableCommands = {}
         
         for command, data in pairs(cmds) do
-            if data["function"] and data["flag"] and et.G_shrubbot_permission(clientId, data["flag"]) == 1 and (not data["hidden"] or (type(data["hidden"]) == "function" and not data["hidden"]())) then
+            if data["function"] and data["flag"] and auth.isallowed(clientId, data["flag"]) == 1 and (not data["hidden"] or (type(data["hidden"]) == "function" and not data["hidden"]())) then
                 table.insert(availableCommands, command)
             end
         end
@@ -66,4 +67,4 @@ function commandHelp(clientId, cmdArguments)
     
     return false
 end
-commands.addadmin("help", commandHelp, "h", "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)
+commands.addadmin("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)

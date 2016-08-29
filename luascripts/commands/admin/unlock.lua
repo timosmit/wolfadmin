@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local util = require "luascripts.wolfadmin.util.util"
 local constants = require "luascripts.wolfadmin.util.constants"
 local commands = require "luascripts.wolfadmin.commands.commands"
@@ -37,4 +38,4 @@ function commandUnlock(clientId, cmdArguments)
     
     return false
 end
-commands.addadmin("unlock", commandUnlock, "K", "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true)
+commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true)
