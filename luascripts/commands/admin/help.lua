@@ -31,7 +31,7 @@ function commandHelp(clientId, cmdArguments)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") == 0) and "additional " or "").."commands (open console for the full list)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") == 1) and "available" or "additional").." commands (open console for the full list)\";")
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         
@@ -68,8 +68,4 @@ function commandHelp(clientId, cmdArguments)
     
     return false
 end
-<<<<<<< HEAD
-commands.addadmin("help", commandHelp, "h", "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)
-=======
-commands.addadmin("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", true)
->>>>>>> feature/auth
+commands.addadmin("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", (settings.get("g_standalone") == 0))

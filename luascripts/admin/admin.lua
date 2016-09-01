@@ -19,6 +19,7 @@ local constants = require "luascripts.wolfadmin.util.constants"
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
 local files = require "luascripts.wolfadmin.util.files"
+local util = require "luascripts.wolfadmin.util.util"
 local db = require "luascripts.wolfadmin.db.db"
 local stats = require "luascripts.wolfadmin.players.stats"
 
@@ -56,6 +57,10 @@ end
 
 function admin.unmuteVoice(clientId)
     stats.set(clientId, "voiceMute", false)
+end
+
+function admin.putPlayer(clientId, teamId)
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
 
 function admin.lockTeam(teamId)
