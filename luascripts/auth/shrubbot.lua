@@ -30,6 +30,7 @@ local flags = {
 
     [auth.PERM_LISTPLAYERS] = "i",
     [auth.PERM_LISTTEAMS] = "l",
+    [auth.PERM_LISTMAPS] = "C",
     [auth.PERM_LISTSPREES] = "I",
     [auth.PERM_LISTRULES] = "C",
     [auth.PERM_LISTWARNS] = "R",
@@ -50,6 +51,7 @@ local flags = {
     [auth.PERM_FREEZE] = "E",
     [auth.PERM_DISORIENT] = "d",
     [auth.PERM_BURN] = "U",
+    [auth.PERM_SLAP] = "A",
     [auth.PERM_GIB] = "g",
     [auth.PERM_THROW] = "L",
     [auth.PERM_GLOW] = "o",
