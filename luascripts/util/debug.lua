@@ -36,7 +36,7 @@ function outputDebug(msg, severity)
         et.G_Print("[WolfAdmin] "..msg.."\n")
         
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-            if settings.get("g_debugWolfAdmin") ~= 0 and et.G_shrubbot_permission(playerId, "*") then
+            if settings.get("g_debugWolfAdmin") ~= 0 then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..playerId.." \"^:[WolfAdmin DEBUG] "..SEVERITY_LEVELS[severity]..msg.."\";")
             end
         end
