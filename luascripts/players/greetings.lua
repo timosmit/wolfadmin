@@ -31,7 +31,7 @@ local userGreetings = {}
 local levelGreetings = {}
 
 function greetings.get(clientId)
-    local lvl = et.G_shrubbot_level(clientId)
+    local lvl = auth.getlevel(clientId)
     
     if auth.isallowed(clientId, auth.PERM_INCOGNITO) ~= 1 then
         if userGreetings[stats.get(clientId, "playerGUID")] ~= nil then

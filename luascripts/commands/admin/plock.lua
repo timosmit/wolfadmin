@@ -50,7 +50,7 @@ function commandPlayerLock(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
-    elseif et.G_shrubbot_level(cmdClient) > et.G_shrubbot_level(clientId) then
+    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true
