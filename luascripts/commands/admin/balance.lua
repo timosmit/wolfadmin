@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local balancer = require "luascripts.wolfadmin.admin.balancer"
 
 function commandBalance(clientId, cmdArguments)
@@ -43,4 +44,4 @@ function commandBalance(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("balance", commandBalance, "p", "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")
+commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")

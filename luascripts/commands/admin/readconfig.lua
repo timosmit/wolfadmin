@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local settings = require "luascripts.wolfadmin.util.settings"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local rules = require "luascripts.wolfadmin.admin.rules"
@@ -29,4 +30,4 @@ function commandReadconfig(clientId, cmdArguments)
     
     return false
 end
-commands.addadmin("readconfig", commandReadconfig, "G", "reloads the shrubbot config file and refreshes user flags", nil, true)
+commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true)

@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local balancer = require "luascripts.wolfadmin.admin.balancer"
@@ -51,4 +52,4 @@ function commandPutBots(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("putbots", commandPutBots, "p", "puts all bots into a specific team", "^9[r|b|s]")
+commands.addadmin("putbots", commandPutBots, auth.PERM_PUT, "puts all bots into a specific team", "^9[r|b|s]")

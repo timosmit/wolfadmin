@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
@@ -29,9 +31,9 @@ local userGreetings = {}
 local levelGreetings = {}
 
 function greetings.get(clientId)
-    local lvl = et.G_shrubbot_level(clientId)
+    local lvl = auth.getlevel(clientId)
     
-    if et.G_shrubbot_permission(clientId, "@") ~= 1 then
+    if auth.isallowed(clientId, auth.PERM_INCOGNITO) ~= 1 then
         if userGreetings[stats.get(clientId, "playerGUID")] ~= nil then
             return userGreetings[stats.get(clientId, "playerGUID")]
         elseif levelGreetings[lvl] ~= nil then
@@ -105,12 +107,12 @@ function greetings.oninit(levelTime, randomSeed, restartMap)
     if settings.get("g_fileGreetings") ~= "" then
         greetings.load()
         
-        events.handle("onClientBegin", greetings.onbegin)
+        events.handle("onPlayerReady", greetings.onready)
     end
 end
 events.handle("onGameInit", greetings.oninit)
 
-function greetings.onbegin(clientId, firstTime)
+function greetings.onready(clientId, firstTime)
     if firstTime and (not stats.get(clientId, "isBot") or settings.get("g_botGreetings") == 1) then
         greetings.show(clientId)
     end

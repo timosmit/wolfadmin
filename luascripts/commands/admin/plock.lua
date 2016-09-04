@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local util = require "luascripts.wolfadmin.util.util"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
@@ -45,11 +46,11 @@ function commandPlayerLock(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already locked to a team.\";")
         
         return true
-    elseif et.G_shrubbot_permission(cmdClient, "!") == 1 then
+    elseif auth.isallowed(cmdClient, "!") == 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
-    elseif et.G_shrubbot_level(cmdClient) > et.G_shrubbot_level(clientId) then
+    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true
@@ -61,4 +62,4 @@ function commandPlayerLock(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("plock", commandPlayerLock, "K", "locks a player to a specific team", "^9[^3name|slot#^9]")
+commands.addadmin("plock", commandPlayerLock, auth.PERM_LOCKPLAYER, "locks a player to a specific team", "^9[^3name|slot#^9]")

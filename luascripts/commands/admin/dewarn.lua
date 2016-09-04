@@ -18,6 +18,7 @@
 local db = require "luascripts.wolfadmin.db.db"
 local settings = require "luascripts.wolfadmin.util.settings"
 local commands = require "luascripts.wolfadmin.commands.commands"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local warns = require "luascripts.wolfadmin.admin.warns"
 
 function commandRemoveWarn(clientId, cmdArguments)
@@ -57,4 +58,4 @@ function commandRemoveWarn(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("dewarn", commandRemoveWarn, "R", "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or not db.isconnected()) end)
+commands.addadmin("dewarn", commandRemoveWarn, auth.PERM_WARN, "remove a warning for a certain player", "^9[^3name|slot#^9] ^9[^3warn#^9]", function() return (settings.get("g_warnHistory") == 0 or not db.isconnected()) end)

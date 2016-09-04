@@ -18,6 +18,7 @@
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local pagination = require "luascripts.wolfadmin.util.pagination"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local db = require "luascripts.wolfadmin.db.db"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local stats = require "luascripts.wolfadmin.players.stats"
@@ -47,11 +48,11 @@ function commandListAliases(clientId, cmdArguments)
         return true
     end
     
-    if et.G_shrubbot_permission(cmdClient, "!") == 1 then
+    if auth.isallowed(cmdClient, "!") == 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
-    elseif et.G_shrubbot_level(cmdClient) > et.G_shrubbot_level(clientId) then
+    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true
@@ -76,4 +77,4 @@ function commandListAliases(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("listaliases", commandListAliases, "f", "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (not db.isconnected()) end)
+commands.addadmin("listaliases", commandListAliases, auth.PERM_FINGER, "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (not db.isconnected()) end)

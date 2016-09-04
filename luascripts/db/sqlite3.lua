@@ -18,6 +18,7 @@
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
+local tables = require "luascripts.wolfadmin.util.tables"
 
 local stats = require "luascripts.wolfadmin.players.stats"
 
@@ -34,8 +35,12 @@ function sqlite3.addplayer(guid, ip)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
 end
 
-function sqlite3.updateplayer(guid, ip)
+function sqlite3.updateplayerip(guid, ip)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+end
+
+function sqlite3.updateplayerlevel(id, level)
+    cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
 function sqlite3.getplayerid(clientid)
@@ -51,13 +56,27 @@ function sqlite3.getplayer(guid)
     return player
 end
 
+-- levels
+function sqlite3.addlevel(id, name)
+    cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
+end
+
+function sqlite3.updatelevel(id, name)
+    cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
+end
+
+function sqlite3.getlevel(id)
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
+    
+    local level = cur:fetch({}, "a")
+    cur:close()
+    
+    return level
+end
+
 -- aliases
 function sqlite3.addalias(playerid, alias, lastused)
     cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
-end
-
-function sqlite3.updatecleanalias(aliasid, alias)
-    cur = assert(con:execute("UPDATE `alias` SET `cleanalias`='"..util.escape(util.removeColors(alias)).."' WHERE `id`='"..util.escape(aliasid).."'"))
 end
 
 function sqlite3.updatealias(aliasid, lastused)
@@ -83,7 +102,7 @@ function sqlite3.getaliases(playerid, limit, offset)
     local row = cur:fetch({}, "a")
 
     while row do
-        table.insert(aliases, row)
+        table.insert(aliases, tables.copy(row))
         row = cur:fetch(row, "a")
     end
 
@@ -119,13 +138,13 @@ function sqlite3.getlastalias(playerid)
     return alias
 end
 
--- setlevels
+-- level history
 function sqlite3.addsetlevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
 function sqlite3.getlevelscount(playerid)
-    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player_level` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
     cur:close()
@@ -137,13 +156,13 @@ function sqlite3.getlevels(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
-    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+    cur = assert(con:execute("SELECT * FROM `player_level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
 
     local levels = {}
     local row = cur:fetch({}, "a")
     
     while row do
-        table.insert(levels, row)
+        table.insert(levels, tables.copy(row))
         row = cur:fetch(row, "a")
     end
     
@@ -180,7 +199,7 @@ function sqlite3.getwarns(playerid, limit, offset)
     local row = cur:fetch({}, "a")
     
     while row do
-        table.insert(warns, row)
+        table.insert(warns, tables.copy(row))
         row = cur:fetch(row, "a")
     end
 

@@ -38,8 +38,9 @@ local sprees = require "luascripts.wolfadmin.game.sprees"
 local teams = require "luascripts.wolfadmin.game.teams"
 local voting = require "luascripts.wolfadmin.game.voting"
 
-local stats = require "luascripts.wolfadmin.players.stats"
 local greetings = require "luascripts.wolfadmin.players.greetings"
+local players = require "luascripts.wolfadmin.players.players"
+local stats = require "luascripts.wolfadmin.players.stats"
 
 local version = "1.1.0-beta"
 local release = "26 August 2016"
@@ -89,17 +90,11 @@ function et_ConsoleCommand(cmdText)
 end
 
 function et_ClientConnect(clientId, firstTime, isBot)
-    if firstTime == 1 then
-        stats.set(clientId, "newConnection", true)
-    end
-    
-    return events.trigger("onClientConnect", clientId, (firstTime == 1), (isBot == 1))
+    return events.trigger("onClientConnectAttempt", clientId, (firstTime == 1), (isBot == 1))
 end
 
 function et_ClientBegin(clientId)
-    events.trigger("onClientBegin", clientId, stats.get(clientId, "newConnection"))
-    
-    stats.set(clientId, "newConnection", false)
+    events.trigger("onClientBegin", clientId)
 end
 
 function et_ClientDisconnect(clientId)

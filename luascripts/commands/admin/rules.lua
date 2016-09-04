@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local rules = require "luascripts.wolfadmin.admin.rules"
 
@@ -42,4 +43,4 @@ function commandRules(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("rules", commandRules, "C", "display the rules on the server", "^9(^hrule^9)")
+commands.addadmin("rules", commandRules, auth.PERM_LISTRULES, "display the rules on the server", "^9(^hrule^9)")

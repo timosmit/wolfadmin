@@ -17,6 +17,16 @@
 
 local tables = {}
 
+function tables.copy(table)
+    local copy = {}
+
+    for key, value in pairs(table) do
+        copy[key] = value
+    end
+
+    return copy
+end
+
 function tables.unpack(table)
     if table.unpack ~= nil then
         return table.unpack(table)

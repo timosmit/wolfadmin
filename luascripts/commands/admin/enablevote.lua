@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local voting = require "luascripts.wolfadmin.game.voting"
 
 function commandEnableVote(clientId, cmdArguments)
@@ -25,4 +26,4 @@ function commandEnableVote(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("enablevote", commandEnableVote, "c", "enables next map voting")
+commands.addadmin("enablevote", commandEnableVote, auth.PERM_ENABLEVOTE, "enables next map voting")

@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
 local util = require "luascripts.wolfadmin.util.util"
 local commands = require "luascripts.wolfadmin.commands.commands"
 local admin = require "luascripts.wolfadmin.admin.admin"
@@ -49,7 +50,7 @@ function commandVoiceMute(clientId, cmdArguments)
         vmuteTime = util.getTimeFromString(cmdArguments[2])
     elseif cmdArguments[2] then
         vmuteReason = table.concat(cmdArguments, " ", 2)
-    elseif et.G_shrubbot_permission(clientId, "8") ~= 1 then
+    elseif auth.isallowed(clientId, "8") ~= 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
@@ -59,11 +60,11 @@ function commandVoiceMute(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
         
         return true
-    elseif et.G_shrubbot_permission(cmdClient, "!") == 1 then
+    elseif auth.isallowed(cmdClient, "!") == 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
-    elseif et.G_shrubbot_level(cmdClient) > et.G_shrubbot_level(clientId) then
+    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true
@@ -75,4 +76,4 @@ function commandVoiceMute(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("vmute", commandVoiceMute, "m", "voicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("vmute", commandVoiceMute, auth.PERM_VOICEMUTE, "voicemutes a player", "^9[^3name|slot#^9]")

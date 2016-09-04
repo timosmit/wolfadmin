@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require "luascripts.wolfadmin.commands.commands"
+local auth = require "luascripts.wolfadmin.auth.auth"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 function commandIncognito(clientId, cmdArguments)
@@ -37,7 +38,7 @@ function commandIncognito(clientId, cmdArguments)
         -- et.G_Print(string.format("%s %s %d %s\n", adminName, adminGUID, adminLevel, adminFlags))
         
         if stats.get(clientId, "playerGUID") == adminGUID then
-            if et.G_shrubbot_permission(clientId, "@") ~= 1 then
+            if auth.isallowed(clientId, "@") ~= 1 then
                 adminFlags = adminFlags.."+@"
                 
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
@@ -74,4 +75,4 @@ function commandIncognito(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("incognito", commandIncognito, "s", "fakes your level to guest (no aka)")
+commands.addadmin("incognito", commandIncognito, auth.PERM_INCOGNITO, "fakes your level to guest (no aka)")
