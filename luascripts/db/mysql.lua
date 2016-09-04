@@ -39,8 +39,8 @@ function mysql.updateplayerip(guid, ip)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
 end
 
-function mysql.updateplayerlevel(guid, level)
-    cur = assert(con:execute("UPDATE `player` SET `level`='"..tonumber(level).."' WHERE `guid`='"..util.escape(guid).."'"))
+function mysql.updateplayerlevel(id, level)
+    cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
 function mysql.getplayerid(clientid)

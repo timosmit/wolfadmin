@@ -29,22 +29,54 @@ function commandSetLevel(clientId, cmdArguments)
     else
         cmdClient = tonumber(cmdArguments[1])
     end
-    
+
     if cmdClient == -1 then
         return false
     elseif not et.gentity_get(cmdClient, "pers.netname") then
         return false
     end
-    
-    -- plays a promotion sound
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"/sound/vo/general/axis/hq_promogen.wav\";")
-    
-    if db.isconnected() then
-        cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
-        
-        admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
-    end
-    
+
+    cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
+
+    admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
+
     return false
 end
-commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true)
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", (settings.get("g_standalone") == 0 and db.isconnected()))
+
+function commandSetLevel(clientId, cmdArguments)
+    if cmdArguments[1] == nil then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel usage: "..commands.getadmin("setlevel")["syntax"].."\";")
+
+        return true
+    elseif tonumber(cmdArguments[1]) == nil then
+        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    else
+        cmdClient = tonumber(cmdArguments[1])
+    end
+    
+    if cmdClient == -1 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        
+        return true
+    elseif not et.gentity_get(cmdClient, "pers.netname") then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no connected player by that name or slot #\";")
+
+        return true
+    end
+    
+    if auth.getlevel(cmdClient) > auth.getlevel(clientId) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+
+        return true
+    end
+
+    cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
+
+    admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..cmdArguments[2].." ^9player.\";")
+
+    return false
+end
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", (settings.get("g_standalone") == 0 and db.isconnected()))

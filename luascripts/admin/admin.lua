@@ -79,7 +79,8 @@ end
 function admin.setPlayerLevel(clientId, level, adminId)
     local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
     local adminid = db.getplayer(stats.get(adminId, "playerGUID"))["id"]
-    
+
+    db.updateplayerlevel(playerid, level)
     db.addsetlevel(playerid, level, adminid, os.time())
 end
 
