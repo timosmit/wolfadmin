@@ -56,10 +56,6 @@ function mysql.addalias(playerid, alias, lastused)
     cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
 end
 
-function mysql.updatecleanalias(aliasid, alias)
-    cur = assert(con:execute("UPDATE `alias` SET `cleanalias`='"..util.escape(util.removeColors(alias)).."' WHERE `id`='"..util.escape(aliasid).."'"))
-end
-
 function mysql.updatealias(aliasid, lastused)
     cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
 end
