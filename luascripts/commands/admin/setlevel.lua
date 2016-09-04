@@ -57,7 +57,7 @@ function commandSetLevel(clientId, cmdArguments)
     
     if cmdClient == -1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
-        
+
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no connected player by that name or slot #\";")
@@ -69,9 +69,13 @@ function commandSetLevel(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true
+    elseif not db.getlevel(tonumber(cmdArguments[2])) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9this admin level does not exist.\";")
+
+        return true
     end
 
-    cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
+    cmdArguments[2] = tonumber(cmdArguments[2]) or 0
 
     admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
 

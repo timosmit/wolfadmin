@@ -21,7 +21,10 @@ local stats = require "luascripts.wolfadmin.players.stats"
 local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandAdminTest(clientId, cmdArguments)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: "..stats.get(clientId, "playerName").." ^9is a level "..auth.getlevel(clientId).." user (".."^7Guest".."^9).\";")
+    local level = auth.getlevel(clientId)
+    local levelName = auth.getlevelname(level)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: ^7"..stats.get(clientId, "playerName").." ^9is a level "..level.." user (^7"..levelName.."^9).\";")
 
     return true
 end

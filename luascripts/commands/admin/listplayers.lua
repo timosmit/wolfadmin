@@ -47,6 +47,9 @@ function commandListPlayers(clientId, cmdArguments)
             guidStub = stats.get(player, "playerGUID"):sub(-8)
         end
 
+        local level = auth.getlevel(player)
+        local levelName = auth.getlevelname(level)
+
         local teamColor, teamCode
 
         if et.gentity_get(player, "pers.connected") then
@@ -66,8 +69,8 @@ function commandListPlayers(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s%s^7%s", 
             player, -- slot
             teamCode, -- team
-            auth.getlevel(player), -- level
-            "Guest", -- levelname
+            level, -- level
+            levelName, -- levelname
             guidStub, -- guid stub
             (stats.get(player, "playerMuted") and "M" or ""), -- muted
             fireteamName, -- fireteam
