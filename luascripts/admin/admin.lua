@@ -102,4 +102,36 @@ function admin.onconnect(clientId, firstTime, isBot)
 end
 events.handle("onClientConnect", admin.onconnect)
 
+function players.oninfochange(clientId)
+    local clientInfo = et.trap_GetUserinfo(clientId)
+    local old = stats.get(clientId, "playerName")
+    local new = et.Info_ValueForKey(clientInfo, "name")
+
+    if new ~= old then
+        if (os.time() - stats.get(clientId, "namechangeStart")) < settings.get("g_renameInterval") and stats.get(clientId, "namechangePts") >= settings.get("g_renameLimit") and not stats.get(clientId, "namechangeForce") then
+            stats.set(clientId, "namechangeForce", true)
+
+            clientInfo = et.Info_SetValueForKey(clientInfo, "name", old)
+            et.trap_SetUserinfo(clientId, clientInfo)
+            et.ClientUserinfoChanged(clientId)
+
+            stats.set(clientId, "namechangeForce", false)
+
+            et.trap_SendServerCommand(clientId, "cp \"Too many name changes in 1 minute.\";")
+        else
+            stats.set(clientId, "playerName", new)
+
+            if (os.time() - stats.get(clientId, "namechangeStart")) > settings.get("g_renameInterval") then
+                stats.set(clientId, "namechangeStart", os.time())
+                stats.get(clientId, "namechangePts", 0)
+            end
+
+            stats.add(clientId, "namechangePts", 1)
+
+            events.trigger("onClientNameChange", clientId, old, new)
+        end
+    end
+end
+events.handle("onClientInfoChange", players.oninfochange)
+
 return admin

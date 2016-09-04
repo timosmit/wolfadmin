@@ -15,43 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local db = require "luascripts.wolfadmin.db.db"
+
 local stats = require "luascripts.wolfadmin.players.stats"
 
 local events = require "luascripts.wolfadmin.util.events"
 
 local players = {}
-
-function players.updatePlayer(clientId)
-    local player = db.getplayer(stats.get(clientId, "playerGUID"))
-
-    if player then
-        local guid = stats.get(clientId, "playerGUID")
-        local ip = stats.get(clientId, "playerIP")
-
-        db.updateplayer(guid, ip)
-    else
-        local guid = stats.get(clientId, "playerGUID")
-        local ip = stats.get(clientId, "playerIP")
-
-        db.addplayer(guid, ip)
-        -- admin.setPlayerLevel(clientId, et.G_shrubbot_level(clientId), 1)
-    end
-end
-
-function players.updateAlias(clientId)
-    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
-    local name = stats.get(clientId, "playerName")
-    local alias = db.getaliasbyname(playerid, name)
-
-    if alias then
-        db.updatealias(alias["id"], os.time())
-        if alias["cleanalias"] == "" then
-            db.updatecleanalias(alias["id"], name)
-        end
-    else
-        db.addalias(playerid, name, os.time())
-    end
-end
 
 function players.onconnect(clientId, firstTime, isBot)
     local clientInfo = et.trap_GetUserinfo(clientId)
@@ -67,8 +37,28 @@ function players.onconnect(clientId, firstTime, isBot)
         stats.set(clientId, "newConnection", true)
 
         if db.isconnected() then
-            players.updatePlayer(clientId)
-            players.updateAlias(clientId)
+            local player = db.getplayer(stats.get(clientId, "playerGUID"))
+
+            if player then
+                local guid = stats.get(clientId, "playerGUID")
+                local ip = stats.get(clientId, "playerIP")
+
+                db.updateplayer(guid, ip)
+            else
+                local guid = stats.get(clientId, "playerGUID")
+                local ip = stats.get(clientId, "playerIP")
+
+                db.addplayer(guid, ip)
+            end
+
+            local name = stats.get(clientId, "playerName")
+            local alias = db.getaliasbyname(player["id"], name)
+
+            if alias then
+                db.updatealias(alias["id"], os.time())
+            else
+                db.addalias(playerid, name, os.time())
+            end
         end
     end
 end
@@ -92,46 +82,26 @@ function players.ondisconnect(clientId)
 end
 events.handle("onClientDisconnect", players.ondisconnect)
 
--- TODO: split into admin-side and player-side event?
-function players.oninfochange(clientId)
-    local clientInfo = et.trap_GetUserinfo(clientId)
-    local old = stats.get(clientId, "playerName")
-    local new = et.Info_ValueForKey(clientInfo, "name")
+function players.onnamechange(clientId, old, new)
+    -- TODO: on some mods, this message is already printed
+    -- known: old NQ versions, Legacy
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..old.." ^7is now known as "..new.."\";")
 
-    if new ~= old then
-        if (os.time() - stats.get(clientId, "namechangeStart")) < settings.get("g_renameInterval") and stats.get(clientId, "namechangePts") >= settings.get("g_renameLimit") and not stats.get(clientId, "namechangeForce") then
-            stats.set(clientId, "namechangeForce", true)
+    if db.isconnected() then
+        local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+        local name = stats.get(clientId, "playerName")
+        local alias = db.getaliasbyname(playerid, name)
 
-            clientInfo = et.Info_SetValueForKey(clientInfo, "name", old)
-            et.trap_SetUserinfo(clientId, clientInfo)
-            et.ClientUserinfoChanged(clientId)
-
-            stats.set(clientId, "namechangeForce", false)
-
-            et.trap_SendServerCommand(clientId, "cp \"Too many name changes in 1 minute.\";")
+        if alias then
+            db.updatealias(alias["id"], os.time())
         else
-            stats.set(clientId, "playerName", new)
-
-            if (os.time() - stats.get(clientId, "namechangeStart")) > settings.get("g_renameInterval") then
-                stats.set(clientId, "namechangeStart", os.time())
-                stats.get(clientId, "namechangePts", 0)
-            end
-
-            stats.add(clientId, "namechangePts", 1)
-
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..old.." ^7is now known as "..new.."\";")
-
-            if db.isconnected() then
-                players.updateAlias(clientId)
-            end
-
-            events.trigger("onClientNameChange", clientId, old, new)
+            db.addalias(playerid, name, os.time())
         end
     end
 end
-events.handle("onClientInfoChange", players.oninfochange)
+events.handle("onClientNameChange", players.onnamechange)
 
-function players.onteamchange(clientId)
+function players.oninfochange(clientId)
     local clientInfo = et.trap_GetUserinfo(clientId)
     local old = stats.get(clientId, "playerTeam")
     local new = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
@@ -142,6 +112,6 @@ function players.onteamchange(clientId)
         events.trigger("onClientTeamChange", clientId, old, new)
     end
 end
-events.handle("onClientInfoChange", players.onteamchange)
+events.handle("onClientInfoChange", players.oninfochange)
 
 return players
