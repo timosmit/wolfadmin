@@ -43,7 +43,7 @@ function players.onconnect(clientId, firstTime, isBot)
                 local guid = stats.get(clientId, "playerGUID")
                 local ip = stats.get(clientId, "playerIP")
 
-                db.updateplayer(guid, ip)
+                db.updateplayerip(guid, ip)
             else
                 local guid = stats.get(clientId, "playerGUID")
                 local ip = stats.get(clientId, "playerIP")

@@ -34,8 +34,12 @@ function sqlite3.addplayer(guid, ip)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
 end
 
-function sqlite3.updateplayer(guid, ip)
+function sqlite3.updateplayerip(guid, ip)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+end
+
+function sqlite3.updateplayerlevel(guid, level)
+    cur = assert(con:execute("UPDATE `player` SET `level`='"..tonumber(level).."' WHERE `guid`='"..util.escape(guid).."'"))
 end
 
 function sqlite3.getplayerid(clientid)
@@ -49,6 +53,24 @@ function sqlite3.getplayer(guid)
     cur:close()
     
     return player
+end
+
+-- levels
+function sqlite3.addlevel(id, name)
+    cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
+end
+
+function sqlite3.updatelevel(id, name)
+    cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
+end
+
+function sqlite3.getlevel(id)
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
+    
+    local level = cur:fetch({}, "a")
+    cur:close()
+    
+    return level
 end
 
 -- aliases

@@ -15,10 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = require "luascripts.wolfadmin.auth.auth"
+
+local db = require "luascripts.wolfadmin.db.db"
+
+local stats = require "luascripts.wolfadmin.players.stats"
+
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
-
-local auth = require "luascripts.wolfadmin.auth.auth"
 
 local acl = {}
 
@@ -39,9 +43,15 @@ function acl.isallowed(clientId, permission)
 end
 
 function acl.getlevel(clientId)
-    -- returns level for client
+    local player = db.getplayer(stats.get(clientId, "playerGUID"))
 
-    return 0
+    return player["level_id"]
+end
+
+function acl.getlevelname(levelId)
+    local level = db.getlevel(levelId)
+
+    return level["name"]
 end
 
 return acl

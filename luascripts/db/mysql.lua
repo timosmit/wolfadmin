@@ -34,8 +34,12 @@ function mysql.addplayer(guid, ip)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
 end
 
-function mysql.updateplayer(guid, ip)
+function mysql.updateplayerip(guid, ip)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+end
+
+function mysql.updateplayerlevel(guid, level)
+    cur = assert(con:execute("UPDATE `player` SET `level`='"..tonumber(level).."' WHERE `guid`='"..util.escape(guid).."'"))
 end
 
 function mysql.getplayerid(clientid)
@@ -49,6 +53,24 @@ function mysql.getplayer(guid)
     cur:close()
     
     return player
+end
+
+-- levels
+function mysql.addlevel(id, name)
+    cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
+end
+
+function mysql.updatelevel(id, name)
+    cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
+end
+
+function mysql.getlevel(id)
+    cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
+    
+    local level = cur:fetch({}, "a")
+    cur:close()
+    
+    return level
 end
 
 -- aliases
