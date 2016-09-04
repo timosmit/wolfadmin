@@ -107,12 +107,12 @@ function greetings.oninit(levelTime, randomSeed, restartMap)
     if settings.get("g_fileGreetings") ~= "" then
         greetings.load()
         
-        events.handle("onClientBegin", greetings.onbegin)
+        events.handle("onPlayerReady", greetings.onready)
     end
 end
 events.handle("onGameInit", greetings.oninit)
 
-function greetings.onbegin(clientId, firstTime)
+function greetings.onready(clientId, firstTime)
     if firstTime and (not stats.get(clientId, "isBot") or settings.get("g_botGreetings") == 1) then
         greetings.show(clientId)
     end

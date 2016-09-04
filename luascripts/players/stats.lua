@@ -15,8 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require "luascripts.wolfadmin.util.events"
-
 local stats = {}
 
 local data = {[-1337] = {["playerGUID"] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}
@@ -73,39 +71,5 @@ function stats.remove(clientId)
     
     return true
 end
-
-function stats.onconnect(clientId, firstTime, isBot)
-    local clientInfo = et.trap_GetUserinfo(clientId)
-    
-    -- name is NOT yet set in pers.netname, so get all info out of infostring
-    stats.set(clientId, "playerName", et.Info_ValueForKey(clientInfo, "name"))
-    stats.set(clientId, "playerGUID", et.Info_ValueForKey(clientInfo, "cl_guid"))
-    stats.set(clientId, "playerIP", string.gsub(et.Info_ValueForKey(clientInfo, "ip"), ":%d*", ""))
-    stats.set(clientId, "playerTeam", tonumber(et.gentity_get(clientId, "sess.sessionTeam")))
-    stats.set(clientId, "isBot", isBot)
-    
-    if firstTime then
-        stats.set(clientId, "voiceMute", false)
-    end
-end
-events.handle("onClientConnect", stats.onconnect)
-
-function stats.ondisconnect(clientId)
-    stats.remove(clientId)
-end
-events.handle("onClientDisconnect", stats.ondisconnect)
-
-function stats.onteamchange(clientId)
-    local clientInfo = et.trap_GetUserinfo(clientId)
-    local old = stats.get(clientId, "playerTeam")
-    local new = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
-
-    if new ~= old then
-        stats.set(clientId, "playerTeam", new)
-
-        events.trigger("onClientTeamChange", clientId, old, new)
-    end
-end
-events.handle("onClientInfoChange", stats.onteamchange)
 
 return stats
