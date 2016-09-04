@@ -137,13 +137,13 @@ function mysql.getlastalias(playerid)
     return alias
 end
 
--- setlevels
+-- level history
 function mysql.addsetlevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
 function mysql.getlevelscount(playerid)
-    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `level` WHERE `player_id`="..tonumber(playerid)..""))
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player_level` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
     cur:close()
@@ -155,7 +155,7 @@ function mysql.getlevels(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
-    cur = assert(con:execute("SELECT * FROM `level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+    cur = assert(con:execute("SELECT * FROM `player_level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
 
     local levels = {}
     local row = cur:fetch({}, "a")
