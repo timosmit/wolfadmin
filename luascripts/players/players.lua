@@ -58,7 +58,9 @@ function players.onconnect(clientId, firstTime, isBot)
                 local ip = stats.get(clientId, "playerIP")
 
                 db.addplayer(guid, ip)
-                db.addalias(playerid, name, os.time())
+
+                local player = db.getplayer(stats.get(clientId, "playerGUID"))
+                db.addalias(player["id"], name, os.time())
             end
         end
     end
