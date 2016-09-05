@@ -33,30 +33,31 @@ function players.onconnect(clientId, firstTime, isBot)
     stats.set(clientId, "playerTeam", tonumber(et.gentity_get(clientId, "sess.sessionTeam")))
     stats.set(clientId, "isBot", isBot)
 
-    if firstTime == 1 then
+    if firstTime then
         stats.set(clientId, "newConnection", true)
 
         if db.isconnected() then
             local player = db.getplayer(stats.get(clientId, "playerGUID"))
+            local name = stats.get(clientId, "playerName")
 
             if player then
                 local guid = stats.get(clientId, "playerGUID")
                 local ip = stats.get(clientId, "playerIP")
 
                 db.updateplayerip(guid, ip)
+
+                local alias = db.getaliasbyname(player["id"], name)
+
+                if alias then
+                    db.updatealias(alias["id"], os.time())
+                else
+                    db.addalias(playerid, name, os.time())
+                end
             else
                 local guid = stats.get(clientId, "playerGUID")
                 local ip = stats.get(clientId, "playerIP")
 
                 db.addplayer(guid, ip)
-            end
-
-            local name = stats.get(clientId, "playerName")
-            local alias = db.getaliasbyname(player["id"], name)
-
-            if alias then
-                db.updatealias(alias["id"], os.time())
-            else
                 db.addalias(playerid, name, os.time())
             end
         end
