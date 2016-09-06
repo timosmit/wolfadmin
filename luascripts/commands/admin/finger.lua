@@ -16,8 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
+
 local settings = require "luascripts.wolfadmin.util.settings"
 local util = require "luascripts.wolfadmin.util.util"
 
@@ -43,12 +46,11 @@ function commandFinger(clientId, cmdArguments)
     end
 
     local stats = {
-        ["name"] = et.gentity_get(cmdClient, "pers.netname"),
-        ["cleanname"] = et.gentity_get(cmdClient, "pers.netname"):gsub("%^[^^]", ""),
-        ["codedsname"] = et.gentity_get(cmdClient, "pers.netname"):gsub("%^([^^])", "^^2%1"),
-        ["guid"] = et.gentity_get(cmdClient, "pers.netname"):gsub("%^([^^])", "^^2%1"),
+        ["name"] = players.getName(clientId),
+        ["cleanname"] = players.getName(clientId):gsub("%^[^^]", ""),
+        ["codedsname"] = players.getName(clientId):gsub("%^([^^])", "^^2%1"),
         ["slot"] = cmdClient,
-        ["guid"] = stats.get(cmdClient, "playerGUID"),
+        ["guid"] = players.getGUID(clientId),
     }
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dInformation about ^7"..stats["name"].."^d:\";")

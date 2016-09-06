@@ -96,7 +96,7 @@ events.handle("onPlayerDeath", game.ondeath)
 function game.onrevive(clientMedic, clientVictim)
     if settings.get("g_announceRevives") ~= 0 then
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-            if wolfa_isPlayer(playerId) and tonumber(et.gentity_get(playerId, "sess.sessionTeam")) == tonumber(et.gentity_get(clientMedic, "sess.sessionTeam")) then
+            if players.isConnected(playerId) and tonumber(et.gentity_get(playerId, "sess.sessionTeam")) == tonumber(et.gentity_get(clientMedic, "sess.sessionTeam")) then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..playerId.." \"^drevive: ^7"..et.gentity_get(clientMedic, "pers.netname").." ^9revived ^7"..et.gentity_get(clientVictim, "pers.netname").."^9.\";")
             end
         end

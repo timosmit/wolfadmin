@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local players = require "luascripts.wolfadmin.players.players"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local tables = require "luascripts.wolfadmin.util.tables"
-
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local luasql = require "luasql.mysql"
 
@@ -43,8 +43,8 @@ function mysql.updateplayerlevel(id, level)
     cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function mysql.getplayerid(clientid)
-    return mysql.getplayer(stats.get(clientid, "playerGUID"))["id"]
+function mysql.getplayerid(clientId)
+    return mysql.getplayer(players.getGUID(clientId))["id"]
 end
 
 function mysql.getplayer(guid)

@@ -15,9 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luascripts.wolfadmin.commands.commands"
 local auth = require "luascripts.wolfadmin.auth.auth"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local commands = require "luascripts.wolfadmin.commands.commands"
+
+local players = require "luascripts.wolfadmin.players.players"
 
 function commandIncognito(clientId, cmdArguments)
     local fileName = et.trap_Cvar_Get("g_shrubbot")
@@ -37,7 +39,7 @@ function commandIncognito(clientId, cmdArguments)
     for entry, adminName, adminGUID, adminLevel, adminFlags in string.gmatch(fileString, "(%[admin%]\nname%s+=%s+([%a%d%p]+)\nguid%s+=%s+([%u%d]+)\nlevel%s+=%s+([%d]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
         -- et.G_Print(string.format("%s %s %d %s\n", adminName, adminGUID, adminLevel, adminFlags))
         
-        if stats.get(clientId, "playerGUID") == adminGUID then
+        if players.getGUID(clientId) == adminGUID then
             if auth.isallowed(clientId, "@") ~= 1 then
                 adminFlags = adminFlags.."+@"
                 

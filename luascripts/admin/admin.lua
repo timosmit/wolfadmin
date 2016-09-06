@@ -33,6 +33,18 @@ local teamLocks = {
     [constants.TEAM_SPECTATORS] = false,
 }
 
+function admin.isPlayerMuted(clientId)
+    -- return players.isPlayerMuted(clientId)
+end
+
+function admin.mutePlayer(clientId, length)
+    --
+end
+
+function admin.unmutePlayer(clientId)
+    --
+end
+
 function admin.isVoiceMuted(clientId)
     if stats.get(clientId, "voiceMute") then
         if stats.get(clientId, "voiceMute") - os.time() > 0 then
@@ -40,14 +52,6 @@ function admin.isVoiceMuted(clientId)
         else
             admin.unmuteVoice(clientId)
         end
-    end
-    
-    return false
-end
-
-function admin.isPlayerLocked(clientId)
-    if stats.get(clientId, "teamLock") then
-        return true
     end
     
     return false
@@ -73,6 +77,14 @@ function admin.unlockTeam(teamId)
     teamLocks[teamId] = false
 end
 
+function admin.isPlayerLocked(clientId)
+    if stats.get(clientId, "teamLock") then
+        return true
+    end
+    
+    return false
+end
+
 function admin.lockPlayer(clientId)
     stats.set(clientId, "teamLock", true)
 end
@@ -82,8 +94,8 @@ function admin.unlockPlayer(clientId)
 end
 
 function admin.setPlayerLevel(clientId, level, adminId)
-    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
-    local adminid = db.getplayer(stats.get(adminId, "playerGUID"))["id"]
+    local playerid = db.getplayer(players.getGUID(clientId))["id"]
+    local adminid = db.getplayer(players.getGUID(clientId))["id"]
 
     db.updateplayerlevel(playerid, level)
     db.addsetlevel(playerid, level, adminid, os.time())
@@ -112,7 +124,8 @@ events.handle("onClientConnect", admin.onconnect)
 
 function players.oninfochange(clientId)
     local clientInfo = et.trap_GetUserinfo(clientId)
-    local old = stats.get(clientId, "playerName")
+
+    local old = players.getCachedName(clientId)
     local new = et.Info_ValueForKey(clientInfo, "name")
 
     if new ~= old then
@@ -127,8 +140,6 @@ function players.oninfochange(clientId)
 
             et.trap_SendServerCommand(clientId, "cp \"Too many name changes in 1 minute.\";")
         else
-            stats.set(clientId, "playerName", new)
-
             if (os.time() - stats.get(clientId, "namechangeStart")) > settings.get("g_renameInterval") then
                 stats.set(clientId, "namechangeStart", os.time())
                 stats.get(clientId, "namechangePts", 0)

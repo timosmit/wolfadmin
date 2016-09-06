@@ -15,13 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luascripts.wolfadmin.util.util"
-local settings = require "luascripts.wolfadmin.util.settings"
-local pagination = require "luascripts.wolfadmin.util.pagination"
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local db = require "luascripts.wolfadmin.db.db"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
+
+local pagination = require "luascripts.wolfadmin.util.pagination"
+local settings = require "luascripts.wolfadmin.util.settings"
+local util = require "luascripts.wolfadmin.util.util"
 
 function commandListAliases(clientId, cmdArguments)
     if not db.isconnected() then
@@ -58,7 +62,7 @@ function commandListAliases(clientId, cmdArguments)
         return true
     end
     
-    local player = db.getplayer(stats.get(cmdClient, "playerGUID"))["id"]
+    local player = db.getplayer(players.getGUID(cmdClient))["id"]
     
     local count = db.getaliasescount(player)
     local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))

@@ -17,13 +17,13 @@
 
 local auth = require "luascripts.wolfadmin.auth.auth"
 
+local players = require "luascripts.wolfadmin.players.players"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
 local files = require "luascripts.wolfadmin.util.files"
-
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local greetings = {}
 
@@ -34,8 +34,8 @@ function greetings.get(clientId)
     local lvl = auth.getlevel(clientId)
     
     if auth.isallowed(clientId, auth.PERM_INCOGNITO) ~= 1 then
-        if userGreetings[stats.get(clientId, "playerGUID")] ~= nil then
-            return userGreetings[stats.get(clientId, "playerGUID")]
+        if userGreetings[players.getGUID(clientId)] ~= nil then
+            return userGreetings[players.getGUID(clientId)]
         elseif levelGreetings[lvl] ~= nil then
             return levelGreetings[lvl]
         end
@@ -113,7 +113,7 @@ end
 events.handle("onGameInit", greetings.oninit)
 
 function greetings.onready(clientId, firstTime)
-    if firstTime and (not stats.get(clientId, "isBot") or settings.get("g_botGreetings") == 1) then
+    if firstTime and (not players.isBot(clientId) or settings.get("g_botGreetings") == 1) then
         greetings.show(clientId)
     end
 end

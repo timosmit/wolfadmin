@@ -15,22 +15,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luascripts.wolfadmin.util.util"
+local players = require "luascripts.wolfadmin.players.players"
+
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
-local stats = require "luascripts.wolfadmin.players.stats"
+local util = require "luascripts.wolfadmin.util.util"
 
 local bots = {}
-
-function bots.is(clientId)
-    return stats.get(clientId, "isBot")
-end
 
 function bots.put(team)
     local team = util.getTeamCode(team)
     
     for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-        if wolfa_isPlayer(playerId) and bots.is(playerId) then
+        if players.isConnected(playerId) and players.isBot(playerId) then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..playerId.." "..team..";")
         end
     end

@@ -19,7 +19,7 @@ local auth = require "luascripts.wolfadmin.auth.auth"
 
 local db = require "luascripts.wolfadmin.db.db"
 
-local stats = require "luascripts.wolfadmin.players.stats"
+local players = require "luascripts.wolfadmin.players.players"
 
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
@@ -43,7 +43,7 @@ function acl.isallowed(clientId, permission)
 end
 
 function acl.getlevel(clientId)
-    local player = db.getplayer(stats.get(clientId, "playerGUID"))
+    local player = db.getplayer(players.getGUID(clientId))
 
     return player["level_id"]
 end

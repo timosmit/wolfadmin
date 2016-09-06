@@ -17,12 +17,16 @@
 
 require "luascripts.wolfadmin.util.debug"
 
+local admin = require "luascripts.wolfadmin.admin.admin"
+
+local auth = require "luascripts.wolfadmin.auth.auth"
+
+local players = require "luascripts.wolfadmin.players.players"
+local stats = require "luascripts.wolfadmin.players.stats"
+
 local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
-local admin = require "luascripts.wolfadmin.admin.admin"
-local auth = require "luascripts.wolfadmin.auth.auth"
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local commands = {}
 
@@ -116,8 +120,8 @@ function commands.log(clientId, command, cmdArguments)
     local logLine
     local levelTime = wolfa_getLevelTime() / 1000
     
-    local clientGUID = clientId and stats.get(clientId, "playerGUID") or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    local clientName = clientId and stats.get(clientId, "playerName") or "console"
+    local clientGUID = clientId and players.getGUID(clientId) or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    local clientName = clientId and players.getName(clientId) or "console"
     local clientFlags = ""
     
     local victimId
@@ -140,7 +144,7 @@ function commands.log(clientId, command, cmdArguments)
     end
     
     if victimId then
-        local victimName = stats.get(victimId, "playerName")
+        local victimName = players.getName(victimId)
         logLine = string.format("%3i:%02i: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
     else
         logLine = string.format("%3i:%02i: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))

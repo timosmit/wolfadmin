@@ -16,8 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
+
 local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandSlap(clientId, cmdArguments)
@@ -59,7 +62,7 @@ function commandSlap(clientId, cmdArguments)
 
     et.gentity_set(cmdClient, "health", newHealth)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..stats.get(cmdClient, "playerName").." ^9was slapped.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(cmdClient).." ^9was slapped.\";")
 
     return true
 end

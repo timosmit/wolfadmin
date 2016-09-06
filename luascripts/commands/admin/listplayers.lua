@@ -22,6 +22,7 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local game = require "luascripts.wolfadmin.game.game"
 local fireteams = require "luascripts.wolfadmin.game.fireteams"
 
+local players = require "luascripts.wolfadmin.players.players"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 local constants = require "luascripts.wolfadmin.util.constants"
@@ -32,7 +33,7 @@ function commandListPlayers(clientId, cmdArguments)
     local players = {}
 
     for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-        if wolfa_isPlayer(playerId) then
+        if players.isConnected(playerId) then
             table.insert(players, playerId)
         end
     end
@@ -41,10 +42,10 @@ function commandListPlayers(clientId, cmdArguments)
     for _, player in pairs(players) do
         local guidStub
 
-        if stats.get(player, "isBot") then
+        if players.isBot(player) then
             guidStub = "OMNIBOT-"
         else
-            guidStub = stats.get(player, "playerGUID"):sub(-8)
+            guidStub = players.getGUID(player):sub(-8)
         end
 
         local level = auth.getlevel(player)
@@ -74,7 +75,7 @@ function commandListPlayers(clientId, cmdArguments)
             guidStub, -- guid stub
             (stats.get(player, "playerMuted") and "M" or ""), -- muted
             fireteamName, -- fireteam
-            stats.get(player, "playerName"), -- name
+            players.getName(player), -- name
             "", -- alias open
             "", -- alias
             "" -- alias close

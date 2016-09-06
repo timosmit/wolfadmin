@@ -16,7 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
+
+local players = require "luascripts.wolfadmin.players.players"
 
 function commandAdminChat(clientId, cmdArguments)
     if #cmdArguments == 0 then
@@ -30,7 +33,7 @@ function commandAdminChat(clientId, cmdArguments)
         end
         
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-            if wolfa_isPlayer(playerId) and auth.isallowed(playerId, "~") == 1 then
+            if players.isConnected(playerId) and auth.isallowed(playerId, "~") == 1 then
                 table.insert(recipients, playerId) 
             end
         end

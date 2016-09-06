@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local players = require "luascripts.wolfadmin.players.players"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 local tables = require "luascripts.wolfadmin.util.tables"
-
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local luasql = require "luasql.sqlite3"
 
@@ -43,8 +43,8 @@ function sqlite3.updateplayerlevel(id, level)
     cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function sqlite3.getplayerid(clientid)
-    return sqlite3.getplayer(stats.get(clientid, "playerGUID"))["id"]
+function sqlite3.getplayerid(clientId)
+    return sqlite3.getplayer(players.getGUID(clientId))["id"]
 end
 
 function sqlite3.getplayer(guid)

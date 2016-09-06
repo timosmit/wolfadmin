@@ -155,7 +155,7 @@ function sprees.ondeath(victimId, killerId, mod)
     elseif victimId == killerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
-        if not wolfa_isPlayer(victimId) then return end
+        if not players.isConnected(victimId) then return end
         
         stats.set(victimId, "currentKillSpree", 0)
         stats.add(victimId, "currentDeathSpree", 1)
@@ -163,7 +163,7 @@ function sprees.ondeath(victimId, killerId, mod)
         
         stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
         
-        if (settings.get("g_botRecords") == 1 or not stats.get(victimId, "isBot")) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
             currentRecords["dsplayer"] = db.getplayerid(victimId)
             currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
         end
@@ -176,14 +176,14 @@ function sprees.ondeath(victimId, killerId, mod)
             
             stats.set(killerId, "longestKillSpree", stats.get(killerId, "currentKillSpree") > stats.get(killerId, "longestKillSpree") and stats.get(killerId, "currentKillSpree") or stats.get(killerId, "longestKillSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not stats.get(killerId, "isBot")) and (not currentRecords["ksrecord"] or stats.get(killerId, "longestKillSpree") > currentRecords["ksrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not players.isBot(killerId)) and (not currentRecords["ksrecord"] or stats.get(killerId, "longestKillSpree") > currentRecords["ksrecord"]) then
                 currentRecords["ksplayer"] = db.getplayerid(killerId)
                 currentRecords["ksrecord"] = stats.get(killerId, "longestKillSpree")
             end
             
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
-            if not wolfa_isPlayer(victimId) then return end
+            if not players.isConnected(victimId) then return end
             
             stats.set(victimId, "currentKillSpree", 0)
             stats.add(victimId, "currentDeathSpree", 1)
@@ -191,7 +191,7 @@ function sprees.ondeath(victimId, killerId, mod)
             
             stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not stats.get(victimId, "isBot")) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
                 currentRecords["dsplayer"] = db.getplayerid(victimId)
                 currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
             end
@@ -204,10 +204,10 @@ function sprees.onrevive(clientMedic, clientVictim)
     stats.set(clientMedic, "longestReviveSpree", stats.get(clientMedic, "currentReviveSpree") > stats.get(clientMedic, "longestReviveSpree") and stats.get(clientMedic, "currentReviveSpree") or stats.get(clientMedic, "longestReviveSpree"))
     
     if revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")] then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..stats.get(clientMedic, "playerName").." ^*"..revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")]["msg"].." ^d(^3"..stats.get(clientMedic, "currentReviveSpree").." ^drevives in a row!)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")]["msg"].." ^d(^3"..stats.get(clientMedic, "currentReviveSpree").." ^drevives in a row!)\";")
     end
     
-    if (settings.get("g_botRecords") == 1 or not stats.get(clientMedic, "isBot")) and (not currentRecords["rsrecord"] or stats.get(clientMedic, "longestReviveSpree") > currentRecords["rsrecord"]) then
+    if (settings.get("g_botRecords") == 1 or not players.isBot(clientMedic)) and (not currentRecords["rsrecord"] or stats.get(clientMedic, "longestReviveSpree") > currentRecords["rsrecord"]) then
         currentRecords["rsplayer"] = db.getplayerid(clientMedic)
         currentRecords["rsrecord"] = stats.get(clientMedic, "longestReviveSpree")
     end

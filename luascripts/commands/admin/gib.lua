@@ -16,8 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
+
 local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandGib(clientId, cmdArguments)
@@ -56,7 +59,7 @@ function commandGib(clientId, cmdArguments)
     -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
     et.G_Damage(cmdClient, 18, 18, 500, 0, 0) -- MOD_UNKNOWN = 0
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..stats.get(cmdClient, "playerName").." ^9was gibbed.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.\";")
 
     return true
 end

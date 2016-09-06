@@ -16,15 +16,18 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
+
 local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandAdminTest(clientId, cmdArguments)
     local level = auth.getlevel(clientId)
     local levelName = auth.getlevelname(level)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: ^7"..stats.get(clientId, "playerName").." ^9is a level "..level.." user (^7"..levelName.."^9).\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: ^7"..players.getName(clientId).." ^9is a level "..level.." user (^7"..levelName.."^9).\";")
 
     return true
 end

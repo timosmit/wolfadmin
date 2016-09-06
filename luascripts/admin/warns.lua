@@ -16,9 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local db = require "luascripts.wolfadmin.db.db"
+
+local players = require "luascripts.wolfadmin.players.players"
+
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local warns = {}
 
@@ -28,27 +30,27 @@ function warns.get(clientId, warnId)
     if warnId then
         return db.getwarn(warnId)
     else
-        local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+        local playerid = db.getplayer(players.getGUID(clientId))["id"]
         
         return db.getwarns(playerid)
     end
 end
 
 function warns.getcount(clientId)
-    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+    local playerid = db.getplayer(players.getGUID(clientId))["id"]
 
     return db.getwarnscount(playerid)
 end
 
 function warns.getlimit(clientId, start, limit)
-    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
+    local playerid = db.getplayer(players.getGUID(clientId))["id"]
 
     return db.getwarns(playerid, start, limit)
 end
 
 function warns.add(clientId, reason, adminId, datetime)
-    local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
-    local adminid = db.getplayer(stats.get(adminId, "playerGUID"))["id"]
+    local playerid = db.getplayer(players.getGUID(clientId))["id"]
+    local adminid = db.getplayer(players.getGUID(clientId))["id"]
     
     db.addwarn(playerid, reason, adminid, datetime)
 end

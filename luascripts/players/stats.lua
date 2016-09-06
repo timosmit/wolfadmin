@@ -15,21 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local players = require "luascripts.wolfadmin.players.players"
+
 local stats = {}
 
-local data = {[-1337] = {["playerGUID"] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}
-
--- TODO: need to check this in stat functions, apparently goes wrong
-function wolfa_isPlayer(clientId)
-    if data[clientId] then
-        return true
-    end
-    
-    return false
-end
+local data = {}
 
 function stats.get(clientId, statKey)
-    -- if not wolfa_isPlayer(clientId) then return false end
+    if not players.isConnected(clientId) then
+        error("client "..clientId.." is not connected")
+    end
     
     if statKey and type(statKey) == "string" and data[clientId] then
         return data[clientId][statKey]
@@ -39,7 +34,9 @@ function stats.get(clientId, statKey)
 end
 
 function stats.set(clientId, statKey, statValue)
-    -- if not wolfa_isPlayer(clientId) then return false end
+    if not players.isConnected(clientId) then
+        error("client "..clientId.." is not connected")
+    end
     
     if not data[clientId] then data[clientId] = {} end
     
@@ -52,20 +49,22 @@ function stats.set(clientId, statKey, statValue)
     return false
 end
 
-function stats.add(clientId, statKey, statAdd) -- alias
+function stats.add(clientId, statKey, statAdd)
     statAdd = statAdd and statAdd or 1
     
     return stats.set(clientId, statKey, stats.get(clientId, statKey) + statAdd)
 end
 
-function stats.take(clientId, statKey, statTake) -- alias
+function stats.take(clientId, statKey, statTake)
     statTake = statTake and statTake or 1
     
     return stats.set(clientId, statKey, stats.get(clientId, statKey) - statTake)
 end
 
 function stats.remove(clientId)
-    -- if not wolfa_isPlayer(clientId) then return false end
+    if not players.isConnected(clientId) then
+        error("client "..clientId.." is not connected")
+    end
     
     data[clientId] = nil
     

@@ -16,12 +16,16 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
-local util = require "luascripts.wolfadmin.util.util"
-local settings = require "luascripts.wolfadmin.util.settings"
-local pagination = require "luascripts.wolfadmin.util.pagination"
-local db = require "luascripts.wolfadmin.db.db"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local db = require "luascripts.wolfadmin.db.db"
+
+local players = require "luascripts.wolfadmin.players.players"
+
+local pagination = require "luascripts.wolfadmin.util.pagination"
+local settings = require "luascripts.wolfadmin.util.settings"
+local util = require "luascripts.wolfadmin.util.util"
 
 function commandListLevels(clientId, cmdArguments)
     if cmdArguments[1] == nil then
@@ -74,7 +78,7 @@ function commandListLevels(clientId, cmdArguments)
         return true
     end
     
-    local player = db.getplayer(stats.get(cmdClient, "playerGUID"))["id"]
+    local player = db.getplayer(players.getGUID(cmdClient))["id"]
     
     local count = db.getlevelscount(player)
     local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))

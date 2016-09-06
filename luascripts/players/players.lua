@@ -17,34 +17,87 @@
 
 local db = require "luascripts.wolfadmin.db.db"
 
-local stats = require "luascripts.wolfadmin.players.stats"
-
 local events = require "luascripts.wolfadmin.util.events"
 
 local players = {}
+
+local data = {}
+
+function players.isConnected(clientId)
+    return (data[clientId] ~= nil)
+end
+
+function players.getCachedName(clientId)
+    return data[clientId]["name"]
+end
+
+function players.getName(clientId)
+    return et.gentity_get(clientId, "pers.netname")
+end
+
+function players.getGUID(clientId)
+    return data[clientId]["guid"]
+end
+
+function players.getIP(clientId)
+    return data[clientId]["ip"]
+end
+
+function players.isBot(clientId)
+    return data[clientId]["bot"]
+end
+
+function players.setPlayerMuted(clientId, state, type, duration)
+    data[clientId]["mute"] = state
+
+    if state == true then
+        data[clientId]["mutetype"] = type
+        data[clientId]["muteduration"] = duration
+    end
+end
+
+function players.isPlayerMuted(clientId)
+    return data[clientId]["mute"]
+end
+
+function players.getPlayerMuteType(clientId, state, type, duration)
+    return data[clientId]["mutetype"]
+end
+
+function players.getPlayerMuteDuration(clientId, state, type, duration)
+    return data[clientId]["muteduration"]
+end
+
+function players.setPlayerTeamLocked(clientId, state)
+    data[clientId]["teamlock"] = state
+end
+
+function players.isPlayerTeamLocked(clientId)
+    return data[clientId]["teamlock"]
+end
 
 function players.onconnect(clientId, firstTime, isBot)
     local clientInfo = et.trap_GetUserinfo(clientId)
 
     -- name is NOT yet set in pers.netname, so get all info out of infostring
-    stats.set(clientId, "playerName", et.Info_ValueForKey(clientInfo, "name"))
-    stats.set(clientId, "playerGUID", et.Info_ValueForKey(clientInfo, "cl_guid"))
-    stats.set(clientId, "playerIP", string.gsub(et.Info_ValueForKey(clientInfo, "ip"), ":%d*", ""))
-    stats.set(clientId, "playerTeam", tonumber(et.gentity_get(clientId, "sess.sessionTeam")))
-    stats.set(clientId, "isBot", isBot)
+    data[clientId] = {}
+
+    -- data[clientId]["name"] is cached version for detecting namechanges, do not
+    -- use it to retrieve a player's name
+    data[clientId]["name"] = et.Info_ValueForKey(clientInfo, "name")
+    data[clientId]["guid"] = et.Info_ValueForKey(clientInfo, "cl_guid")
+    data[clientId]["ip"] = string.gsub(et.Info_ValueForKey(clientInfo, "ip"), ":%d*", "")
+    data[clientId]["bot"] = isBot
+    data[clientId]["team"] = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
 
     if firstTime then
-        stats.set(clientId, "newConnection", true)
+        data[clientId]["new"] = true
 
         if db.isconnected() then
-            local player = db.getplayer(stats.get(clientId, "playerGUID"))
-            local name = stats.get(clientId, "playerName")
+            local player = db.getplayer(data[clientId]["guid"])
 
             if player then
-                local guid = stats.get(clientId, "playerGUID")
-                local ip = stats.get(clientId, "playerIP")
-
-                db.updateplayerip(guid, ip)
+                db.updateplayerip(data[clientId]["guid"], data[clientId]["ip"])
 
                 local alias = db.getaliasbyname(player["id"], name)
 
@@ -54,12 +107,9 @@ function players.onconnect(clientId, firstTime, isBot)
                     db.addalias(playerid, name, os.time())
                 end
             else
-                local guid = stats.get(clientId, "playerGUID")
-                local ip = stats.get(clientId, "playerIP")
+                db.addplayer(data[clientId]["guid"], data[clientId]["ip"])
 
-                db.addplayer(guid, ip)
-
-                local player = db.getplayer(stats.get(clientId, "playerGUID"))
+                local player = db.getplayer(data[clientId]["guid"])
                 db.addalias(player["id"], name, os.time())
             end
         end
@@ -74,9 +124,9 @@ function players.onbegin(clientId)
     -- less coupling between main.lua and stats.lua)
     -- ensures that all data is loaded from this moment on
 
-    events.trigger("onPlayerReady", clientId, stats.get(clientId, "newConnection"))
+    events.trigger("onPlayerReady", clientId, data[clientId]["new"])
 
-    stats.set(clientId, "newConnection", false)
+    data[clientId]["new"] = false
 end
 events.handle("onClientBegin", players.onbegin)
 
@@ -90,9 +140,11 @@ function players.onnamechange(clientId, old, new)
     -- known: old NQ versions, Legacy
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..old.." ^7is now known as "..new.."\";")
 
+    data[clientId]["name"] = new
+
     if db.isconnected() then
-        local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
-        local name = stats.get(clientId, "playerName")
+        local playerid = db.getplayer(players.getGUID(clientId))["id"]
+        local name = players.getName(clientId)
         local alias = db.getaliasbyname(playerid, name)
 
         if alias then
@@ -106,11 +158,11 @@ events.handle("onClientNameChange", players.onnamechange)
 
 function players.oninfochange(clientId)
     local clientInfo = et.trap_GetUserinfo(clientId)
-    local old = stats.get(clientId, "playerTeam")
+    local old = data[clientId]["team"]
     local new = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
 
     if new ~= old then
-        stats.set(clientId, "playerTeam", new)
+        data[clientId]["team"] = new
 
         events.trigger("onClientTeamChange", clientId, old, new)
     end
