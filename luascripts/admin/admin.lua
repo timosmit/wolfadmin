@@ -91,7 +91,9 @@ end
 
 function admin.onconnectattempt(clientId, firstTime, isBot)
     if firstTime then
-        if stats.get(clientId, "playerGUID") == "NO_GUID" or stats.get(clientId, "playerGUID") == "unknown" then
+        local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
+
+        if guid == "NO_GUID" or guid == "unknown" then
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
     end
