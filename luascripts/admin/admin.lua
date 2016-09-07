@@ -33,38 +33,6 @@ local teamLocks = {
     [constants.TEAM_SPECTATORS] = false,
 }
 
-function admin.isPlayerMuted(clientId)
-    -- return players.isPlayerMuted(clientId)
-end
-
-function admin.mutePlayer(clientId, length)
-    --
-end
-
-function admin.unmutePlayer(clientId)
-    --
-end
-
-function admin.isVoiceMuted(clientId)
-    if stats.get(clientId, "voiceMute") then
-        if stats.get(clientId, "voiceMute") - os.time() > 0 then
-            return true
-        else
-            admin.unmuteVoice(clientId)
-        end
-    end
-    
-    return false
-end
-
-function admin.muteVoice(clientId, length)
-    stats.set(clientId, "voiceMute", length)
-end
-
-function admin.unmuteVoice(clientId)
-    stats.set(clientId, "voiceMute", false)
-end
-
 function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
@@ -75,22 +43,6 @@ end
 
 function admin.unlockTeam(teamId)
     teamLocks[teamId] = false
-end
-
-function admin.isPlayerLocked(clientId)
-    if stats.get(clientId, "teamLock") then
-        return true
-    end
-    
-    return false
-end
-
-function admin.lockPlayer(clientId)
-    stats.set(clientId, "teamLock", true)
-end
-
-function admin.unlockPlayer(clientId)
-    stats.set(clientId, "teamLock", false)
 end
 
 function admin.setPlayerLevel(clientId, level, adminId)

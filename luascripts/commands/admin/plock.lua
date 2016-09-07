@@ -16,10 +16,13 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
-local util = require "luascripts.wolfadmin.util.util"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local admin = require "luascripts.wolfadmin.admin.admin"
+
+local players = require "luascripts.wolfadmin.players.players"
 local stats = require "luascripts.wolfadmin.players.stats"
+
+local util = require "luascripts.wolfadmin.util.util"
 
 function commandPlayerLock(clientId, cmdArguments)
     if cmdArguments[1] == nil then
@@ -42,7 +45,7 @@ function commandPlayerLock(clientId, cmdArguments)
         return true
     end
     
-    if admin.isPlayerLocked(cmdClient) then
+    if players.isPlayerTeamLocked(cmdClient) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already locked to a team.\";")
         
         return true
@@ -58,7 +61,7 @@ function commandPlayerLock(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team\";")
     
-    admin.lockPlayer(cmdClient)
+    players.setPlayerTeamLocked(cmdClient, true)
     
     return true
 end

@@ -17,9 +17,13 @@
 
 local db = require "luascripts.wolfadmin.db.db"
 
+local bits = require "luascripts.wolfadmin.util.bits"
 local events = require "luascripts.wolfadmin.util.events"
 
 local players = {}
+
+players.MUTE_CHAT = 1
+players.MUTE_VOICE = 2
 
 local data = {}
 
@@ -47,25 +51,40 @@ function players.isBot(clientId)
     return data[clientId]["bot"]
 end
 
-function players.setPlayerMuted(clientId, state, type, duration)
-    data[clientId]["mute"] = state
+function players.setPlayerMuted(clientId, state, type, issued, expires)
+    data[clientId]["mute"] = nil
 
     if state == true then
-        data[clientId]["mutetype"] = type
-        data[clientId]["muteduration"] = duration
+        data[clientId]["mute"] = {
+            ["type"] = type,
+            ["issued"] = issued,
+            ["expires"] = expires
+        }
     end
 end
 
-function players.isPlayerMuted(clientId)
-    return data[clientId]["mute"]
+function players.isPlayerMuted(clientId, type)
+    if type == nil then
+        return data[clientId]["mute"] ~= nil
+    elseif type == players.MUTE_CHAT then
+        return data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_CHAT)
+    elseif type == players.MUTE_VOICE then
+        return data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_VOICE)
+    end
+
+    return false
 end
 
-function players.getPlayerMuteType(clientId, state, type, duration)
-    return data[clientId]["mutetype"]
+function players.getPlayerMuteType(clientId)
+    return data[clientId]["mute"]["type"]
 end
 
-function players.getPlayerMuteDuration(clientId, state, type, duration)
-    return data[clientId]["muteduration"]
+function players.getPlayerMuteIssuedAt(clientId)
+    return data[clientId]["mute"]["issued"]
+end
+
+function players.getPlayerMuteExpiresAt(clientId)
+    return data[clientId]["mute"]["expires"]
 end
 
 function players.setPlayerTeamLocked(clientId, state)

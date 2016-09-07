@@ -23,9 +23,9 @@ local players = require "luascripts.wolfadmin.players.players"
 
 local util = require "luascripts.wolfadmin.util.util"
 
-function commandVoiceMute(clientId, cmdArguments)
+function commandMute(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -35,48 +35,48 @@ function commandVoiceMute(clientId, cmdArguments)
     end
     
     if cmdClient == -1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9no connected player by that name or slot #\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no connected player by that name or slot #\";")
         
         return true
     end
     
-    local vmuteTime, vmuteReason = 600, "muted by admin"
+    local muteTime, muteReason = 600, "muted by admin"
     
     if cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) and cmdArguments[3] then
-        vmuteTime = util.getTimeFromString(cmdArguments[2])
-        vmuteReason = table.concat(cmdArguments, " ", 3)
+        muteTime = util.getTimeFromString(cmdArguments[2])
+        muteReason = table.concat(cmdArguments, " ", 3)
     elseif cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) then
-        vmuteTime = util.getTimeFromString(cmdArguments[2])
+        muteTime = util.getTimeFromString(cmdArguments[2])
     elseif cmdArguments[2] then
-        vmuteReason = table.concat(cmdArguments, " ", 2)
+        muteReason = table.concat(cmdArguments, " ", 2)
     elseif auth.isallowed(clientId, "8") ~= 1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
         
         return true
     end
     
     if players.isPlayerMuted(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
         
         return true
     elseif auth.isallowed(cmdClient, "!") == 1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
     elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true
     end
         
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..vmuteTime.." seconds\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..muteTime.." seconds\";")
     
-    players.setPlayerMuted(cmdClient, true, players.MUTE_VOICE, os.time(), vmuteTime)
+    players.setPlayerMuted(cmdClient, true, players.MUTE_CHAT + players.MUTE_VOICE, os.time(), muteTime)
     
     return true
 end
-commands.addadmin("vmute", commandVoiceMute, auth.PERM_VOICEMUTE, "voicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("mute", commandMute, auth.PERM_MUTE, "voicemutes a player", "^9[^3name|slot#^9]")

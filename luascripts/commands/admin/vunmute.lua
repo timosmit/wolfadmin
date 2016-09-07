@@ -16,8 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local admin = require "luascripts.wolfadmin.admin.admin"
+
+local players = require "luascripts.wolfadmin.players.players"
 
 function commandVoiceUnmute(clientId, cmdArguments)
     if cmdArguments[1] == nil then
@@ -40,7 +42,7 @@ function commandVoiceUnmute(clientId, cmdArguments)
         return true
     end
     
-    if not admin.isVoiceMuted(cmdClient) then
+    if not players.isPlayerMuted(cmdClient) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute: ^9no player by that name or slot # is voicemuted\";")
         
         return true
@@ -48,7 +50,7 @@ function commandVoiceUnmute(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unvoicemuted\";")
     
-    admin.unmuteVoice(cmdClient)
+    players.setPlayerMuted(cmdClient, false)
     
     return true
 end

@@ -20,13 +20,10 @@ local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 
 local players = require "luascripts.wolfadmin.players.players"
-local stats = require "luascripts.wolfadmin.players.stats"
 
-local util = require "luascripts.wolfadmin.util.util"
-
-function commandPlayerUnlock(clientId, cmdArguments)
+function commandUnmute(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock usage: "..commands.getadmin("punlock")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunmute usage: "..commands.getadmin("unmute")["syntax"].."\";")
         
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -36,25 +33,25 @@ function commandPlayerUnlock(clientId, cmdArguments)
     end
     
     if cmdClient == -1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunmute: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no connected player by that name or slot #\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunmute: ^9no connected player by that name or slot #\";")
         
         return true
     end
     
-    if not players.isPlayerTeamLocked(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no player by that name or slot # is locked to a team\";")
+    if not players.isPlayerMuted(cmdClient) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunmute: ^9no player by that name or slot # is muted\";")
         
         return true
     end
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dpunlock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unlocked from his team\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unmuted\";")
     
-    players.setPlayerTeamLocked(cmdClient, false)
+    players.setPlayerMuted(cmdClient, false)
     
     return true
 end
-commands.addadmin("punlock", commandPlayerUnlock, auth.PERM_LOCKPLAYER, "unlocks a player", "^9[^3name|slot#^9]")
+commands.addadmin("unmute", commandUnmute, auth.PERM_MUTE, "unvoicemutes a player", "^9[^3name|slot#^9]")
