@@ -80,7 +80,9 @@ function players.oninfochange(clientId)
     local old = players.getCachedName(clientId)
     local new = et.Info_ValueForKey(clientInfo, "name")
 
-    if new ~= old then
+    -- TODO fix for Legacy
+    -- prints messages by itself, also when rename is rejected - not desirable
+    --[[ if new ~= old then
         if (os.time() - stats.get(clientId, "namechangeStart")) < settings.get("g_renameInterval") and stats.get(clientId, "namechangePts") >= settings.get("g_renameLimit") and not players.isNameForced(clientId) then
             players.setNameForced(clientId, true)
 
@@ -101,7 +103,7 @@ function players.oninfochange(clientId)
 
             events.trigger("onClientNameChange", clientId, old, new)
         end
-    end
+    end ]]
 end
 events.handle("onClientInfoChange", players.oninfochange)
 
