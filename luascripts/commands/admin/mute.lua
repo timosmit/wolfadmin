@@ -22,6 +22,7 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 local players = require "luascripts.wolfadmin.players.players"
 
 local util = require "luascripts.wolfadmin.util.util"
+local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandMute(clientId, cmdArguments)
     if cmdArguments[1] == nil then

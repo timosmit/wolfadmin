@@ -21,6 +21,8 @@ local commands = require "luascripts.wolfadmin.commands.commands"
 
 local players = require "luascripts.wolfadmin.players.players"
 
+local settings = require "luascripts.wolfadmin.util.settings"
+
 function commandUnmute(clientId, cmdArguments)
     if cmdArguments[1] == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunmute usage: "..commands.getadmin("unmute")["syntax"].."\";")
