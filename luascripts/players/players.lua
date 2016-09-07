@@ -51,7 +51,23 @@ function players.isBot(clientId)
     return data[clientId]["bot"]
 end
 
-function players.setPlayerMuted(clientId, state, type, issued, expires)
+function players.setLastPMSender(clientId, senderId)
+    data[clientId]["lastpmsender"] = senderId
+end
+
+function players.getLastPMSender(clientId)
+    return data[clientId]["lastpmsender"]
+end
+
+function players.setNameForced(clientId, state)
+    data[clientId]["nameforced"] = state
+end
+
+function players.isNameForced(clientId)
+    return data[clientId]["nameforced"]
+end
+
+function players.setMuted(clientId, state, type, issued, expires)
     data[clientId]["mute"] = nil
 
     if state == true then
@@ -63,7 +79,7 @@ function players.setPlayerMuted(clientId, state, type, issued, expires)
     end
 end
 
-function players.isPlayerMuted(clientId, type)
+function players.isMuted(clientId, type)
     if type == nil then
         return data[clientId]["mute"] ~= nil
     elseif type == players.MUTE_CHAT then
@@ -75,23 +91,23 @@ function players.isPlayerMuted(clientId, type)
     return false
 end
 
-function players.getPlayerMuteType(clientId)
+function players.getMuteType(clientId)
     return data[clientId]["mute"]["type"]
 end
 
-function players.getPlayerMuteIssuedAt(clientId)
+function players.getMuteIssuedAt(clientId)
     return data[clientId]["mute"]["issued"]
 end
 
-function players.getPlayerMuteExpiresAt(clientId)
+function players.getMuteExpiresAt(clientId)
     return data[clientId]["mute"]["expires"]
 end
 
-function players.setPlayerTeamLocked(clientId, state)
+function players.setTeamLocked(clientId, state)
     data[clientId]["teamlock"] = state
 end
 
-function players.isPlayerTeamLocked(clientId)
+function players.isTeamLocked(clientId)
     return data[clientId]["teamlock"]
 end
 

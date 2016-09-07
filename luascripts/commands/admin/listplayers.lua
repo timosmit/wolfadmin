@@ -73,7 +73,7 @@ function commandListPlayers(clientId, cmdArguments)
             level, -- level
             levelName, -- levelname
             guidStub, -- guid stub
-            (stats.get(player, "playerMuted") and "M" or ""), -- muted
+            (players.isMuted(player) and "M" or ""), -- muted
             fireteamName, -- fireteam
             players.getName(player), -- name
             "", -- alias open

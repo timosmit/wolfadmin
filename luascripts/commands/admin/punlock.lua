@@ -45,7 +45,7 @@ function commandPlayerUnlock(clientId, cmdArguments)
         return true
     end
     
-    if not players.isPlayerTeamLocked(cmdClient) then
+    if not players.isTeamLocked(cmdClient) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no player by that name or slot # is locked to a team\";")
         
         return true
@@ -53,7 +53,7 @@ function commandPlayerUnlock(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dpunlock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unlocked from his team\";")
     
-    players.setPlayerTeamLocked(cmdClient, false)
+    players.setTeamLocked(cmdClient, false)
     
     return true
 end

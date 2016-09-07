@@ -42,7 +42,7 @@ function commandVoiceUnmute(clientId, cmdArguments)
         return true
     end
     
-    if not players.isPlayerMuted(cmdClient) then
+    if not players.isMuted(cmdClient) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute: ^9no player by that name or slot # is voicemuted\";")
         
         return true
@@ -50,7 +50,7 @@ function commandVoiceUnmute(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unvoicemuted\";")
     
-    players.setPlayerMuted(cmdClient, false)
+    players.setMuted(cmdClient, false)
     
     return true
 end

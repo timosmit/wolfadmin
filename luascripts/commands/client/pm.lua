@@ -16,8 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
 
 function commandPersonalMessage(clientId, cmdArguments)
     if #cmdArguments > 1 then
@@ -30,7 +32,7 @@ function commandPersonalMessage(clientId, cmdArguments)
         end
         
         if cmdClient ~= -1 and et.gentity_get(cmdClient, "pers.netname") then
-            stats.set(cmdClient, "lastMessageFrom", clientId)
+            players.setLastPMSender(cmdClient, clientId)
             
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..cmdClient.." \"^9reply: ^7r [^2message^7]\";")
         end

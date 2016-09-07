@@ -59,7 +59,7 @@ function commandMute(clientId, cmdArguments)
         return true
     end
     
-    if players.isPlayerMuted(cmdClient) then
+    if players.isMuted(cmdClient) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
         
         return true
@@ -75,7 +75,7 @@ function commandMute(clientId, cmdArguments)
         
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..muteTime.." seconds\";")
     
-    players.setPlayerMuted(cmdClient, true, players.MUTE_CHAT + players.MUTE_VOICE, os.time(), muteTime)
+    players.setMuted(cmdClient, true, players.MUTE_CHAT + players.MUTE_VOICE, os.time(), muteTime)
     
     return true
 end

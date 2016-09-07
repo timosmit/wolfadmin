@@ -210,7 +210,7 @@ function commands.onclientcommand(clientId, cmdText)
     
     -- all Wolfenstein-related commands defined separately for now
     if wolfCmd == "team" then
-        if players.isPlayerTeamLocked(clientId) then
+        if players.isTeamLocked(clientId) then
             local clientTeam = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
             local teamName = util.getTeamName(clientTeam)
             local teamColor = util.getTeamColor(clientTeam)
@@ -231,13 +231,13 @@ function commands.onclientcommand(clientId, cmdText)
         
         return events.trigger("onCallvote", clientId, et.trap_Argv(1), voteArguments)
     elseif wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_teamnl" or wolfCmd == "say_buddy" then
-        if players.isPlayerMuted(clientId, players.MUTE_CHAT) then
+        if players.isMuted(clientId, players.MUTE_CHAT) then
             et.trap_SendServerCommand(clientId, "cp \"^1You are muted\"")
             
             return 1
         end
     elseif wolfCmd == "vsay" or wolfCmd == "vsay_team" then
-        if players.isPlayerMuted(clientId, players.MUTE_VOICE) then
+        if players.isMuted(clientId, players.MUTE_VOICE) then
             et.trap_SendServerCommand(clientId, "cp \"^1You are voicemuted\"")
             
             return 1

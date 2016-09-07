@@ -16,14 +16,16 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
-local stats = require "luascripts.wolfadmin.players.stats"
+
+local players = require "luascripts.wolfadmin.players.players"
 
 function commandR(clientId, cmdArguments)
     if #cmdArguments == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("r")["syntax"].."\";")
     else
-        local recipient = stats.get(clientId, "lastMessageFrom")
+        local recipient = players.getLastPMSender(clientId)
         
         if not (recipient and et.gentity_get(recipient, "pers.netname")) then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
@@ -36,7 +38,7 @@ function commandR(clientId, cmdArguments)
             
             messageConcatenated = table.concat(message, " ")
             
-            stats.set(recipient, "lastMessageFrom", clientId)
+            players.setLastPMSender(recipient, clientId)
             
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
