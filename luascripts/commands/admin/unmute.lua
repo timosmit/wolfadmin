@@ -54,4 +54,4 @@ function commandUnmute(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("unmute", commandUnmute, auth.PERM_MUTE, "unvoicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("unmute", commandUnmute, auth.PERM_MUTE, "unvoicemutes a player", "^9[^3name|slot#^9]", (settings.get("g_standalone") == 0))

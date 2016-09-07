@@ -79,4 +79,4 @@ function commandMute(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("mute", commandMute, auth.PERM_MUTE, "voicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("mute", commandMute, auth.PERM_MUTE, "voicemutes a player", "^9[^3name|slot#^9]", (settings.get("g_standalone") == 0))
