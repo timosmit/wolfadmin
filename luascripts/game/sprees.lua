@@ -110,8 +110,15 @@ function sprees.onconnect(clientId, firstTime, isBot)
 end
 events.handle("onClientConnect", sprees.onconnect)
 
+function sprees.onteamchange(clientId, old, new)
+    stats.set(clientId, "currentKillSpree", 0)
+    stats.set(clientId, "currentDeathSpree", 0)
+    stats.set(clientId, "currentReviveSpree", 0)
+end
+
 function sprees.ongamestatechange(gameState)
     if gameState == constants.GAME_STATE_RUNNING then
+        events.handle("onClientTeamChange", sprees.onteamchange)
         events.handle("onPlayerDeath", sprees.ondeath)
         events.handle("onPlayerRevive", sprees.onrevive)
     elseif gameState == constants.GAME_STATE_INTERMISSION then

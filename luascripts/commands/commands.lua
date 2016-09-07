@@ -219,10 +219,6 @@ function commands.onclientcommand(clientId, cmdText)
             
             return 1
         end
-        
-        stats.set(clientId, "currentKillSpree", 0)
-        stats.set(clientId, "currentDeathSpree", 0)
-        stats.set(clientId, "currentReviveSpree", 0)
     elseif wolfCmd == "callvote" then
         local voteArguments = {}
         for i = 2, et.trap_Argc() - 1 do
