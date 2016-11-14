@@ -24,8 +24,6 @@ local settings = require "luascripts.wolfadmin.util.settings"
 
 local warns = {}
 
-local data = {}
-
 function warns.get(clientId, warnId)
     if warnId then
         return db.getwarn(warnId)
