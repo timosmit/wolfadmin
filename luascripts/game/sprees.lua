@@ -15,13 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local db = require "luascripts.wolfadmin.db.db"
+
+local game = require "luascripts.wolfadmin.game.game"
+
+local players = require "luascripts.wolfadmin.players.players"
+local stats = require "luascripts.wolfadmin.players.stats"
+
 local constants = require "luascripts.wolfadmin.util.constants"
 local events = require "luascripts.wolfadmin.util.events"
-local settings = require "luascripts.wolfadmin.util.settings"
 local files = require "luascripts.wolfadmin.util.files"
-local db = require "luascripts.wolfadmin.db.db"
-local game = require "luascripts.wolfadmin.game.game"
-local stats = require "luascripts.wolfadmin.players.stats"
+local settings = require "luascripts.wolfadmin.util.settings"
 
 local sprees = {}
 
