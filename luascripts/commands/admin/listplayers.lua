@@ -30,16 +30,16 @@ local settings = require "luascripts.wolfadmin.util.settings"
 local util = require "luascripts.wolfadmin.util.util"
 
 function commandListPlayers(clientId, cmdArguments)
-    local players = {}
+    local playersOnline = {}
 
     for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
         if players.isConnected(playerId) then
-            table.insert(players, playerId)
+            table.insert(playersOnline, playerId)
         end
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dCurrently ^7"..(#players).." ^dplayers online^d:\";")
-    for _, player in pairs(players) do
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dCurrently ^7"..(#playersOnline).." ^dplayers online^d:\";")
+    for _, player in pairs(playersOnline) do
         local guidStub
 
         if players.isBot(player) then
