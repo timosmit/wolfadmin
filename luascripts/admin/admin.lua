@@ -69,8 +69,8 @@ events.handle("onClientConnectAttempt", admin.onconnectattempt)
 function admin.onconnect(clientId, firstTime, isBot)
     -- only increase the counter on first connection (fixes counter increase on 
     -- clientbegin which is also triggered on warmup/maprestart/etc)
-    stats.set(clientId, "namechangeStart", os.time())
-    stats.set(clientId, "namechangePts", 0)
+    --[[ stats.set(clientId, "namechangeStart", os.time())
+    stats.set(clientId, "namechangePts", 0) ]]
 end
 events.handle("onClientConnect", admin.onconnect)
 
