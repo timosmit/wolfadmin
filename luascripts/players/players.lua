@@ -25,7 +25,7 @@ local players = {}
 players.MUTE_CHAT = 1
 players.MUTE_VOICE = 2
 
-local data = {}
+local data = {[-1337] = {["guid"] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}
 
 function players.isConnected(clientId)
     return (data[clientId] ~= nil)
