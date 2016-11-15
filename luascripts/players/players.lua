@@ -134,7 +134,7 @@ function players.onconnect(clientId, firstTime, isBot)
             if player then
                 db.updateplayerip(data[clientId]["guid"], data[clientId]["ip"])
 
-                local alias = db.getaliasbyname(player["id"], name)
+                local alias = db.getaliasbyname(player["id"], data[clientId]["name"])
 
                 if alias then
                     db.updatealias(alias["id"], os.time())
