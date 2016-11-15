@@ -15,9 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luascripts.wolfadmin.util.util"
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
+local util = require "luascripts.wolfadmin.util.util"
+
+local players = require "luascripts.wolfadmin.players.players"
 local stats = require "luascripts.wolfadmin.players.stats"
 
 local game = {}
