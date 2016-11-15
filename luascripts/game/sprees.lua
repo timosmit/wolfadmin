@@ -20,7 +20,7 @@ local db = require "luascripts.wolfadmin.db.db"
 local game = require "luascripts.wolfadmin.game.game"
 
 local players = require "luascripts.wolfadmin.players.players"
-local stats = require "luascripts.wolfadmin.players.stats"
+-- local stats = require "luascripts.wolfadmin.players.stats"
 
 local constants = require "luascripts.wolfadmin.util.constants"
 local events = require "luascripts.wolfadmin.util.events"
@@ -48,6 +48,7 @@ local revivespreeMessages = {
     },
 }
 
+local playerSprees = {}
 local currentRecords -- cached version
 local currentMapId
 
@@ -105,19 +106,17 @@ end
 events.handle("onGameInit", sprees.oninit)
 
 function sprees.onconnect(clientId, firstTime, isBot)
-    stats.set(clientId, "currentKillSpree", 0)
-    stats.set(clientId, "longestKillSpree", 0)
-    stats.set(clientId, "currentDeathSpree", 0)
-    stats.set(clientId, "longestDeathSpree", 0)
-    stats.set(clientId, "currentReviveSpree", 0)
-    stats.set(clientId, "longestReviveSpree", 0)
+    playerSprees[clientId] = {["kill"] = 0, ["death"] = 0, ["revive"] = 0}
 end
 events.handle("onClientConnect", sprees.onconnect)
 
+function sprees.ondisconnect(clientId)
+    playerSprees[clientId] = nil
+end
+events.handle("onClientDisconnect", sprees.ondisconnect)
+
 function sprees.onteamchange(clientId, old, new)
-    stats.set(clientId, "currentKillSpree", 0)
-    stats.set(clientId, "currentDeathSpree", 0)
-    stats.set(clientId, "currentReviveSpree", 0)
+    playerSprees[clientId] = {["kill"] = 0, ["death"] = 0, ["revive"] = 0}
 end
 
 function sprees.ongamestatechange(gameState)
@@ -158,69 +157,74 @@ end
 
 function sprees.ondeath(victimId, killerId, mod)
     if killerId == 1022 then -- killed by map
-        stats.set(victimId, "currentKillSpree", 0)
-        stats.add(victimId, "currentDeathSpree", 1)
-        stats.set(victimId, "currentReviveSpree", 0)
+        playerSprees[victimId]["kill"] = 0
+        playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
+        playerSprees[victimId]["revive"] = 0
     
-        stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
+        -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
+
+        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
+            currentRecords["dsplayer"] = db.getplayerid(victimId)
+            currentRecords["dsrecord"] = playerSprees[victimId]["death"]
+        end
     elseif victimId == killerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
         if not players.isConnected(victimId) then return end
         
-        stats.set(victimId, "currentKillSpree", 0)
-        stats.add(victimId, "currentDeathSpree", 1)
-        stats.set(victimId, "currentReviveSpree", 0)
+        playerSprees[victimId]["kill"] = 0
+        playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
+        playerSprees[victimId]["revive"] = 0
         
-        stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
+        -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
         
-        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
             currentRecords["dsplayer"] = db.getplayerid(victimId)
-            currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
+            currentRecords["dsrecord"] = playerSprees[victimId]["death"]
         end
     else -- regular kills
         if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(killerId, "sess.sessionTeam") then
             -- teamkill handling
         else
-            stats.add(killerId, "currentKillSpree", 1)
-            stats.set(killerId, "currentDeathSpree", 0)
+            playerSprees[killerId]["kill"] = playerSprees[killerId]["kill"] + 1
+            playerSprees[victimId]["death"] = 0
             
-            stats.set(killerId, "longestKillSpree", stats.get(killerId, "currentKillSpree") > stats.get(killerId, "longestKillSpree") and stats.get(killerId, "currentKillSpree") or stats.get(killerId, "longestKillSpree"))
+            -- stats.set(killerId, "longestKillSpree", stats.get(killerId, "currentKillSpree") > stats.get(killerId, "longestKillSpree") and stats.get(killerId, "currentKillSpree") or stats.get(killerId, "longestKillSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not players.isBot(killerId)) and (not currentRecords["ksrecord"] or stats.get(killerId, "longestKillSpree") > currentRecords["ksrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not players.isBot(killerId)) and (not currentRecords["ksrecord"] or playerSprees[killerId]["kill"] > currentRecords["ksrecord"]) then
                 currentRecords["ksplayer"] = db.getplayerid(killerId)
-                currentRecords["ksrecord"] = stats.get(killerId, "longestKillSpree")
+                currentRecords["ksrecord"] = playerSprees[killerId]["kill"]
             end
             
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
             if not players.isConnected(victimId) then return end
             
-            stats.set(victimId, "currentKillSpree", 0)
-            stats.add(victimId, "currentDeathSpree", 1)
-            stats.set(victimId, "currentReviveSpree", 0)
+            playerSprees[victimId]["kill"] = 0
+            playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
+            playerSprees[victimId]["revive"] = 0
             
-            stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
+            -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
             
-            if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or stats.get(victimId, "longestDeathSpree") > currentRecords["dsrecord"]) then
+            if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
                 currentRecords["dsplayer"] = db.getplayerid(victimId)
-                currentRecords["dsrecord"] = stats.get(victimId, "longestDeathSpree")
+                currentRecords["dsrecord"] = playerSprees[victimId]["death"]
             end
         end
     end
 end
 
 function sprees.onrevive(clientMedic, clientVictim)
-    stats.add(clientMedic, "currentReviveSpree", 1)
-    stats.set(clientMedic, "longestReviveSpree", stats.get(clientMedic, "currentReviveSpree") > stats.get(clientMedic, "longestReviveSpree") and stats.get(clientMedic, "currentReviveSpree") or stats.get(clientMedic, "longestReviveSpree"))
+    playerSprees[clientMedic]["revive"] = playerSprees[clientMedic]["revive"] + 1
+    -- stats.set(clientMedic, "longestReviveSpree", stats.get(clientMedic, "currentReviveSpree") > stats.get(clientMedic, "longestReviveSpree") and stats.get(clientMedic, "currentReviveSpree") or stats.get(clientMedic, "longestReviveSpree"))
     
-    if revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")] then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[stats.get(clientMedic, "currentReviveSpree")]["msg"].." ^d(^3"..stats.get(clientMedic, "currentReviveSpree").." ^drevives in a row!)\";")
+    if revivespreeMessages[playerSprees[clientMedic]["revive"]] then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[playerSprees[clientMedic]["revive"]]["msg"].." ^d(^3"..playerSprees[clientMedic]["revive"].." ^drevives in a row!)\";")
     end
     
-    if (settings.get("g_botRecords") == 1 or not players.isBot(clientMedic)) and (not currentRecords["rsrecord"] or stats.get(clientMedic, "longestReviveSpree") > currentRecords["rsrecord"]) then
+    if (settings.get("g_botRecords") == 1 or not players.isBot(clientMedic)) and (not currentRecords["rsrecord"] or playerSprees[clientMedic]["revive"] > currentRecords["rsrecord"]) then
         currentRecords["rsplayer"] = db.getplayerid(clientMedic)
-        currentRecords["rsrecord"] = stats.get(clientMedic, "longestReviveSpree")
+        currentRecords["rsrecord"] = playerSprees[clientMedic]["revive"]
     end
 end
 
