@@ -23,7 +23,7 @@ local util = require "luascripts.wolfadmin.util.util"
 local db = require "luascripts.wolfadmin.db.db"
 
 local players = require "luascripts.wolfadmin.players.players"
-local stats = require "luascripts.wolfadmin.players.stats"
+-- local stats = require "luascripts.wolfadmin.players.stats"
 
 local admin = {}
 

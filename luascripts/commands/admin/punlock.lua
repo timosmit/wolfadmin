@@ -20,7 +20,6 @@ local auth = require "luascripts.wolfadmin.auth.auth"
 local commands = require "luascripts.wolfadmin.commands.commands"
 
 local players = require "luascripts.wolfadmin.players.players"
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local util = require "luascripts.wolfadmin.util.util"
 

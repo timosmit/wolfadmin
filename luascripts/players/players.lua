@@ -166,7 +166,7 @@ end
 events.handle("onClientBegin", players.onbegin)
 
 function players.ondisconnect(clientId)
-    stats.remove(clientId)
+    -- stats.remove(clientId)
 end
 events.handle("onClientDisconnect", players.ondisconnect)
 

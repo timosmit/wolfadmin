@@ -23,7 +23,6 @@ local game = require "luascripts.wolfadmin.game.game"
 local fireteams = require "luascripts.wolfadmin.game.fireteams"
 
 local players = require "luascripts.wolfadmin.players.players"
-local stats = require "luascripts.wolfadmin.players.stats"
 
 local constants = require "luascripts.wolfadmin.util.constants"
 local settings = require "luascripts.wolfadmin.util.settings"
