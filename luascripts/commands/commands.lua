@@ -144,9 +144,9 @@ function commands.log(clientId, command, cmdArguments)
     
     if victimId then
         local victimName = players.getName(victimId)
-        logLine = string.format("%3i:%02i: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
+        logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
     else
-        logLine = string.format("%3i:%02i: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))
+        logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))
     end
     
     et.trap_FS_Write(logLine, string.len(logLine), fileDescriptor)
