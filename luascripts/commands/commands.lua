@@ -186,7 +186,7 @@ function commands.onservercommand(cmdText)
         admincmds[shrubCmd]["function"](-1337, cmdArguments)
         
         if not admincmds[shrubCmd]["hidden"] then
-            commands.log(-1, shrubCmd, cmdArguments)
+            commands.log(-1337, shrubCmd, cmdArguments)
         end
     end
 end
