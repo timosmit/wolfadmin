@@ -36,6 +36,10 @@ function players.getCachedName(clientId)
 end
 
 function players.getName(clientId)
+    if clientId == -1337 then
+        return "console"
+    end
+
     return et.gentity_get(clientId, "pers.netname")
 end
 
