@@ -48,7 +48,7 @@ end
 
 function warns.add(clientId, reason, adminId, datetime)
     local playerid = db.getplayer(players.getGUID(clientId))["id"]
-    local adminid = db.getplayer(players.getGUID(clientId))["id"]
+    local adminid = db.getplayer(players.getGUID(adminId))["id"]
     
     db.addwarn(playerid, reason, adminid, datetime)
 end
