@@ -46,11 +46,11 @@ function commandFinger(clientId, cmdArguments)
     end
 
     local stats = {
-        ["name"] = players.getName(clientId),
-        ["cleanname"] = players.getName(clientId):gsub("%^[^^]", ""),
-        ["codedsname"] = players.getName(clientId):gsub("%^([^^])", "^^2%1"),
+        ["name"] = players.getName(cmdClient),
+        ["cleanname"] = players.getName(cmdClient):gsub("%^[^^]", ""),
+        ["codedsname"] = players.getName(cmdClient):gsub("%^([^^])", "^^2%1"),
         ["slot"] = cmdClient,
-        ["guid"] = players.getGUID(clientId),
+        ["guid"] = players.getGUID(cmdClient),
     }
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dInformation about ^7"..stats["name"].."^d:\";")
