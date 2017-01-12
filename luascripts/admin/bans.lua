@@ -22,43 +22,33 @@ local players = require "luascripts.wolfadmin.players.players"
 local events = require "luascripts.wolfadmin.util.events"
 local settings = require "luascripts.wolfadmin.util.settings"
 
-local warns = {}
+local bans = {}
 
-function warns.get(clientId, warnId)
-    if warnId then
-        return db.getwarn(warnId)
-    else
-        local playerid = db.getplayer(players.getGUID(clientId))["id"]
-        
-        return db.getwarns(playerid)
-    end
+function bans.get(banId)
+    return db.getBan(banId)
 end
 
-function warns.getcount(clientId)
-    local playerid = db.getplayer(players.getGUID(clientId))["id"]
-
-    return db.getwarnscount(playerid)
+function bans.getCount()
+    return db.getBansCount()
 end
 
-function warns.getlimit(clientId, start, limit)
-    local playerid = db.getplayer(players.getGUID(clientId))["id"]
-
-    return db.getwarns(playerid, start, limit)
+function bans.getList(start, limit)
+    return db.getBans(start, limit)
 end
 
-function warns.add(clientId, reason, adminId, datetime)
-    local playerid = db.getplayer(players.getGUID(clientId))["id"]
-    local adminid = db.getplayer(players.getGUID(adminId))["id"]
-    
-    db.addwarn(playerid, reason, adminid, datetime)
+function bans.add(victimId, invokerId, duration, reason)
+    local victimPlayerId = db.getplayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
+
+    local reason = reason and reason or "banned by admin"
+
+    db.addBan(victimPlayerId, invokerPlayerId, os.time(), duration, reason)
+
+    et.trap_DropClient(victimId, "You have been banned for "..duration.." seconds, Reason: "..reason, 0)
 end
 
-function warns.remove(clientId, warnId)
-    if not warns.get(clientId, warnId) then
-        return
-    end
-    
-    db.removewarn(warnId)
+function bans.remove(banId)
+    db.removeBan(banId)
 end
 
-return warns
+return bans

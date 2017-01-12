@@ -17,6 +17,9 @@
 
 local auth = require "luascripts.wolfadmin.auth.auth"
 
+local admin = require "luascripts.wolfadmin.admin.admin"
+local history = require "luascripts.wolfadmin.admin.history"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
 
 local players = require "luascripts.wolfadmin.players.players"
@@ -44,15 +47,15 @@ function commandVoiceMute(clientId, cmdArguments)
         return true
     end
     
-    local vmuteTime, vmuteReason = 600, "muted by admin"
+    local duration, reason = 600, "muted by admin"
     
     if cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) and cmdArguments[3] then
-        vmuteTime = util.getTimeFromString(cmdArguments[2])
-        vmuteReason = table.concat(cmdArguments, " ", 3)
+        duration = util.getTimeFromString(cmdArguments[2])
+        reason = table.concat(cmdArguments, " ", 3)
     elseif cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) then
-        vmuteTime = util.getTimeFromString(cmdArguments[2])
+        duration = util.getTimeFromString(cmdArguments[2])
     elseif cmdArguments[2] then
-        vmuteReason = table.concat(cmdArguments, " ", 2)
+        reason = table.concat(cmdArguments, " ", 2)
     elseif auth.isallowed(clientId, "8") ~= 1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
@@ -72,10 +75,11 @@ function commandVoiceMute(clientId, cmdArguments)
         
         return true
     end
-        
+
+    admin.mutePlayer(cmdClient, clientId, players.MUTE_VOICE, duration, reason)
+    history.add(cmdClient, clientId, "mute", reason)
+
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..vmuteTime.." seconds\";")
-    
-    players.setMuted(cmdClient, true, players.MUTE_VOICE, os.time(), vmuteTime)
     
     return true
 end

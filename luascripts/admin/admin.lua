@@ -15,15 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = require "luascripts.wolfadmin.util.constants"
-local events = require "luascripts.wolfadmin.util.events"
-local settings = require "luascripts.wolfadmin.util.settings"
-local files = require "luascripts.wolfadmin.util.files"
-local util = require "luascripts.wolfadmin.util.util"
 local db = require "luascripts.wolfadmin.db.db"
+
+local warns = require "luascripts.wolfadmin.admin.warns"
 
 local players = require "luascripts.wolfadmin.players.players"
 -- local stats = require "luascripts.wolfadmin.players.stats"
+
+local constants = require "luascripts.wolfadmin.util.constants"
+local events = require "luascripts.wolfadmin.util.events"
+local files = require "luascripts.wolfadmin.util.files"
+local settings = require "luascripts.wolfadmin.util.settings"
+local util = require "luascripts.wolfadmin.util.util"
 
 local admin = {}
 
@@ -35,6 +38,18 @@ local teamLocks = {
 
 function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
+end
+
+function admin.mutePlayer(victimId, invokerId, type, duration, reason)
+    players.setMuted(victimId, true, type, os.time(), duration)
+    db.addMute(victimId, invokerId, type, os.time(), duration, reason)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..victimId.." \"^7You have been muted by "..players.getName(invokerId)..": ^7"..reason..".\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dmute: ^7"..players.getName(victimId).." ^9has been muted.\";")
+end
+
+function admin.kickPlayer(victimId, invokerId, reason)
+    et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
 end
 
 function admin.lockTeam(teamId)
@@ -59,6 +74,12 @@ function admin.onconnectattempt(clientId, firstTime, isBot)
 
         if guid == "NO_GUID" or guid == "unknown" then
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
+        end
+
+        local playerId = db.getplayer(guid)["id"]
+        local ban = db.getBanByPlayer(playerId)
+        if ban then
+            return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
         end
     end
 

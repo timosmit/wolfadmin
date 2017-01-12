@@ -15,47 +15,40 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luascripts.wolfadmin.auth.auth"
-
 local db = require "luascripts.wolfadmin.db.db"
 
 local players = require "luascripts.wolfadmin.players.players"
 
 local events = require "luascripts.wolfadmin.util.events"
-local files = require "luascripts.wolfadmin.util.files"
+local settings = require "luascripts.wolfadmin.util.settings"
 
-local acl = {}
+local history = {}
 
-function acl.readpermissions()
-    -- read level permissions into a cache file (can be loaded at mod start)
-    -- should probably cache current players' permissions as well, then
-    -- read in new players' permissions as they join the server
+function history.get(clientId, historyId)
+    return db.getHistoryItem(historyId)
 end
 
-function acl.clearcache()
-    -- clear cache whenever database is updated, or do this manually
+function history.getCount(clientId)
+    local playerId = db.getplayer(players.getGUID(clientId))["id"]
+
+    return db.getHistoryCount(playerId)
 end
 
-function acl.isallowed(clientId, permission)
-    -- stub function, reads from cache
+function history.getList(clientId, start, limit)
+    local playerId = db.getplayer(players.getGUID(clientId))["id"]
 
-    if permission == auth.PERM_IMMUNE or permission == "!" then
-        return 0
-    end
-
-    return 1
+    return db.getHistory(playerId, start, limit)
 end
 
-function acl.getlevel(clientId)
-    local player = db.getplayer(players.getGUID(clientId))
+function history.add(victimId, invokerId, type, reason)
+    local victimPlayerId = db.getplayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
 
-    return player["level_id"]
+    db.addHistory(victimPlayerId, invokerPlayerId, type, os.time(), reason)
 end
 
-function acl.getlevelname(levelId)
-    local level = db.getlevel(levelId)
-
-    return level["name"]
+function history.remove(clientId, historyId)
+    db.removeHistory(historyId)
 end
 
-return acl
+return history

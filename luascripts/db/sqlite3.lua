@@ -171,17 +171,17 @@ function sqlite3.getlevels(playerid, limit, offset)
     return levels
 end
 
--- warns
-function sqlite3.addwarn(playerid, reason, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+-- history
+function sqlite3.addHistory(victimId, invokerId, type, datetime, reason)
+    cur = assert(con:execute("INSERT INTO `history` (`victim_id`, `invoker_id`, `type`, `datetime`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..util.escape(type).."', "..tonumber(datetime)..", '"..util.escape(reason).."')"))
 end
 
-function sqlite3.removewarn(warnid)
-    cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+function sqlite3.removeHistory(historyId)
+    cur = assert(con:execute("DELETE FROM `history` WHERE `id`="..tonumber(historyId)..""))
 end
 
-function sqlite3.getwarnscount(playerid)
-    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
+function sqlite3.getHistoryCount(playerId)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `history` WHERE `victim_id`="..tonumber(playerId)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
     cur:close()
@@ -189,11 +189,11 @@ function sqlite3.getwarnscount(playerid)
     return count
 end
 
-function sqlite3.getwarns(playerid, limit, offset)
+function sqlite3.getHistory(playerId, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+    cur = assert(con:execute("SELECT * FROM `history` WHERE `victim_id`="..tonumber(playerId).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
 
     local warns = {}
     local row = cur:fetch({}, "a")
@@ -208,13 +208,114 @@ function sqlite3.getwarns(playerid, limit, offset)
     return warns
 end
 
-function sqlite3.getwarn(warnid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+function sqlite3.getHistoryItem(historyId)
+    cur = assert(con:execute("SELECT * FROM `history` WHERE `id`="..tonumber(historyId)..""))
     
-    local warn = cur:fetch({}, "a")
+    local history = cur:fetch({}, "a")
     cur:close()
     
-    return warn
+    return history
+end
+
+-- mutes
+function sqlite3.addMute(victimId, invokerId, type, issued, duration, reason)
+    cur = assert(con:execute("INSERT INTO `mute` (`victim_id`, `invoker_id`, `type`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..util.escape(type).."', "..tonumber(issued)..", "..tonumber(issued + duration)..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+end
+
+function sqlite3.removeMute(muteId)
+    cur = assert(con:execute("DELETE FROM `mute` WHERE `id`="..tonumber(muteId)..""))
+end
+
+function sqlite3.getMutesCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `mute`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function sqlite3.getMutes(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `mute` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local mutes = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(mutes, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return mutes
+end
+
+function sqlite3.getMute(muteId)
+    cur = assert(con:execute("SELECT * FROM `mute` WHERE `id`="..tonumber(muteId)..""))
+
+    local mute = cur:fetch({}, "a")
+    cur:close()
+
+    return mute
+end
+
+-- bans
+function sqlite3.addBan(victimId, invokerId, issued, duration, reason)
+    cur = assert(con:execute("INSERT INTO `ban` (`victim_id`, `invoker_id`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(issued)..", "..(tonumber(issued) + tonumber(duration))..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+end
+
+function sqlite3.removeBan(banId)
+    cur = assert(con:execute("DELETE FROM `ban` WHERE `id`="..tonumber(banId)..""))
+end
+
+function sqlite3.getBansCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `ban`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function sqlite3.getBans(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `ban` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local bans = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(bans, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return bans
+end
+
+function sqlite3.getBan(banId)
+    cur = assert(con:execute("SELECT * FROM `ban` WHERE `id`="..tonumber(banId)..""))
+
+    local ban = cur:fetch({}, "a")
+    cur:close()
+
+    return ban
+end
+
+function sqlite3.getBanByPlayer(playerId)
+    cur = assert(con:execute("SELECT * FROM `ban` WHERE `victim_id`="..tonumber(playerId).." AND `expires`>"..os.time()))
+
+    local ban = cur:fetch({}, "a")
+    cur:close()
+
+    return ban
 end
 
 -- maps

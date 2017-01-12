@@ -16,8 +16,13 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require "luascripts.wolfadmin.auth.auth"
-local settings = require "luascripts.wolfadmin.util.settings"
+
+local admin = require "luascripts.wolfadmin.admin.admin"
+local history = require "luascripts.wolfadmin.admin.history"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
+
+local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandKick(clientId, cmdArguments)
     if cmdArguments[1] == nil then
@@ -32,7 +37,7 @@ function commandKick(clientId, cmdArguments)
 
     if cmdClient == -1 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
-        
+
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no connected player by that name or slot #\";")
@@ -50,8 +55,11 @@ function commandKick(clientId, cmdArguments)
         return true
     end
 
-    et.trap_DropClient(cmdClient, "You have been kicked, Reason: "..(cmdArguments[2] and cmdArguments[2] or "kicked by admin"), 0)
+    local reason = table.concat(cmdArguments, " ", 2)
 
-    return false
+    admin.kickPlayer(cmdClient, clientId, reason)
+    history.add(cmdClient, clientId, "kick", reason)
+
+    return true
 end
 commands.addadmin("kick", commandKick, auth.PERM_KICK, "kick a player with an optional reason", "^9[^3name|slot#^9] ^9(^3reason^9)", (settings.get("g_standalone") == 0))

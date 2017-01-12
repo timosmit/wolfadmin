@@ -17,19 +17,17 @@
 
 local auth = require "luascripts.wolfadmin.auth.auth"
 
-local admin = require "luascripts.wolfadmin.admin.admin"
+local bans = require "luascripts.wolfadmin.admin.bans"
 local history = require "luascripts.wolfadmin.admin.history"
 
 local commands = require "luascripts.wolfadmin.commands.commands"
 
-local players = require "luascripts.wolfadmin.players.players"
-
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
 
-function commandMute(clientId, cmdArguments)
+function commandBan(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
 
         return true
     elseif tonumber(cmdArguments[1]) == nil then
@@ -39,16 +37,16 @@ function commandMute(clientId, cmdArguments)
     end
 
     if cmdClient == -1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
-
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no connected player by that name or slot #\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9no connected player by that name or slot #\";")
 
         return true
     end
 
-    local duration, reason = 600, "muted by admin"
+    local duration, reason = 600, "banned by admin"
 
     if cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) and cmdArguments[3] then
         duration = util.getTimeFromString(cmdArguments[2])
@@ -58,30 +56,26 @@ function commandMute(clientId, cmdArguments)
     elseif cmdArguments[2] then
         reason = table.concat(cmdArguments, " ", 2)
     elseif auth.isallowed(clientId, "8") ~= 1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
-
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
+        
         return true
     end
 
-    if players.isMuted(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
-
-        return true
-    elseif auth.isallowed(cmdClient, "!") == 1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+    if auth.isallowed(cmdClient, "!") == 1 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
     elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true
     end
 
-    admin.mutePlayer(cmdClient, clientId, players.MUTE_CHAT + players.MUTE_VOICE, duration, reason)
-    history.add(cmdClient, clientId, "mute", reason)
+    bans.add(cmdClient, clientId, duration, reason)
+    history.add(cmdClient, clientId, "ban", reason)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
 
     return true
 end
-commands.addadmin("mute", commandMute, auth.PERM_MUTE, "voicemutes a player", "^9[^3name|slot#^9]", (settings.get("g_standalone") == 0))
+commands.addadmin("ban", commandBan, auth.PERM_BAN, "ban a player with an optional duration and reason", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", (settings.get("g_standalone") == 0))
