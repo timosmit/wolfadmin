@@ -129,7 +129,9 @@ end
 function util.getTimeFromString(str)
     local amount, unit = string.match(str, "^([0-9]+)([smhdwy])$")
     
-    if not (amount and unit) then return false end
+    if not (amount and unit) then return nil end
+
+    amount = math.floor(amount)
     
     local multiplier = {
         ["s"] = function(a) return a end,
