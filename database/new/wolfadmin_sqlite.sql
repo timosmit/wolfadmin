@@ -19,28 +19,58 @@ CREATE INDEX IF NOT EXISTS `alias_player_idx` ON `alias` (`player_id`);
 CREATE TABLE IF NOT EXISTS `level` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `player_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
   `level` INTEGER NOT NULL,
-  `admin_id` INTEGER NOT NULL,
   `datetime` INTEGER NOT NULL,
   CONSTRAINT `level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `level_admin` FOREIGN KEY (`admin_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE INDEX IF NOT EXISTS `level_player_idx` ON `level` (`player_id`);
-CREATE INDEX IF NOT EXISTS `level_admin_idx` ON `level` (`player_id`);
+CREATE INDEX IF NOT EXISTS `level_invoker_idx` ON `level` (`invoker_id`);
 
-CREATE TABLE IF NOT EXISTS `warn` (
+CREATE TABLE IF NOT EXISTS `history` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `player_id` INTEGER NOT NULL,
-  `reason` TEXT NOT NULL,
-  `admin_id` INTEGER NOT NULL,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
   `datetime` INTEGER NOT NULL,
-  CONSTRAINT `warn_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `warn_admin` FOREIGN KEY (`admin_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `history_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `history_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE INDEX IF NOT EXISTS `warn_player_idx` ON `warn` (`player_id`);
-CREATE INDEX IF NOT EXISTS `warn_admin_idx` ON `warn` (`player_id`);
+CREATE INDEX IF NOT EXISTS `history_victim_idx` ON `history` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `history_invoker_idx` ON `history` (`invoker_id`);
+
+CREATE TABLE IF NOT EXISTS `mute` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `mute_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `mute_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `mute_victim_idx` ON `mute` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `mute_invoker_idx` ON `mute` (`invoker_id`);
+
+CREATE TABLE IF NOT EXISTS `ban` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `ban_victim_idx` ON `ban` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `ban_invoker_idx` ON `ban` (`invoker_id`);
 
 CREATE TABLE IF NOT EXISTS `map` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
