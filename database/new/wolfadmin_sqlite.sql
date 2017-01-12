@@ -1,7 +1,14 @@
+CREATE TABLE IF NOT EXISTS `level` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `name` TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS `player` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `guid` TEXT NOT NULL UNIQUE,
-  `ip` TEXT NOT NULL
+  `ip` TEXT NOT NULL,
+  `level` INTEGER NOT NULL,
+  CONSTRAINT `player_level` FOREIGN KEY (`level`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE TABLE IF NOT EXISTS `alias` (
@@ -16,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `alias` (
 
 CREATE INDEX IF NOT EXISTS `alias_player_idx` ON `alias` (`player_id`);
 
-CREATE TABLE IF NOT EXISTS `level` (
+CREATE TABLE IF NOT EXISTS `player_level` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `player_id` INTEGER NOT NULL,
   `invoker_id` INTEGER NOT NULL,
@@ -26,8 +33,8 @@ CREATE TABLE IF NOT EXISTS `level` (
   CONSTRAINT `level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE INDEX IF NOT EXISTS `level_player_idx` ON `level` (`player_id`);
-CREATE INDEX IF NOT EXISTS `level_invoker_idx` ON `level` (`invoker_id`);
+CREATE INDEX IF NOT EXISTS `level_player_idx` ON `player_level` (`player_id`);
+CREATE INDEX IF NOT EXISTS `level_invoker_idx` ON `player_level` (`invoker_id`);
 
 CREATE TABLE IF NOT EXISTS `history` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -91,5 +98,7 @@ CREATE TABLE IF NOT EXISTS `record` (
 
 CREATE INDEX IF NOT EXISTS `record_player_idx` ON `record` (`player_id`);
 
-INSERT INTO `player` (`id`, `guid`, `ip`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1');
+INSERT INTO `level` (`id`, `name`) VALUES (0, 'Guest');
+INSERT INTO `level` (`id`, `name`) VALUES (5, 'Admin');
+INSERT INTO `player` (`id`, `guid`, `ip`, `level`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);
