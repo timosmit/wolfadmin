@@ -23,27 +23,41 @@ local players = require "luascripts.wolfadmin.players.players"
 
 local events = require "luascripts.wolfadmin.util.events"
 local files = require "luascripts.wolfadmin.util.files"
+local tables = require "luascripts.wolfadmin.util.tables"
 
 local acl = {}
 
-function acl.readpermissions()
+local data = {}
+
+function acl.readPermissions()
     -- read level permissions into a cache file (can be loaded at mod start)
     -- should probably cache current players' permissions as well, then
     -- read in new players' permissions as they join the server
-end
 
-function acl.clearcache()
+    local roles = db.getLevelRoles()
+
+    for _, role in ipairs(roles) do
+        if not data[role["level_id"]] then
+            data[role["level_id"]] = {}
+        end
+
+        table.insert(data[role["level_id"]], role["role"])
+    end
+end
+events.handle("onGameInit", acl.readPermissions)
+
+function acl.clearCache()
     -- clear cache whenever database is updated, or do this manually
 end
 
 function acl.isallowed(clientId, permission)
-    -- stub function, reads from cache
+    local level = acl.getlevel(clientId)
 
-    if permission == auth.PERM_IMMUNE or permission == "!" then
-        return 0
+    if data[level] ~= nil and tables.contains(data[level], permission) then
+        return 1
     end
 
-    return 1
+    return 0
 end
 
 function acl.getlevel(clientId)
@@ -53,7 +67,7 @@ function acl.getlevel(clientId)
 end
 
 function acl.getlevelname(levelId)
-    local level = db.getlevel(levelId)
+    local level = db.getLevel(levelId)
 
     return level["name"]
 end

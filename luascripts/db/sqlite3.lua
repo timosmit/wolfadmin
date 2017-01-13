@@ -57,21 +57,54 @@ function sqlite3.getplayer(guid)
 end
 
 -- levels
-function sqlite3.addlevel(id, name)
+function sqlite3.addLevel(id, name)
     cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
 end
 
-function sqlite3.updatelevel(id, name)
+function sqlite3.updateLevel(id, name)
     cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function sqlite3.getlevel(id)
+function sqlite3.getLevels()
+    cur = assert(con:execute("SELECT * FROM `level`"))
+
+    local levels = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(levels, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return levels
+end
+
+function sqlite3.getLevel(id)
     cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
     
     local level = cur:fetch({}, "a")
     cur:close()
     
     return level
+end
+
+-- acl
+function sqlite3.getLevelRoles()
+    cur = assert(con:execute("SELECT * FROM `level_role`"))
+
+    local roles = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(roles, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return roles
 end
 
 -- aliases

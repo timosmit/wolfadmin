@@ -3,6 +3,13 @@ CREATE TABLE IF NOT EXISTS `level` (
   `name` TEXT NOT NULL
 );
 
+CREATE TABLE `level_role` (
+  `level_id` INTEGER NOT NULL,
+  `role` TEXT NOT NULL,
+  PRIMARY KEY (`level_id`, `role`),
+  CONSTRAINT `role_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
 CREATE TABLE IF NOT EXISTS `player` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `guid` TEXT NOT NULL UNIQUE,
@@ -100,5 +107,94 @@ CREATE INDEX IF NOT EXISTS `record_player_idx` ON `record` (`player_id`);
 
 INSERT INTO `level` (`id`, `name`) VALUES (0, 'Guest');
 INSERT INTO `level` (`id`, `name`) VALUES (5, 'Admin');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'admintest');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'help');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'time');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'greeting');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'listmaps');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'listsprees');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'listrules');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'adminchat');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'admintest');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'help');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'time');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'greeting');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listplayers');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listteams');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listmaps');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listsprees');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listrules');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listhistory');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listwarns');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listbans');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listaliases');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listlevels');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'liststats');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'finger');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'adminchat');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'put');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'dropweapons');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'rename');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'freeze');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'disorient');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'burn');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'slap');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'gib');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'throw');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'glow');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'pants');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'pop');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'warn');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'mute');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'voicemute');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'kick');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'ban');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'spec999');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'balance');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'lockplayers');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'lockteam');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'shuffle');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'swap');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'pause');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'nextmap');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'restart');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'botadmin');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'enablevote');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'cancelvote');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'passvote');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'news');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'uptime');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'setlevel');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'readconfig');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'noinactivity');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'novote');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'nocensor');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'nobalance');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'novotelimit');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'noreason');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'perma');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'teamcmds');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'silentcmds');
+
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'spy');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'incognito');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'immune');
+
 INSERT INTO `player` (`id`, `guid`, `ip`, `level`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);

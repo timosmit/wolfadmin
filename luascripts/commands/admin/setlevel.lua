@@ -69,7 +69,7 @@ function commandSetLevel(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true
-    elseif not db.getlevel(tonumber(cmdArguments[2])) then
+    elseif not db.getLevel(tonumber(cmdArguments[2])) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9this admin level does not exist.\";")
 
         return true
