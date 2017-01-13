@@ -27,8 +27,10 @@ local db = require "luascripts.wolfadmin.db.db"
 
 local admin = require "luascripts.wolfadmin.admin.admin"
 local balancer = require "luascripts.wolfadmin.admin.balancer"
+local bans = require "luascripts.wolfadmin.admin.bans"
+local history = require "luascripts.wolfadmin.admin.history"
+local mutes = require "luascripts.wolfadmin.admin.mutes"
 local rules = require "luascripts.wolfadmin.admin.rules"
-local warns = require "luascripts.wolfadmin.admin.warns"
 
 local commands = require "luascripts.wolfadmin.commands.commands"
 

@@ -17,8 +17,6 @@
 
 local db = require "luascripts.wolfadmin.db.db"
 
-local warns = require "luascripts.wolfadmin.admin.warns"
-
 local players = require "luascripts.wolfadmin.players.players"
 -- local stats = require "luascripts.wolfadmin.players.stats"
 
