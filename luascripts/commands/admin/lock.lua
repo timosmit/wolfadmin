@@ -23,6 +23,7 @@ local teams = require "luascripts.wolfadmin.game.teams"
 
 local util = require "luascripts.wolfadmin.util.util"
 local constants = require "luascripts.wolfadmin.util.constants"
+local settings = require "luascripts.wolfadmin.util.settings"
 
 function commandLock(clientId, cmdArguments)
     if cmdArguments[1] == nil or (cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC and cmdArguments[1] ~= "all") then
