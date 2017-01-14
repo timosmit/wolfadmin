@@ -50,7 +50,7 @@ function commandVoiceUnmute(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unvoicemuted\";")
     
-    players.setMuted(cmdClient, false)
+    mutes.removeByClient(cmdClient)
     
     return true
 end

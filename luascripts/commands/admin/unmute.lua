@@ -17,6 +17,8 @@
 
 local auth = require "luascripts.wolfadmin.auth.auth"
 
+local mutes = require "luascripts.wolfadmin.admin.mutes"
+
 local commands = require "luascripts.wolfadmin.commands.commands"
 
 local players = require "luascripts.wolfadmin.players.players"
@@ -52,7 +54,7 @@ function commandUnmute(clientId, cmdArguments)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unmuted\";")
     
-    players.setMuted(cmdClient, false)
+    mutes.removeByClient(cmdClient)
     
     return true
 end

@@ -32,14 +32,6 @@ function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
 
-function admin.mutePlayer(victimId, invokerId, type, duration, reason)
-    players.setMuted(victimId, true, type, os.time(), duration)
-    db.addMute(victimId, invokerId, type, os.time(), duration, reason)
-
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..victimId.." \"^7You have been muted by "..players.getName(invokerId)..": ^7"..reason..".\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dmute: ^7"..players.getName(victimId).." ^9has been muted.\";")
-end
-
 function admin.kickPlayer(victimId, invokerId, reason)
     et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
 end
@@ -76,6 +68,14 @@ function admin.onconnect(clientId, firstTime, isBot)
     -- clientbegin which is also triggered on warmup/maprestart/etc)
     --[[ stats.set(clientId, "namechangeStart", os.time())
     stats.set(clientId, "namechangePts", 0) ]]
+
+    local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
+    local playerId = db.getplayer(guid)["id"]
+    local mute = db.getMuteByPlayer(playerId)
+
+    if mute then
+        players.setMuted(clientId, true, mute["type"], mute["issued"], mute["expires"])
+    end
 end
 events.handle("onClientConnect", admin.onconnect)
 

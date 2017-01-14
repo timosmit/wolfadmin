@@ -296,6 +296,15 @@ function sqlite3.getMute(muteId)
     return mute
 end
 
+function sqlite3.getMuteByPlayer(playerId)
+    cur = assert(con:execute("SELECT * FROM `mute` WHERE `victim_id`="..tonumber(playerId).." AND `expires`>"..os.time()))
+
+    local mute = cur:fetch({}, "a")
+    cur:close()
+
+    return mute
+end
+
 -- bans
 function sqlite3.addBan(victimId, invokerId, issued, duration, reason)
     cur = assert(con:execute("INSERT INTO `ban` (`victim_id`, `invoker_id`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(issued)..", "..(tonumber(issued) + tonumber(duration))..", "..tonumber(duration)..", '"..util.escape(reason).."')"))

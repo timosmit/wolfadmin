@@ -19,6 +19,7 @@ local auth = require "luascripts.wolfadmin.auth.auth"
 
 local admin = require "luascripts.wolfadmin.admin.admin"
 local history = require "luascripts.wolfadmin.admin.history"
+local mutes = require "luascripts.wolfadmin.admin.mutes"
 
 local commands = require "luascripts.wolfadmin.commands.commands"
 
@@ -77,7 +78,7 @@ function commandMute(clientId, cmdArguments)
         return true
     end
 
-    admin.mutePlayer(cmdClient, clientId, players.MUTE_CHAT + players.MUTE_VOICE, duration, reason)
+    mutes.add(cmdClient, clientId, players.MUTE_CHAT + players.MUTE_VOICE, duration, reason)
     history.add(cmdClient, clientId, "mute", reason)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds\";")

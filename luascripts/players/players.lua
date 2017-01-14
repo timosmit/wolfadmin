@@ -85,11 +85,11 @@ end
 
 function players.isMuted(clientId, type)
     if type == nil then
-        return data[clientId]["mute"] ~= nil
+        return data[clientId] ~= nil and data[clientId]["mute"] ~= nil
     elseif type == players.MUTE_CHAT then
-        return data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_CHAT)
+        return data[clientId] ~= nil and data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_CHAT)
     elseif type == players.MUTE_VOICE then
-        return data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_VOICE)
+        return data[clientId] ~= nil and data[clientId]["mute"] ~= nil and bits.hasbit(data[clientId]["mute"]["type"], players.MUTE_VOICE)
     end
 
     return false
