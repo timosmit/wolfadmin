@@ -28,12 +28,6 @@ local util = require "luascripts.wolfadmin.util.util"
 
 local admin = {}
 
-local teamLocks = {
-    [constants.TEAM_AXIS] = false,
-    [constants.TEAM_ALLIES] = false,
-    [constants.TEAM_SPECTATORS] = false,
-}
-
 function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
@@ -48,14 +42,6 @@ end
 
 function admin.kickPlayer(victimId, invokerId, reason)
     et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
-end
-
-function admin.lockTeam(teamId)
-    teamLocks[teamId] = false
-end
-
-function admin.unlockTeam(teamId)
-    teamLocks[teamId] = false
 end
 
 function admin.setPlayerLevel(clientId, level, adminId)

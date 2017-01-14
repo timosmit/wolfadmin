@@ -21,51 +21,69 @@ local events = require "luascripts.wolfadmin.util.events"
 
 local teams = {}
 
-local data = {
+local players = {
     [constants.TEAM_AXIS] = {},
     [constants.TEAM_ALLIES] = {},
     [constants.TEAM_SPECTATORS] = {}
 }
 
+local locks = {
+    [constants.TEAM_AXIS] = false,
+    [constants.TEAM_ALLIES] = false,
+    [constants.TEAM_SPECTATORS] = false
+}
+
 function teams.get()
-    return data
+    return players
 end
 
 function teams.count(team)
-    return #data[team]
+    return #players[team]
 end
 
 function teams.difference()
     return math.abs(teams.count(constants.TEAM_AXIS) - teams.count(constants.TEAM_ALLIES))
 end
 
+function teams.lock(teamId)
+    locks[teamId] = true
+end
+
+function teams.unlock(teamId)
+    locks[teamId] = false
+end
+
+function teams.isLocked(teamId)
+    return locks[teamId]
+end
+
 function teams.onconnect(clientId, firstTime, isBot)
     local team = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
 
-    if not tables.contains(data[team], clientId) then
-        table.insert(data[team], clientId)
+    if not tables.contains(players[team], clientId) then
+        table.insert(players[team], clientId)
     end
 end
 events.handle("onClientConnect", teams.onconnect)
 
 function teams.ondisconnect(clientId)
     local team = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
-    local idx = tables.find(data[team], clientId)
+    local idx = tables.find(players[team], clientId)
 
     if idx then
-        table.remove(data[team], idx)
+        table.remove(players[team], idx)
     end
 end
 events.handle("onClientDisconnect", teams.ondisconnect)
 
 function teams.onclientteamchange(clientId, old, new)
-    local idx = tables.find(data[old], clientId)
+    local idx = tables.find(players[old], clientId)
 
     if idx then
-        table.remove(data[old], idx)
+        table.remove(players[old], idx)
     end
 
-    table.insert(data[new], clientId)
+    table.insert(players[new], clientId)
 end
 events.handle("onClientTeamChange", teams.onclientteamchange)
 

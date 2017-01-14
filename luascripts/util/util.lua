@@ -61,11 +61,11 @@ function util.getTeamName(teamId)
 end
 
 function util.getTeamFromCode(teamCode)
-    if teamCode == constants.TEAM_AXIS_SC then
+    if teamCode == constants.TEAM_AXIS_SC or teamCode == constants.TEAM_AXIS_NAME or teamCode == constants.TEAM_AXIS_COLOR_NAME then
         return constants.TEAM_AXIS
-    elseif teamCode == constants.TEAM_ALLIES_SC then
+    elseif teamCode == constants.TEAM_ALLIES_SC or teamCode == constants.TEAM_ALLIES_NAME or teamCode == constants.TEAM_ALLIES_COLOR_NAME then
         return constants.TEAM_ALLIES
-    elseif teamCode == constants.TEAM_SPECTATORS_SC then
+    elseif teamCode == constants.TEAM_SPECTATORS_SC or teamCode == constants.TEAM_SPECTATORS_NAME then
         return constants.TEAM_SPECTATORS
     else
         return 0

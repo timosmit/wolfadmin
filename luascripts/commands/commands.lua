@@ -21,6 +21,8 @@ local admin = require "luascripts.wolfadmin.admin.admin"
 
 local auth = require "luascripts.wolfadmin.auth.auth"
 
+local teams = require "luascripts.wolfadmin.game.teams"
+
 local players = require "luascripts.wolfadmin.players.players"
 
 local util = require "luascripts.wolfadmin.util.util"
@@ -216,6 +218,16 @@ function commands.onclientcommand(clientId, cmdText)
             
             et.trap_SendServerCommand(clientId, "cp \"^7You are locked to the "..teamColor..teamName.." ^7team")
             
+            return 1
+        end
+
+        local team = util.getTeamFromCode(et.trap_Argv(1))
+        if teams.isLocked(team) then
+            local teamName = util.getTeamName(team)
+            local teamColor = util.getTeamColor(team)
+
+            et.trap_SendServerCommand(clientId, "cp \""..teamColor..teamName.." ^7team is locked")
+
             return 1
         end
     elseif wolfCmd == "callvote" then

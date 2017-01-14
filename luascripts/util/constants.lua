@@ -35,9 +35,16 @@ constants.TEAM_AXIS_SC = "r"
 constants.TEAM_ALLIES_SC = "b"
 constants.TEAM_SPECTATORS_SC = "s"
 
+constants.TEAM_AXIS_NAME = "axis"
+constants.TEAM_ALLIES_NAME = "allies"
+constants.TEAM_SPECTATORS_NAME = "spectator"
+
 constants.TEAM_AXIS_COLOR = "^1"
 constants.TEAM_ALLIES_COLOR = "^4"
 constants.TEAM_SPECTATORS_COLOR = "^2"
+
+constants.TEAM_AXIS_COLOR_NAME = "red"
+constants.TEAM_ALLIES_COLOR_NAME = "blue"
 
 constants.CLASS_SOLDIER = 0
 constants.CLASS_MEDIC = 1
