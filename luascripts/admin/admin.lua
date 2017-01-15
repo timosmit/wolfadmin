@@ -52,10 +52,13 @@ function admin.onconnectattempt(clientId, firstTime, isBot)
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
-        local playerId = db.getplayer(guid)["id"]
-        local ban = db.getBanByPlayer(playerId)
-        if ban then
-            return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
+        local player = db.getplayer(guid)
+        if player then
+            local playerId = player["id"]
+            local ban = db.getBanByPlayer(playerId)
+            if ban then
+                return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
+            end
         end
     end
 

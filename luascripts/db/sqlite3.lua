@@ -32,7 +32,7 @@ local cur = nil
 
 -- players
 function sqlite3.addplayer(guid, ip)
-    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
+    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0)"))
 end
 
 function sqlite3.updateplayerip(guid, ip)
