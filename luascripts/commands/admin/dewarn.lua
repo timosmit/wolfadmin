@@ -35,7 +35,7 @@ function commandRemoveWarn(clientId, cmdArguments)
         cmdClient = tonumber(cmdArguments[1])
     end
     
-    if cmdClient == -1 then
+    if cmdClient == -1 or cmdClient > et.trap_Cvar_Get("sv_maxclients") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^ddewarn: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
         
         return true

@@ -22,7 +22,7 @@ function commandPersonalMessage(clientId, cmdArguments)
     if #cmdArguments > 1 then
         local cmdClient
         
-        if tonumber(cmdArguments[1]) == nil then
+        if tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
             cmdClient = et.ClientNumberFromString(cmdArguments[1])
         else
             cmdClient = tonumber(cmdArguments[1])
