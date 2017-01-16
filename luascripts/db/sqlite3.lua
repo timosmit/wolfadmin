@@ -173,7 +173,7 @@ end
 
 -- level history
 function sqlite3.addsetlevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level_id`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
 function sqlite3.getlevelscount(playerid)

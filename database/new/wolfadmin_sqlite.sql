@@ -34,10 +34,11 @@ CREATE TABLE IF NOT EXISTS `player_level` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `player_id` INTEGER NOT NULL,
   `invoker_id` INTEGER NOT NULL,
-  `level` INTEGER NOT NULL,
+  `level_id` INTEGER NOT NULL,
   `datetime` INTEGER NOT NULL,
   CONSTRAINT `level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `level_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE INDEX IF NOT EXISTS `level_player_idx` ON `player_level` (`player_id`);
@@ -196,5 +197,5 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'spy');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'incognito');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'immune');
 
-INSERT INTO `player` (`id`, `guid`, `ip`, `level`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5);
+INSERT INTO `player` (`id`, `guid`, `ip`, `level_id`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);
