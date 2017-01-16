@@ -73,11 +73,15 @@ function admin.onconnect(clientId, firstTime, isBot)
     stats.set(clientId, "namechangePts", 0) ]]
 
     local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
-    local playerId = db.getplayer(guid)["id"]
-    local mute = db.getMuteByPlayer(playerId)
+    local player = db.getplayer(guid)
 
-    if mute then
-        players.setMuted(clientId, true, mute["type"], mute["issued"], mute["expires"])
+    if player then
+        local playerId = player["id"]
+        local mute = db.getMuteByPlayer(playerId)
+
+        if mute then
+            players.setMuted(clientId, true, mute["type"], mute["issued"], mute["expires"])
+        end
     end
 end
 events.handle("onClientConnect", admin.onconnect)
