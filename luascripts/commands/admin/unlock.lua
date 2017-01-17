@@ -64,7 +64,7 @@ function commandUnlock(clientId, cmdArguments)
     local team = util.getTeamFromCode(cmdArguments[1])
     teams.unlock(team)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team).util.getTeamName(team).." ^9team has been unlocked.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been unlocked.\";")
 
     return false
 end

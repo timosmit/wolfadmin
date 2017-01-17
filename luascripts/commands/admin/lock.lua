@@ -64,7 +64,7 @@ function commandLock(clientId, cmdArguments)
     local team = util.getTeamFromCode(cmdArguments[1])
     teams.lock(team)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team).util.getTeamName(team).." ^9team has been locked.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been locked.\";")
 
     return false
 end
