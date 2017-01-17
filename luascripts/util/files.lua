@@ -25,11 +25,11 @@ function files.ls(directory)
     local entries = {}
     
     if platform == "unix" then
-        command = 'ls -1 "'..wolfa_getBasePath()..directory..'"'
+        command = 'ls -1 "'..wolfa_getBasePath()..'luascripts/wolfadmin/'..directory..'"'
     elseif platform == "windows" then
-        command = 'dir "'..wolfa_getBasePath()..directory..'" /b'
+        command = 'dir "'..wolfa_getBasePath()..'luascripts/wolfadmin/'..directory..'" /b'
     end
-    
+
     for filename in io.popen(command):lines() do
         table.insert(entries, filename)
     end

@@ -48,6 +48,7 @@ local version = "1.2.0-dev"
 local release = "TBD"
 
 local basepath = nil
+local homepath = nil
 
 -- game related data
 local currentLevelTime = nil
@@ -69,6 +70,10 @@ function wolfa_getBasePath()
     return basepath
 end
 
+function wolfa_getHomePath()
+    return homepath
+end
+
 function et_InitGame(levelTime, randomSeed, restartMap)
     et.RegisterModname("WolfAdmin "..wolfa_getVersion())
     
@@ -76,7 +81,8 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
     
-    basepath = string.gsub(et.trap_Cvar_Get("fs_basepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/luascripts/wolfadmin/"
+    basepath = string.gsub(et.trap_Cvar_Get("fs_basepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/"
+    homepath = string.gsub(et.trap_Cvar_Get("fs_homepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/"
     
     currentLevelTime = levelTime
     

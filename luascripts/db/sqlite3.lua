@@ -461,7 +461,7 @@ function sqlite3.isconnected()
 end
 
 function sqlite3.start()
-    con = env:connect(settings.get("db_file"))
+    con = env:connect(wolfa_getHomePath()..settings.get("db_file"))
 
     if not con then
         return

@@ -62,7 +62,7 @@ function commandListLevels(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9level history is disabled.\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil then
+    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(cmdArguments[1])
     else
         cmdClient = tonumber(cmdArguments[1])

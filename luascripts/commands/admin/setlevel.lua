@@ -24,7 +24,7 @@ local admin = require "luascripts.wolfadmin.admin.admin"
 function commandSetLevel(clientId, cmdArguments)
     if #cmdArguments < 2 then
         return false
-    elseif tonumber(cmdArguments[1]) == nil then
+    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(cmdArguments[1])
     else
         cmdClient = tonumber(cmdArguments[1])
