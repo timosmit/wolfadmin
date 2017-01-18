@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
-local events = require "luamods.wolfadmin.util.events"
-local tables = require "luamods.wolfadmin.util.tables"
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local util = require (wolfa_getLuaPath()..".util.util")
+local events = require (wolfa_getLuaPath()..".util.events")
+local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local timers = {}
 

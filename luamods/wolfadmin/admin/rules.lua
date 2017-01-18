@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require "luamods.wolfadmin.util.events"
-local files = require "luamods.wolfadmin.util.files"
-local settings = require "luamods.wolfadmin.util.settings"
+local events = require (wolfa_getLuaPath()..".util.events")
+local files = require (wolfa_getLuaPath()..".util.files")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local rules = {}
 

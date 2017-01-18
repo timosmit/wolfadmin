@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
-local settings = require "luamods.wolfadmin.util.settings"
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local util = require (wolfa_getLuaPath()..".util.util")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local SEVERITY_LEVELS = {
     [1] = "^_", -- termination

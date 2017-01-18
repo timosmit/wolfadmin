@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local admin = require "luamods.wolfadmin.admin.admin"
-local auth = require "luamods.wolfadmin.auth.auth"
-local commands = require "luamods.wolfadmin.commands.commands"
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
+local admin = require (wolfa_getLuaPath()..".admin.admin")
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandPlayerLock(clientId, cmdArguments)
     if cmdArguments[2] == nil or (cmdArguments[2] ~= constants.TEAM_AXIS_SC and cmdArguments[2] ~= constants.TEAM_ALLIES_SC and cmdArguments[2] ~= constants.TEAM_SPECTATORS_SC) then

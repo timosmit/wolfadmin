@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local util = require "luamods.wolfadmin.util.util"
-local commands = require "luamods.wolfadmin.commands.commands"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local util = require (wolfa_getLuaPath()..".util.util")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 function commandShowStats(clientId, cmdArguments)
     if cmdArguments[1] == nil then

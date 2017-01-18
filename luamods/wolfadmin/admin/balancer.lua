@@ -15,17 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
-local bits = require "luamods.wolfadmin.util.bits"
-local tables = require "luamods.wolfadmin.util.tables"
-local events = require "luamods.wolfadmin.util.events"
-local timers = require "luamods.wolfadmin.util.timers"
-local settings = require "luamods.wolfadmin.util.settings"
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local util = require (wolfa_getLuaPath()..".util.util")
+local bits = require (wolfa_getLuaPath()..".util.bits")
+local tables = require (wolfa_getLuaPath()..".util.tables")
+local events = require (wolfa_getLuaPath()..".util.events")
+local timers = require (wolfa_getLuaPath()..".util.timers")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
-local admin = require "luamods.wolfadmin.admin.admin"
+local admin = require (wolfa_getLuaPath()..".admin.admin")
 
-local teams = require "luamods.wolfadmin.game.teams"
+local teams = require (wolfa_getLuaPath()..".game.teams")
 
 local balancer = {}
 

@@ -15,16 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require "luamods.wolfadmin.db.db"
+local db = require (wolfa_getLuaPath()..".db.db")
 
-local players = require "luamods.wolfadmin.players.players"
--- local stats = require "luamods.wolfadmin.players.stats"
+local players = require (wolfa_getLuaPath()..".players.players")
+-- local stats = require (wolfa_getLuaPath()..".players.stats")
 
-local constants = require "luamods.wolfadmin.util.constants"
-local events = require "luamods.wolfadmin.util.events"
-local files = require "luamods.wolfadmin.util.files"
-local settings = require "luamods.wolfadmin.util.settings"
-local util = require "luamods.wolfadmin.util.util"
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local events = require (wolfa_getLuaPath()..".util.events")
+local files = require (wolfa_getLuaPath()..".util.files")
+local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 local admin = {}
 

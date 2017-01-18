@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luamods.wolfadmin.util.util"
-local events = require "luamods.wolfadmin.util.events"
+local util = require (wolfa_getLuaPath()..".util.util")
+local events = require (wolfa_getLuaPath()..".util.events")
 
 local settings = {}
 
@@ -73,7 +73,7 @@ function settings.load()
         end
     end
     
-    local files = require "luamods.wolfadmin.util.files"
+    local files = require (wolfa_getLuaPath()..".util.files")
     local amount, array = files.loadCFG("wolfadmin.cfg", "[a-z]+", true)
     
     for blocksname, settings in pairs(array) do

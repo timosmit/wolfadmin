@@ -15,40 +15,39 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require "luamods.wolfadmin.util.debug"
+local constants
+local util
+local events
+local timers
+local settings
 
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
-local events = require "luamods.wolfadmin.util.events"
-local timers = require "luamods.wolfadmin.util.timers"
-local settings = require "luamods.wolfadmin.util.settings"
+local db
 
-local db = require "luamods.wolfadmin.db.db"
+local admin
+local balancer
+local bans
+local history
+local mutes
+local rules
 
-local admin = require "luamods.wolfadmin.admin.admin"
-local balancer = require "luamods.wolfadmin.admin.balancer"
-local bans = require "luamods.wolfadmin.admin.bans"
-local history = require "luamods.wolfadmin.admin.history"
-local mutes = require "luamods.wolfadmin.admin.mutes"
-local rules = require "luamods.wolfadmin.admin.rules"
+local commands
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local game
+local bots
+local sprees
+local teams
+local voting
 
-local game = require "luamods.wolfadmin.game.game"
-local bots = require "luamods.wolfadmin.game.bots"
-local sprees = require "luamods.wolfadmin.game.sprees"
-local teams = require "luamods.wolfadmin.game.teams"
-local voting = require "luamods.wolfadmin.game.voting"
-
-local greetings = require "luamods.wolfadmin.players.greetings"
-local players = require "luamods.wolfadmin.players.players"
-local stats = require "luamods.wolfadmin.players.stats"
+local greetings
+local players
+local stats
 
 local version = "1.2.0-dev"
 local release = "TBD"
 
 local basepath = nil
 local homepath = nil
+local luapath = nil
 
 -- game related data
 local currentLevelTime = nil
@@ -74,15 +73,51 @@ function wolfa_getHomePath()
     return homepath
 end
 
+function wolfa_getLuaPath()
+    return luapath
+end
+
 function et_InitGame(levelTime, randomSeed, restartMap)
-    et.RegisterModname("WolfAdmin "..wolfa_getVersion())
-    
-    outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit.")
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
-    
+    -- set up paths
     basepath = string.gsub(et.trap_Cvar_Get("fs_basepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/"
     homepath = string.gsub(et.trap_Cvar_Get("fs_homepath"), "\\", "/").."/"..et.trap_Cvar_Get("fs_game").."/"
+    luapath = string.gsub(debug.getinfo(1).source, "[\\/]", "."):sub(0, -10)
+
+    -- load modules
+    require (wolfa_getLuaPath()..".util.debug")
+
+    constants = require (wolfa_getLuaPath()..".util.constants")
+    util = require (wolfa_getLuaPath()..".util.util")
+    events = require (wolfa_getLuaPath()..".util.events")
+    timers = require (wolfa_getLuaPath()..".util.timers")
+    settings = require (wolfa_getLuaPath()..".util.settings")
+
+    db = require (wolfa_getLuaPath()..".db.db")
+
+    admin = require (wolfa_getLuaPath()..".admin.admin")
+    balancer = require (wolfa_getLuaPath()..".admin.balancer")
+    bans = require (wolfa_getLuaPath()..".admin.bans")
+    history = require (wolfa_getLuaPath()..".admin.history")
+    mutes = require (wolfa_getLuaPath()..".admin.mutes")
+    rules = require (wolfa_getLuaPath()..".admin.rules")
+
+    commands = require (wolfa_getLuaPath()..".commands.commands")
+
+    game = require (wolfa_getLuaPath()..".game.game")
+    bots = require (wolfa_getLuaPath()..".game.bots")
+    sprees = require (wolfa_getLuaPath()..".game.sprees")
+    teams = require (wolfa_getLuaPath()..".game.teams")
+    voting = require (wolfa_getLuaPath()..".game.voting")
+
+    greetings = require (wolfa_getLuaPath()..".players.greetings")
+    players = require (wolfa_getLuaPath()..".players.players")
+    stats = require (wolfa_getLuaPath()..".players.stats")
+
+    -- register the module
+    et.RegisterModname("WolfAdmin "..wolfa_getVersion())
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
+
+    outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit.")
     
     currentLevelTime = levelTime
     

@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luamods.wolfadmin.util.util"
-local events = require "luamods.wolfadmin.util.events"
-local settings = require "luamods.wolfadmin.util.settings"
+local util = require (wolfa_getLuaPath()..".util.util")
+local events = require (wolfa_getLuaPath()..".util.events")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local db = {}
 
@@ -28,9 +28,9 @@ local con
 -- this, but it will suffice.
 function db.oninit()
     if settings.get("db_type") == "mysql" then
-        con = require "luamods.wolfadmin.db.mysql"
+        con = require (wolfa_getLuaPath()..".db.mysql")
     elseif settings.get("db_type") == "sqlite3" then
-        con = require "luamods.wolfadmin.db.sqlite3"
+        con = require (wolfa_getLuaPath()..".db.sqlite3")
     else
         error("invalid database system (choose mysql, sqlite3)")
     end

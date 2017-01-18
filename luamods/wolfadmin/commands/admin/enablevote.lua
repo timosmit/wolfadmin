@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luamods.wolfadmin.commands.commands"
-local auth = require "luamods.wolfadmin.auth.auth"
-local voting = require "luamods.wolfadmin.game.voting"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local voting = require (wolfa_getLuaPath()..".game.voting")
 
 function commandEnableVote(clientId, cmdArguments)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^denablevote: ^9next map voting has been enabled.\";")

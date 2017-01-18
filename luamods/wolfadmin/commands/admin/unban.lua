@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local bans = require "luamods.wolfadmin.admin.bans"
+local bans = require (wolfa_getLuaPath()..".admin.bans")
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local db = require "luamods.wolfadmin.db.db"
+local db = require (wolfa_getLuaPath()..".db.db")
 
-local settings = require "luamods.wolfadmin.util.settings"
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandRemoveBan(clientId, cmdArguments)
     if settings.get("g_standalone") == 0 or not db.isconnected() then

@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local db = require "luamods.wolfadmin.db.db"
+local db = require (wolfa_getLuaPath()..".db.db")
 
-local players = require "luamods.wolfadmin.players.players"
+local players = require (wolfa_getLuaPath()..".players.players")
 
-local events = require "luamods.wolfadmin.util.events"
-local files = require "luamods.wolfadmin.util.files"
-local tables = require "luamods.wolfadmin.util.tables"
+local events = require (wolfa_getLuaPath()..".util.events")
+local files = require (wolfa_getLuaPath()..".util.files")
+local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local acl = {}
 

@@ -15,17 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local history = require "luamods.wolfadmin.admin.history"
+local history = require (wolfa_getLuaPath()..".admin.history")
 
-local db = require "luamods.wolfadmin.db.db"
+local db = require (wolfa_getLuaPath()..".db.db")
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local util = require "luamods.wolfadmin.util.util"
-local pagination = require "luamods.wolfadmin.util.pagination"
-local settings = require "luamods.wolfadmin.util.settings"
+local util = require (wolfa_getLuaPath()..".util.util")
+local pagination = require (wolfa_getLuaPath()..".util.pagination")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandListHistory(clientId, cmdArguments)
     if settings.get("g_standalone") == 0 or not db.isconnected() then

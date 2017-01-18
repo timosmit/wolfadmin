@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local constants = require "luamods.wolfadmin.util.constants"
-local util = require "luamods.wolfadmin.util.util"
-local balancer = require "luamods.wolfadmin.admin.balancer"
-local commands = require "luamods.wolfadmin.commands.commands"
-local bots = require "luamods.wolfadmin.game.bots"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local util = require (wolfa_getLuaPath()..".util.util")
+local balancer = require (wolfa_getLuaPath()..".admin.balancer")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local bots = require (wolfa_getLuaPath()..".game.bots")
 
 function commandPutBots(clientId, cmdArguments)
     if cmdArguments[1] == nil and cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC then

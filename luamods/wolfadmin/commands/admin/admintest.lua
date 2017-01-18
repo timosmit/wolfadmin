@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local players = require "luamods.wolfadmin.players.players"
+local players = require (wolfa_getLuaPath()..".players.players")
 
-local settings = require "luamods.wolfadmin.util.settings"
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandAdminTest(clientId, cmdArguments)
     local level = auth.getlevel(clientId)

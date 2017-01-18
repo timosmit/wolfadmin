@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local db = require "luamods.wolfadmin.db.db"
-local commands = require "luamods.wolfadmin.commands.commands"
-local game = require "luamods.wolfadmin.game.game"
-local sprees = require "luamods.wolfadmin.game.sprees"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local db = require (wolfa_getLuaPath()..".db.db")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local game = require (wolfa_getLuaPath()..".game.game")
+local sprees = require (wolfa_getLuaPath()..".game.sprees")
 
 function commandResetSprees(clientId, cmdArguments)
     if not db.isconnected() then

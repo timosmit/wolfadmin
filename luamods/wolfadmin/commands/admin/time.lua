@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local commands = require "luamods.wolfadmin.commands.commands"
-local settings = require "luamods.wolfadmin.util.settings"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandTime(clientId, cmdArguments)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dtime: ^9current time is ^7"..os.date("%H:%M:%S").."^9.\";")

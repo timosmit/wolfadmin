@@ -15,18 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local game = require "luamods.wolfadmin.game.game"
-local fireteams = require "luamods.wolfadmin.game.fireteams"
+local game = require (wolfa_getLuaPath()..".game.game")
+local fireteams = require (wolfa_getLuaPath()..".game.fireteams")
 
-local players = require "luamods.wolfadmin.players.players"
+local players = require (wolfa_getLuaPath()..".players.players")
 
-local constants = require "luamods.wolfadmin.util.constants"
-local settings = require "luamods.wolfadmin.util.settings"
-local util = require "luamods.wolfadmin.util.util"
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandListPlayers(clientId, cmdArguments)
     local playersOnline = {}

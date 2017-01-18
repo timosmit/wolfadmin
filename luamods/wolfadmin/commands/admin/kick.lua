@@ -15,14 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local admin = require "luamods.wolfadmin.admin.admin"
-local history = require "luamods.wolfadmin.admin.history"
+local admin = require (wolfa_getLuaPath()..".admin.admin")
+local history = require (wolfa_getLuaPath()..".admin.history")
 
-local commands = require "luamods.wolfadmin.commands.commands"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local settings = require "luamods.wolfadmin.util.settings"
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandKick(clientId, cmdArguments)
     if cmdArguments[1] == nil then

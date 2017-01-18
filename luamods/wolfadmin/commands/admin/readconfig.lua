@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local settings = require "luamods.wolfadmin.util.settings"
-local commands = require "luamods.wolfadmin.commands.commands"
-local rules = require "luamods.wolfadmin.admin.rules"
-local greetings = require "luamods.wolfadmin.players.greetings"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local settings = require (wolfa_getLuaPath()..".util.settings")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local rules = require (wolfa_getLuaPath()..".admin.rules")
+local greetings = require (wolfa_getLuaPath()..".players.greetings")
 
 function commandReadconfig(clientId, cmdArguments)
     settings.load()

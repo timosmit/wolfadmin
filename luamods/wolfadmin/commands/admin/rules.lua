@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local commands = require "luamods.wolfadmin.commands.commands"
-local rules = require "luamods.wolfadmin.admin.rules"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local rules = require (wolfa_getLuaPath()..".admin.rules")
 
 function commandRules(clientId, cmdArguments)
     if #cmdArguments == 0 then

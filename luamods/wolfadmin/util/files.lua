@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require "luamods.wolfadmin.util.util"
-local settings = require "luamods.wolfadmin.util.settings"
+local util = require (wolfa_getLuaPath()..".util.util")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local files = {}
 
@@ -25,9 +25,9 @@ function files.ls(directory)
     local entries = {}
     
     if platform == "unix" then
-        command = 'ls -1 "'..wolfa_getBasePath()..'luamods/wolfadmin/'..directory..'"'
+        command = 'ls -1 "'..wolfa_getBasePath()..wolfa_getLuaPath():gsub("%.", "/").."/"..directory..'"'
     elseif platform == "windows" then
-        command = 'dir "'..wolfa_getBasePath()..'luamods/wolfadmin/'..directory..'" /b'
+        command = 'dir "'..wolfa_getBasePath()..wolfa_getLuaPath():gsub("%.", "/").."/"..directory..'" /b'
     end
 
     for filename in io.popen(command):lines() do

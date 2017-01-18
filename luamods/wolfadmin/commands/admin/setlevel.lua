@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require "luamods.wolfadmin.auth.auth"
-local settings = require "luamods.wolfadmin.util.settings"
-local db = require "luamods.wolfadmin.db.db"
-local commands = require "luamods.wolfadmin.commands.commands"
-local admin = require "luamods.wolfadmin.admin.admin"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+local settings = require (wolfa_getLuaPath()..".util.settings")
+local db = require (wolfa_getLuaPath()..".db.db")
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local admin = require (wolfa_getLuaPath()..".admin.admin")
 
 function commandSetLevel(clientId, cmdArguments)
     if #cmdArguments < 2 then

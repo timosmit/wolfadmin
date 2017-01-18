@@ -15,19 +15,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require "luamods.wolfadmin.util.debug"
+require (wolfa_getLuaPath()..".util.debug")
 
-local admin = require "luamods.wolfadmin.admin.admin"
+local admin = require (wolfa_getLuaPath()..".admin.admin")
 
-local auth = require "luamods.wolfadmin.auth.auth"
+local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local teams = require "luamods.wolfadmin.game.teams"
+local teams = require (wolfa_getLuaPath()..".game.teams")
 
-local players = require "luamods.wolfadmin.players.players"
+local players = require (wolfa_getLuaPath()..".players.players")
 
-local util = require "luamods.wolfadmin.util.util"
-local events = require "luamods.wolfadmin.util.events"
-local files = require "luamods.wolfadmin.util.files"
+local util = require (wolfa_getLuaPath()..".util.util")
+local events = require (wolfa_getLuaPath()..".util.events")
+local files = require (wolfa_getLuaPath()..".util.files")
 
 local commands = {}
 
@@ -91,7 +91,7 @@ function commands.loadfiles(dir)
     
     for _, file in pairs(files) do
         if string.match(string.lower(file), "^[a-z]+%.lua$") then
-            require ("luamods.wolfadmin.commands."..dir.."."..string.sub(file, 1, string.len(file) - 4))
+            require (wolfa_getLuaPath()..".commands."..dir.."."..string.sub(file, 1, string.len(file) - 4))
             
             amount = amount + 1
         end

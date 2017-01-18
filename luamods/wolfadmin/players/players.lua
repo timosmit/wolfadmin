@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require "luamods.wolfadmin.db.db"
+local db = require (wolfa_getLuaPath()..".db.db")
 
-local bits = require "luamods.wolfadmin.util.bits"
-local events = require "luamods.wolfadmin.util.events"
+local bits = require (wolfa_getLuaPath()..".util.bits")
+local events = require (wolfa_getLuaPath()..".util.events")
 
 local players = {}
 

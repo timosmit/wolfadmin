@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require "luamods.wolfadmin.commands.commands"
-local util = require "luamods.wolfadmin.util.util"
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandClientCenterPrint(clientId, cmdArguments)
     local clientId = tonumber(cmdArguments[1])
