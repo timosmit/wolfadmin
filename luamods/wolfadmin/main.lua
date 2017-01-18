@@ -49,14 +49,7 @@ local basepath = nil
 local homepath = nil
 local luapath = nil
 
--- game related data
-local currentLevelTime = nil
-
 -- need to do this somewhere else
-function wolfa_getLevelTime()
-    return currentLevelTime
-end
-
 function wolfa_getVersion()
     return version
 end
@@ -118,8 +111,6 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
 
     outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit.")
-    
-    currentLevelTime = levelTime
     
     events.trigger("onGameInit", levelTime, randomSeed, (restartMap == 1))
 end

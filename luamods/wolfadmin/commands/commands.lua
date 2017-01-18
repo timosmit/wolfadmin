@@ -119,7 +119,7 @@ function commands.log(clientId, command, cmdArguments)
     local fileDescriptor = files.open(et.trap_Cvar_Get("g_logAdmin"), et.FS_APPEND)
     
     local logLine
-    local levelTime = wolfa_getLevelTime() / 1000
+    local levelTime = et.trap_Milliseconds() / 1000
     
     local clientGUID = clientId and players.getGUID(clientId) or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     local clientName = clientId and players.getName(clientId) or "console"
