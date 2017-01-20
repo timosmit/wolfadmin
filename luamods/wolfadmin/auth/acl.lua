@@ -15,14 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-
 local db = require (wolfa_getLuaPath()..".db.db")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
 local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local acl = {}
@@ -34,20 +31,21 @@ function acl.readPermissions()
     -- should probably cache current players' permissions as well, then
     -- read in new players' permissions as they join the server
 
+    local levels = db.getLevelsWithIds()
+    for _, level in ipairs(levels) do
+        data[level["id"]] = {}
+    end
+
     local roles = db.getLevelRoles()
 
     for _, role in ipairs(roles) do
-        if not data[role["level_id"]] then
-            data[role["level_id"]] = {}
-        end
-
         table.insert(data[role["level_id"]], role["role"])
     end
 end
 events.handle("onGameInit", acl.readPermissions)
 
 function acl.clearCache()
-    -- clear cache whenever database is updated, or do this manually
+    data = {}
 end
 
 function acl.isallowed(clientId, permission)
@@ -58,6 +56,66 @@ function acl.isallowed(clientId, permission)
     end
 
     return 0
+end
+
+function acl.getLevels()
+    return db.getLevels()
+end
+
+function acl.isLevel(levelId)
+    return (db.getLevel(levelId) ~= nil)
+end
+
+function acl.addLevel(levelId, name)
+    db.addLevel(levelId, name)
+
+    data[levelId] = {}
+end
+
+function acl.removeLevel(levelId)
+    db.removeLevel(levelId)
+
+    data[levelId] = nil
+end
+
+function acl.reLevel(levelId, newLevelId)
+    db.reLevel(levelId, newLevelId)
+end
+
+function acl.getLevelRoles(levelId)
+    return data[levelId]
+end
+
+function acl.isLevelAllowed(levelId, role)
+    return tables.contains(data[levelId], role)
+end
+
+function acl.addLevelRole(levelId, role)
+    db.addLevelRole(levelId, role)
+
+    table.insert(data[levelId], role)
+end
+
+function acl.removeLevelRole(levelId, role)
+    db.removeLevelRole(levelId, role)
+
+    for i, levelRole in ipairs(data[levelId]) do
+        if levelRole == role then
+            table.remove(data[levelId], i)
+        end
+    end
+end
+
+function acl.copyLevelRoles(levelId, newLevelId)
+    db.copyLevelRoles(levelId, newLevelId)
+
+    data[newLevelId] = tables.copy(data[levelId])
+end
+
+function acl.removeLevelRoles(levelId)
+    db.removeLevelRoles(levelId)
+
+    data[levelId] = {}
 end
 
 function acl.getlevel(clientId)

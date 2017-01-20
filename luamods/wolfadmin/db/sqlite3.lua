@@ -65,8 +65,32 @@ function sqlite3.updateLevel(id, name)
     cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function sqlite3.getLevels()
+function sqlite3.removeLevel(id)
+    cur = assert(con:execute("DELETE FROM `level` WHERE `id`="..tonumber(id)..""))
+end
+
+function sqlite3.reLevel(id, newId)
+    cur = assert(con:execute("UPDATE `player` SET `level_id`="..tonumber(newId).." WHERE `level_id`="..tonumber(id)..""))
+end
+
+function sqlite3.getLevelsWithIds()
     cur = assert(con:execute("SELECT * FROM `level`"))
+
+    local levels = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(levels, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return levels
+end
+
+function sqlite3.getLevels()
+    cur = assert(con:execute("SELECT `l`.*, COUNT(`p`.`id`) AS `players` FROM `level` AS `l` LEFT JOIN `player` AS `p` ON `l`.`id`=`p`.`level_id` GROUP BY `l`.`id`"))
 
     local levels = {}
     local row = cur:fetch({}, "a")
@@ -105,6 +129,22 @@ function sqlite3.getLevelRoles()
     cur:close()
 
     return roles
+end
+
+function sqlite3.addLevelRole(levelId, role)
+    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) VALUES ("..tonumber(levelId)..", '"..util.escape(role).."')"))
+end
+
+function sqlite3.removeLevelRole(levelId, role)
+    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId).." AND role='"..util.escape(role).."'"))
+end
+
+function sqlite3.copyLevelRoles(levelId, newLevelId)
+    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `role` FROM `level_role` WHERE `level_id`="..tonumber(levelId)))
+end
+
+function sqlite3.removeLevelRoles(levelId)
+    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId)..""))
 end
 
 -- aliases
