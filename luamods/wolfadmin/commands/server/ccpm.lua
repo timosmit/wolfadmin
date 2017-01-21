@@ -16,17 +16,18 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
+
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandClientCPM(clientId, cmdArguments)
+function commandClientCPM(cmdArguments)
     local clientId = tonumber(cmdArguments[1])
-    
+
     if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
         et.trap_SendServerCommand(clientId, "cpm \""..cmdArguments[2].."\";")
     elseif clientId then
         et.G_Print(util.removeColors(cmdArguments[2]).."\n")
     end
-    
+
     return true
 end
 commands.addserver("ccpm", commandClientCPM)

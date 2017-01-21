@@ -172,7 +172,7 @@ function commandAclCopyLevelRoles(cmdArguments)
     et.G_Print("copied roles from "..levelId.." to "..newLevelId.."\n")
 end
 
-function commandAcl(clientId, cmdArguments)
+function commandAcl(cmdArguments)
     local cmd = cmdArguments[1]
 
     if cmd == "listlevels" then

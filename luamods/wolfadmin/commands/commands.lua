@@ -176,8 +176,8 @@ function commands.onServerCommand(cmdText)
         for i = 1, et.trap_Argc() - 1 do
             cmdArguments[i] = et.trap_Argv(i)
         end
-        
-        return servercmds[wolfCmd]["function"](clientId, cmdArguments) and 1 or 0
+
+        return servercmds[wolfCmd]["function"](cmdArguments) and 1 or 0
     end
 
     local shrubCmd = cmdText
@@ -194,8 +194,8 @@ function commands.onServerCommand(cmdText)
         if not admincmds[shrubCmd]["hidden"] then
             commands.log(-1337, shrubCmd, cmdArguments)
         end
-        
-        admincmds[shrubCmd]["function"](-1337, cmdArguments)
+
+        return admincmds[shrubCmd]["function"](-1337, cmdArguments) and 1 or 0
     end
 end
 events.handle("onServerCommand", commands.onServerCommand)
