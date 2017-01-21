@@ -19,6 +19,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
+local settings = require (wolfa_getLuaPath()..".util.settings")
+
 function commandSay(clientId, cmdArguments)
     if players.isMuted(clientId, players.MUTE_CHAT) then
         et.trap_SendServerCommand(clientId, "cp \"^1You are muted\"")
