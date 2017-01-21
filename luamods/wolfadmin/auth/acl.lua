@@ -49,7 +49,7 @@ function acl.clearCache()
 end
 
 function acl.isPlayerAllowed(clientId, permission)
-    local level = acl.getlevel(clientId)
+    local level = acl.getPlayerLevel(clientId)
 
     return data[level] ~= nil and tables.contains(data[level], permission)
 end
