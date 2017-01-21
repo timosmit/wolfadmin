@@ -33,7 +33,7 @@ function commandAdminChat(clientId, cmdArguments)
         end
         
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-            if players.isConnected(playerId) and auth.isallowed(playerId, "~") == 1 then
+            if players.isConnected(playerId) and auth.isPlayerAllowed(playerId, "~") then
                 table.insert(recipients, playerId) 
             end
         end

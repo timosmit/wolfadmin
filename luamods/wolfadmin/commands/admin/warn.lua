@@ -72,7 +72,7 @@ function commandWarn(clientId, cmdArguments)
         return true
     end
 
-    if auth.getlevel(cmdClient) > auth.getlevel(clientId) then
+    if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true

@@ -111,11 +111,11 @@ local flags = {
     [auth.PERM_IMMUNE] = "!",
 }
 
-function shrubbot.isallowed(clientId, permission)
-    return et.G_shrubbot_permission(clientId, flags[permission])
+function shrubbot.isPlayerAllowed(clientId, permission)
+    return et.G_shrubbot_permission(clientId, flags[permission]) == 1
 end
 
-function shrubbot.getlevel(clientId)
+function shrubbot.getPlayerLevel(clientId)
     return et.G_shrubbot_level(clientId)
 end
 

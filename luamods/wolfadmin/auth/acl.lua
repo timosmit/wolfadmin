@@ -48,14 +48,10 @@ function acl.clearCache()
     data = {}
 end
 
-function acl.isallowed(clientId, permission)
+function acl.isPlayerAllowed(clientId, permission)
     local level = acl.getlevel(clientId)
 
-    if data[level] ~= nil and tables.contains(data[level], permission) then
-        return 1
-    end
-
-    return 0
+    return data[level] ~= nil and tables.contains(data[level], permission)
 end
 
 function acl.getLevels()
@@ -118,13 +114,13 @@ function acl.removeLevelRoles(levelId)
     data[levelId] = {}
 end
 
-function acl.getlevel(clientId)
+function acl.getPlayerLevel(clientId)
     local player = db.getplayer(players.getGUID(clientId))
 
     return player["level_id"]
 end
 
-function acl.getlevelname(levelId)
+function acl.getLevelName(levelId)
     local level = db.getLevel(levelId)
 
     return level["name"]

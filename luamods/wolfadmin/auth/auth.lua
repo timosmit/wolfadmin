@@ -112,7 +112,7 @@ auth.PERM_IMMUNE = "immune"
 -- as this module serves as a wrapper/super class, we load the selected database
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
-function auth.oninit()
+function auth.onGameInit()
     if settings.get("g_standalone") == 1 then
         srv = require (wolfa_getLuaPath()..".auth.acl")
     else
@@ -125,6 +125,6 @@ function auth.oninit()
     
     setmetatable(auth, {__index = srv})
 end
-events.handle("onGameInit", auth.oninit)
+events.handle("onGameInit", auth.onGameInit)
 
 return auth

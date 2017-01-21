@@ -24,8 +24,8 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandAdminTest(clientId, cmdArguments)
-    local level = auth.getlevel(clientId)
-    local levelName = auth.getlevelname(level)
+    local level = auth.getPlayerLevel(clientId)
+    local levelName = auth.getLevelName(level)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: ^7"..players.getName(clientId).." ^9is a level "..level.." user (^7"..levelName.."^9).\";")
 

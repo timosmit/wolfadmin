@@ -58,7 +58,7 @@ function commandMute(clientId, cmdArguments)
         duration = util.getTimeFromString(cmdArguments[2])
     elseif cmdArguments[2] then
         reason = table.concat(cmdArguments, " ", 2)
-    elseif auth.isallowed(clientId, "8") ~= 1 then
+    elseif not auth.isPlayerAllowed(clientId, "8") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
 
         return true
@@ -68,11 +68,11 @@ function commandMute(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
 
         return true
-    elseif auth.isallowed(cmdClient, "!") == 1 then
+    elseif auth.isPlayerAllowed(cmdClient, "!") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
-    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
+    elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true

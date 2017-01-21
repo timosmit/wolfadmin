@@ -45,11 +45,11 @@ function commandKick(clientId, cmdArguments)
         return true
     end
 
-    if auth.isallowed(cmdClient, "!") == 1 then
+    if auth.isPlayerAllowed(cmdClient, "!") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
-    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
+    elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true

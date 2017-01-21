@@ -89,7 +89,7 @@ events.handle("onGameStateChange", voting.ongamestatechange)
 function voting.oncallvote(clientId, type, args)
     if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or args[1] == "?" then
         return 0
-    elseif voting.isrestricted(type) and auth.isallowed(clientId, PERM_NOVOTELIMIT) ~= 1 then
+    elseif voting.isrestricted(type) and not auth.isPlayerAllowed(clientId, PERM_NOVOTELIMIT) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"callvote: you are not allowed to call this type of vote.\";")
         et.trap_SendServerCommand(clientId, "cp \"You are not allowed to call this type of vote.")
         

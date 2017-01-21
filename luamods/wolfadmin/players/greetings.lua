@@ -31,9 +31,9 @@ local userGreetings = {}
 local levelGreetings = {}
 
 function greetings.get(clientId)
-    local lvl = auth.getlevel(clientId)
+    local lvl = auth.getPlayerLevel(clientId)
     
-    if auth.isallowed(clientId, auth.PERM_INCOGNITO) ~= 1 then
+    if not auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO) then
         if userGreetings[players.getGUID(clientId)] ~= nil then
             return userGreetings[players.getGUID(clientId)]
         elseif levelGreetings[lvl] ~= nil then

@@ -47,8 +47,8 @@ function commandListPlayers(clientId, cmdArguments)
             guidStub = players.getGUID(player):sub(-8)
         end
 
-        local level = auth.getlevel(player)
-        local levelName = auth.getlevelname(level)
+        local level = auth.getPlayerLevel(player)
+        local levelName = auth.getLevelName(level)
 
         local teamColor, teamCode
 

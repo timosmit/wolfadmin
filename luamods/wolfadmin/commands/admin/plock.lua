@@ -48,11 +48,11 @@ function commandPlayerLock(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already locked to a team.\";")
         
         return true
-    elseif auth.isallowed(cmdClient, "!") == 1 then
+    elseif auth.isPlayerAllowed(cmdClient, "!") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
-    elseif auth.getlevel(cmdClient) > auth.getlevel(clientId) then
+    elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9sorry, but your intended victim has a higher admin level than you do.\";")
         
         return true

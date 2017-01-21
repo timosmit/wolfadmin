@@ -40,7 +40,7 @@ function commandIncognito(clientId, cmdArguments)
         -- et.G_Print(string.format("%s %s %d %s\n", adminName, adminGUID, adminLevel, adminFlags))
         
         if players.getGUID(clientId) == adminGUID then
-            if auth.isallowed(clientId, "@") ~= 1 then
+            if not auth.isPlayerAllowed(clientId, "@") then
                 adminFlags = adminFlags.."+@"
                 
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
