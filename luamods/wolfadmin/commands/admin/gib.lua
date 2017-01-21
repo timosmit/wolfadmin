@@ -63,4 +63,4 @@ function commandGib(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("gib", commandGib, auth.PERM_GIB, "insantly gibs a player", "^9(^3name|slot#^9) (^hreason^9)", (settings.get("g_standalone") == 0))
+commands.addadmin("gib", commandGib, auth.PERM_GIB, "insantly gibs a player", "^9(^3name|slot#^9) (^hreason^9)", nil, (settings.get("g_standalone") == 0))

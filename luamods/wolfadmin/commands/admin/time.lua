@@ -24,4 +24,4 @@ function commandTime(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("time", commandTime, auth.PERM_TIME, "displays the local time", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("time", commandTime, auth.PERM_TIME, "displays the local time", nil, nil, (settings.get("g_standalone") == 0))

@@ -26,7 +26,7 @@ function commandHelp(clientId, cmdArguments)
         local availableCommands = {}
         
         for command, data in pairs(cmds) do
-            if data["function"] and data["flag"] and auth.isPlayerAllowed(clientId, data["flag"]) and (not data["hidden"] or (type(data["hidden"]) == "function" and not data["hidden"]())) then
+            if data["function"] and data["flag"] and auth.isPlayerAllowed(clientId, data["flag"]) and not data["hidden"] then
                 table.insert(availableCommands, command)
             end
         end

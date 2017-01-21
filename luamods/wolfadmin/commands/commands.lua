@@ -58,7 +58,11 @@ function commands.getadmin(command)
     return admincmds
 end
 
-function commands.addclient(command, func, flag, syntax, chat)
+function commands.addclient(command, func, flag, syntax, chat, disabled)
+    if disabled then
+        return
+    end
+
     clientcmds[command] = {
         ["function"] = func,
         ["flag"] = flag,
@@ -67,13 +71,21 @@ function commands.addclient(command, func, flag, syntax, chat)
     }
 end
 
-function commands.addserver(command, func)
+function commands.addserver(command, func, disabled)
+    if disabled then
+        return
+    end
+
     servercmds[command] = {
         ["function"] = func,
     }
 end
 
-function commands.addadmin(command, func, flag, help, syntax, hidden)
+function commands.addadmin(command, func, flag, help, syntax, hidden, disabled)
+    if disabled then
+        return
+    end
+
     admincmds[command] = {
         ["function"] = func,
         ["flag"] = flag,

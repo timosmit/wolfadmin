@@ -62,4 +62,4 @@ function commandKick(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("kick", commandKick, auth.PERM_KICK, "kick a player with an optional reason", "^9[^3name|slot#^9] ^9(^3reason^9)", (settings.get("g_standalone") == 0))
+commands.addadmin("kick", commandKick, auth.PERM_KICK, "kick a player with an optional reason", "^9[^3name|slot#^9] ^9(^3reason^9)", nil, (settings.get("g_standalone") == 0))

@@ -31,4 +31,4 @@ function commandAdminTest(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("admintest", commandAdminTest, auth.PERM_ADMINTEST, "display your current admin level", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("admintest", commandAdminTest, auth.PERM_ADMINTEST, "display your current admin level", nil, nil, (settings.get("g_standalone") == 0))

@@ -42,7 +42,7 @@ function commandSetLevel(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", (settings.get("g_standalone") == 0 and db.isconnected()))
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true, (settings.get("g_standalone") == 1))
 
 function commandSetLevel(clientId, cmdArguments)
     if cmdArguments[1] == nil then
@@ -83,4 +83,4 @@ function commandSetLevel(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", (settings.get("g_standalone") == 0 and db.isconnected()))
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", nil, (settings.get("g_standalone") == 0))

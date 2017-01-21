@@ -85,4 +85,4 @@ function commandListPlayers(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))

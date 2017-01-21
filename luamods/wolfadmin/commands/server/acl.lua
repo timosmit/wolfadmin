@@ -199,4 +199,4 @@ function commandAcl(cmdArguments)
     
     return true
 end
-commands.addserver("acl", commandAcl)
+commands.addserver("acl", commandAcl, (settings.get("g_standalone") == 0))

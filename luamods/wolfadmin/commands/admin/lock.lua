@@ -42,7 +42,7 @@ function commandLock(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true)
+commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") == 1))
 
 function commandLock(clientId, cmdArguments)
     if cmdArguments[1] == nil or (cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC and cmdArguments[1] ~= "all") then
@@ -68,4 +68,4 @@ function commandLock(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", (settings.get("g_standalone") == 0))
+commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", nil, (settings.get("g_standalone") == 0))

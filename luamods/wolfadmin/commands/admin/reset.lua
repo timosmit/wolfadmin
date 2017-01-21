@@ -26,4 +26,4 @@ function commandReset(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("reset", commandReset, auth.PERM_RESTART, "resets the current match", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("reset", commandReset, auth.PERM_RESTART, "resets the current match", nil, nil, (settings.get("g_standalone") == 0))

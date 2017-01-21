@@ -70,4 +70,4 @@ function commandListHistory(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (settings.get("g_standalone") == 0 or not db.isconnected()) end)
+commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", nil, (settings.get("g_standalone") == 0))

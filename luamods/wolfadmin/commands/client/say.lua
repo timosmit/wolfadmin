@@ -26,10 +26,10 @@ function commandSay(clientId, cmdArguments)
         return true
     end
 end
-commands.addclient("say", commandSay, "", "", false)
-commands.addclient("say_team", commandSay, "", "", false)
-commands.addclient("say_teamnl", commandSay, "", "", false)
-commands.addclient("say_buddy", commandSay, "", "", false)
+commands.addclient("say", commandSay, "", "", false, (settings.get("g_standalone") == 0))
+commands.addclient("say_team", commandSay, "", "", false, (settings.get("g_standalone") == 0))
+commands.addclient("say_teamnl", commandSay, "", "", false, (settings.get("g_standalone") == 0))
+commands.addclient("say_buddy", commandSay, "", "", false, (settings.get("g_standalone") == 0))
 
 function commandVoiceSay(clientId, cmdArguments)
     if players.isMuted(clientId, players.MUTE_VOICE) then

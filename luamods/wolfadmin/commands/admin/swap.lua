@@ -26,4 +26,4 @@ function commandSwap(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("swap", commandSwap, auth.PERM_SWAP, "swap teams", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("swap", commandSwap, auth.PERM_SWAP, "swap teams", nil, nil, (settings.get("g_standalone") == 0))

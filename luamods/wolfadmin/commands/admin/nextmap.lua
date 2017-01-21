@@ -26,4 +26,4 @@ function commandNextMap(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("nextmap", commandNextMap, auth.PERM_NEXTMAP, "loads the next map", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("nextmap", commandNextMap, auth.PERM_NEXTMAP, "loads the next map", nil, nil, (settings.get("g_standalone") == 0))

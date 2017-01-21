@@ -34,4 +34,4 @@ function commandRestart(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("restart", commandRestart, auth.PERM_RESTART, "restarts the current map", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("restart", commandRestart, auth.PERM_RESTART, "restarts the current map", nil, nil, (settings.get("g_standalone") == 0))

@@ -81,4 +81,4 @@ function commandListAliases(clientId, cmdArguments)
     
     return true
 end
-commands.addadmin("listaliases", commandListAliases, auth.PERM_FINGER, "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)", function() return (not db.isconnected()) end)
+commands.addadmin("listaliases", commandListAliases, auth.PERM_LISTALIASES, "display all known aliases for a player", "^9[^3name|slot#^9] ^9(^hoffset^9)")

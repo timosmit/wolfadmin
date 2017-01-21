@@ -42,7 +42,7 @@ function commandUnlock(clientId, cmdArguments)
     
     return false
 end
-commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true)
+commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") == 1))
 
 function commandUnlock(clientId, cmdArguments)
     if cmdArguments[1] == nil or (cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC and cmdArguments[1] ~= "all") then
@@ -68,4 +68,4 @@ function commandUnlock(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", (settings.get("g_standalone") == 0))
+commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", nil, (settings.get("g_standalone") == 0))

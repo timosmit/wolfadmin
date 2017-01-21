@@ -60,4 +60,4 @@ function commandFinger(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("finger", commandFinger, auth.PERM_FINGER, "gives specific information about a player", "^9[^3name|slot#^9]", (settings.get("g_standalone") == 0))
+commands.addadmin("finger", commandFinger, auth.PERM_FINGER, "gives specific information about a player", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))

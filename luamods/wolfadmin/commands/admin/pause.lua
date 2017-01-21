@@ -27,4 +27,4 @@ function commandPause(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("pause", commandPause, auth.PERM_RESTART, "pauses the game for all players", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("pause", commandPause, auth.PERM_RESTART, "pauses the game for all players", nil, nil, (settings.get("g_standalone") == 0))

@@ -26,4 +26,4 @@ function commandShuffle(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams to try and even them", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams to try and even them", nil, nil, (settings.get("g_standalone") == 0))

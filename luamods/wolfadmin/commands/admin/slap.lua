@@ -66,4 +66,4 @@ function commandSlap(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("slap", commandSlap, auth.PERM_SLAP, "give a player a specified amount of damage for a specified reason", "^9[^3name|slot#^9] (^hdamage^9) (^hreason^9)", (settings.get("g_standalone") == 0))
+commands.addadmin("slap", commandSlap, auth.PERM_SLAP, "give a player a specified amount of damage for a specified reason", "^9[^3name|slot#^9] (^hdamage^9) (^hreason^9)", nil, (settings.get("g_standalone") == 0))

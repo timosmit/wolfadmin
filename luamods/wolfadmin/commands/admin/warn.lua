@@ -49,7 +49,7 @@ function commandWarn(clientId, cmdArguments)
 
     return false
 end
-commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true)
+commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") == 1))
 
 function commandWarn(clientId, cmdArguments)
     if #cmdArguments < 2 then
@@ -87,4 +87,4 @@ function commandWarn(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", (settings.get("g_standalone") == 0 and db.isconnected()))
+commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", nil, (settings.get("g_standalone") == 0))

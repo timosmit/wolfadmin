@@ -52,4 +52,4 @@ function commandShowBans(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("showbans", commandShowBans, auth.PERM_LISTBANS, "display a (partial) list of active bans", "(^hstart at ban#^9) ((^hbanner^9) (^3banner's name^9)) ((^3find^9) (^hbanned player^9)) ((^3reason^9) (^hreason for ban^9))", function() return (not db.isconnected()) end)
+commands.addadmin("showbans", commandShowBans, auth.PERM_LISTBANS, "display a (partial) list of active bans", "(^hstart at ban#^9) ((^hbanner^9) (^3banner's name^9)) ((^3find^9) (^hbanned player^9)) ((^3reason^9) (^hreason for ban^9))", nil, (settings.get("g_standalone") == 0))

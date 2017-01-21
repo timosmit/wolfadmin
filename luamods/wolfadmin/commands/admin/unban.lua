@@ -48,4 +48,4 @@ function commandRemoveBan(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("unban", commandRemoveBan, auth.PERM_BAN, "unbans a player specified ban number as seen in ^2!showbans^9", "^9[^3ban#^9]", function() return (settings.get("g_standalone") == 0 or not db.isconnected()) end)
+commands.addadmin("unban", commandRemoveBan, auth.PERM_BAN, "unbans a player specified ban number as seen in ^2!showbans^9", "^9[^3ban#^9]", nil, (settings.get("g_standalone") == 0))

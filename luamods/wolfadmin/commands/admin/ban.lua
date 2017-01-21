@@ -78,4 +78,4 @@ function commandBan(clientId, cmdArguments)
 
     return true
 end
-commands.addadmin("ban", commandBan, auth.PERM_BAN, "ban a player with an optional duration and reason", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", (settings.get("g_standalone") == 0))
+commands.addadmin("ban", commandBan, auth.PERM_BAN, "ban a player with an optional duration and reason", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", nil, (settings.get("g_standalone") == 0))
