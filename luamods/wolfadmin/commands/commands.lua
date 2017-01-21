@@ -30,7 +30,6 @@ local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local commands = {}
 
--- available shrubflags: lqyFHY
 local clientcmds = {}
 local servercmds = {}
 local admincmds = {}
@@ -84,7 +83,7 @@ function commands.addadmin(command, func, flag, help, syntax, hidden)
     }
 end
 
-function commands.loadfiles(dir)
+function commands.loadFiles(dir)
     local amount = 0
     local files = files.ls("commands/"..dir.."/")
     
@@ -102,9 +101,9 @@ end
 function commands.load()
     local functionStart = et.trap_Milliseconds()
     
-    local clientAmount = commands.loadfiles("client")
-    local serverAmount = commands.loadfiles("server")
-    local adminAmount = commands.loadfiles("admin")
+    local clientAmount = commands.loadFiles("client")
+    local serverAmount = commands.loadFiles("server")
+    local adminAmount = commands.loadFiles("admin")
     
     local totalAmount = clientAmount + serverAmount + adminAmount
     
@@ -164,13 +163,13 @@ function commands.log(clientId, command, cmdArguments)
     et.trap_FS_FCloseFile(fileDescriptor)
 end
 
-function commands.oninit()
+function commands.onGameInit()
     commands.load()
 end
-events.handle("onGameInit", commands.oninit)
+events.handle("onGameInit", commands.onGameInit)
 
-function commands.onservercommand(cmdText)
-    local wolfCmd = string.lower(et.trap_Argv(0))
+function commands.onServerCommand(cmdText)
+    local wolfCmd = string.lower(cmdText)
     local cmdArguments = {}
     
     if servercmds[wolfCmd] and servercmds[wolfCmd]["function"] then
@@ -180,8 +179,7 @@ function commands.onservercommand(cmdText)
         
         return servercmds[wolfCmd]["function"](clientId, cmdArguments) and 1 or 0
     end
-    
-    -- TODO: merge with commands.onclientcommand
+
     local shrubCmd = cmdText
     
     if string.find(cmdText, "!") == 1 then
@@ -192,85 +190,48 @@ function commands.onservercommand(cmdText)
         for i = 1, et.trap_Argc() - 1 do
             cmdArguments[i] = et.trap_Argv(i)
         end
-        
-        admincmds[shrubCmd]["function"](-1337, cmdArguments)
-        
+
         if not admincmds[shrubCmd]["hidden"] then
             commands.log(-1337, shrubCmd, cmdArguments)
         end
+        
+        admincmds[shrubCmd]["function"](-1337, cmdArguments)
     end
 end
-events.handle("onServerCommand", commands.onservercommand)
+events.handle("onServerCommand", commands.onServerCommand)
 
-function commands.onclientcommand(clientId, cmdText)
-    local wolfCmd = string.lower(et.trap_Argv(0))
+function commands.onClientCommand(clientId, cmdText)
+    local wolfCmd = string.lower(cmdText)
     local cmdArguments = {}
-    
+
     -- mod-specific or custom commands loading
+    -- syntax: command arg1 arg2 ... argN
     if clientcmds[wolfCmd] and clientcmds[wolfCmd]["function"] and clientcmds[wolfCmd]["flag"] then
-        if clientcmds[wolfCmd]["flag"] == "" or auth.isallowed(clientId, clientcmds[wolfCmd]["flag"]) == 1 then        
+        if clientcmds[wolfCmd]["flag"] == "" or auth.isallowed(clientId, clientcmds[wolfCmd]["flag"]) == 1 then
             for i = 1, et.trap_Argc() - 1 do
                 cmdArguments[i] = et.trap_Argv(i)
             end
-            
-            return clientcmds[wolfCmd]["function"](clientId, cmdArguments) and 1 or 0
+
+            local isFinished = clientcmds[wolfCmd]["function"](clientId, cmdArguments)
+
+            if isFinished ~= nil then
+                return isFinished and 1 or 0
+            end
         end
     end
-    
-    -- all Wolfenstein-related commands defined separately for now
-    if wolfCmd == "team" then
-        if players.isTeamLocked(clientId) then
-            local clientTeam = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
-            local teamName = util.getTeamName(clientTeam)
-            local teamColor = util.getTeamColor(clientTeam)
-            
-            et.trap_SendServerCommand(clientId, "cp \"^7You are locked to the "..teamColor..teamName.." ^7team")
-            
-            return 1
-        end
 
-        local team = util.getTeamFromCode(et.trap_Argv(1))
-        if teams.isLocked(team) then
-            local teamName = util.getTeamName(team)
-            local teamColor = util.getTeamColor(team)
-
-            et.trap_SendServerCommand(clientId, "cp \""..teamColor..teamName.." ^7team is locked")
-
-            return 1
-        end
-    elseif wolfCmd == "callvote" then
-        local voteArguments = {}
-        for i = 2, et.trap_Argc() - 1 do
-            voteArguments[(i - 1)] = et.trap_Argv(i)
-        end
-        
-        return events.trigger("onCallvote", clientId, et.trap_Argv(1), voteArguments)
-    elseif wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_teamnl" or wolfCmd == "say_buddy" then
-        if players.isMuted(clientId, players.MUTE_CHAT) then
-            et.trap_SendServerCommand(clientId, "cp \"^1You are muted\"")
-            
-            return 1
-        end
-    elseif wolfCmd == "vsay" or wolfCmd == "vsay_team" then
-        if players.isMuted(clientId, players.MUTE_VOICE) then
-            et.trap_SendServerCommand(clientId, "cp \"^1You are voicemuted\"")
-            
-            return 1
-        end
-    end
-    
     -- client cmds
+    -- syntax: say or say_*
     local clientCmd = nil
-    
-    -- say and say_*
+
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "/") == 1 then
         cmdArguments = util.split(et.trap_Argv(1), " ")
         
-        -- say "/command param1 param2 paramN"
+        -- say "/command arg1 arg2 argN"
         if #cmdArguments > 1 then
             clientCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
             table.remove(cmdArguments, 1)
-        -- say /command param1 param2 paramN
+        -- say /command arg1 arg2 argN
         else
             clientCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
             
@@ -279,15 +240,9 @@ function commands.onclientcommand(clientId, cmdText)
             end
             if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
         end
-    -- !command
-    elseif string.find(wolfCmd, "!") == 1 then
-        clientCmd = string.sub(wolfCmd, 2, string.len(wolfCmd))
-        
-        for i = 1, et.trap_Argc() - 1 do
-            cmdArguments[i] = et.trap_Argv(i)
-        end
     end
-    
+
+    -- handle client cmds
     if clientCmd then
         clientCmd = string.lower(clientCmd)
         
@@ -301,15 +256,16 @@ function commands.onclientcommand(clientId, cmdText)
     -- shrub cmds
     local shrubCmd = nil
     
-    -- say and say_*
+    -- syntax: say or say_*
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "!") == 1 then
         cmdArguments = util.split(et.trap_Argv(1), " ")
         
-        -- say "!command param1 param2 paramN"
+        -- syntax: say "!command arg1 arg2 ... argN"
         if #cmdArguments > 1 then
             shrubCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
+
             table.remove(cmdArguments, 1)
-        -- say !command param1 param2 paramN
+        -- syntax: say !command arg1 arg2 ... argN
         else
             shrubCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
             
@@ -318,7 +274,7 @@ function commands.onclientcommand(clientId, cmdText)
             end
             if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
         end
-    -- !command
+    -- syntax: !command arg1 arg2 ... argN
     elseif string.find(wolfCmd, "!") == 1 then
         shrubCmd = string.sub(wolfCmd, 2, string.len(wolfCmd))
         
@@ -326,7 +282,8 @@ function commands.onclientcommand(clientId, cmdText)
             cmdArguments[i] = et.trap_Argv(i)
         end
     end
-    
+
+    -- handle shrub commands
     if shrubCmd then
         shrubCmd = string.lower(shrubCmd)
         
@@ -351,6 +308,6 @@ function commands.onclientcommand(clientId, cmdText)
     
     return 0
 end
-events.handle("onClientCommand", commands.onclientcommand)
+events.handle("onClientCommand", commands.onClientCommand)
 
 return commands

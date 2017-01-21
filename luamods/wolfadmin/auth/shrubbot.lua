@@ -22,6 +22,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local shrubbot = {}
 
+-- available shrubflags: lqyFHY
 local flags = {
     [auth.PERM_ADMINTEST] = "a",
     [auth.PERM_HELP] = "h",
