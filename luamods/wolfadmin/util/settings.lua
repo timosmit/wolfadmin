@@ -21,6 +21,7 @@ local events = require (wolfa_getLuaPath()..".util.events")
 local settings = {}
 
 local data = {
+    ["g_logAdmin"] = "admin.log",
     ["g_fileGreetings"] = "greetings.cfg",
     ["g_fileRules"] = "rules.cfg",
     ["g_fileSprees"] = "sprees.cfg",

@@ -17,8 +17,6 @@
 
 require (wolfa_getLuaPath()..".util.debug")
 
-local admin = require (wolfa_getLuaPath()..".admin.admin")
-
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local teams = require (wolfa_getLuaPath()..".game.teams")
@@ -28,6 +26,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local util = require (wolfa_getLuaPath()..".util.util")
 local events = require (wolfa_getLuaPath()..".util.events")
 local files = require (wolfa_getLuaPath()..".util.files")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local commands = {}
 
@@ -115,16 +114,6 @@ function commands.load()
 end
 
 function commands.log(clientId, command, cmdArguments)
-    local functionStart = et.trap_Milliseconds()
-    local fileDescriptor = files.open(et.trap_Cvar_Get("g_logAdmin"), et.FS_APPEND)
-    
-    local logLine
-    local levelTime = et.trap_Milliseconds() / 1000
-    
-    local clientGUID = clientId and players.getGUID(clientId) or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    local clientName = clientId and players.getName(clientId) or "console"
-    local clientFlags = ""
-    
     local victimId
     
     -- funny, NoQuarter actually checks EACH command for a victim (so even 
@@ -143,16 +132,35 @@ function commands.log(clientId, command, cmdArguments)
             victimId = cmdClient
         end
     end
-    
-    if victimId then
-        local victimName = players.getName(victimId)
-        logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
+
+    local fileDescriptor = files.open(settings.get("g_logAdmin"), et.FS_APPEND)
+
+    local logLine
+
+    local clientGUID = clientId and players.getGUID(clientId) or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    local clientName = clientId and players.getName(clientId) or "console"
+    local clientFlags = ""
+
+    if settings.get("g_standalone") == 1 then
+        if victimId then
+            local victimName = players.getName(victimId)
+            logLine = string.format("[%s] %s: %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, victimName, table.concat(cmdArguments, " ", 2))
+        else
+            logLine = string.format("[%s] %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, table.concat(cmdArguments, " "))
+        end
     else
-        logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))
+        local levelTime = et.trap_Milliseconds() / 1000
+
+        if victimId then
+            local victimName = players.getName(victimId)
+            logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
+        else
+            logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))
+        end
     end
-    
+
     et.trap_FS_Write(logLine, string.len(logLine), fileDescriptor)
-    
+
     et.trap_FS_FCloseFile(fileDescriptor)
 end
 
