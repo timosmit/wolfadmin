@@ -24,35 +24,39 @@ local players = require (wolfa_getLuaPath()..".players.players")
 function commandR(clientId, cmdArguments)
     if #cmdArguments == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("r")["syntax"].."\";")
-    else
-        local recipient = players.getLastPMSender(clientId)
-        
-        if not (recipient and et.gentity_get(recipient, "pers.netname")) then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
-        else
-            local message, messageConcatenated = {}, ""
-            
-            for i = 1, #cmdArguments do
-                message[i] = cmdArguments[i]
-            end
-            
-            messageConcatenated = table.concat(message, " ")
-            
-            players.setLastPMSender(recipient, clientId)
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
-            
-            if clientId ~= recipient then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
-            end
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
-        end
+
+        return true
     end
-    
+
+    local recipient = players.getLastPMSender(clientId)
+
+    if not (recipient and et.gentity_get(recipient, "pers.netname")) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
+
+        return true
+    end
+
+    local message, messageConcatenated = {}, ""
+
+    for i = 1, #cmdArguments do
+        message[i] = cmdArguments[i]
+    end
+
+    messageConcatenated = table.concat(message, " ")
+
+    players.setLastPMSender(recipient, clientId)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
+
+    if clientId ~= recipient then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
+    end
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
+
     return true
 end
 commands.addclient("r", commandR, "", "[^2message^7]", true)
