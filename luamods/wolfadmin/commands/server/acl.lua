@@ -194,7 +194,7 @@ function commandAcl(clientId, cmdArguments)
     elseif cmd == "copyroles" then
         return commandAclCopyLevelRoles(cmdArguments)
     else
-        error("usage: acl [listlevels|addlevel|removelevel|relevel|listroles|isallowed|addrole|removerole|copyroles]")
+        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listroles|isallowed|addrole|removerole|copyroles]")
     end
     
     return true
