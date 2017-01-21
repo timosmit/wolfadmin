@@ -42,7 +42,7 @@ function commandListHistory(clientId, cmdArguments)
         cmdClient = tonumber(cmdArguments[1])
     end
 
-    if cmdClient == -1 then
+    if cmdClient == -1 or cmdClient == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
 
         return true

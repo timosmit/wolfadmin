@@ -39,7 +39,7 @@ function commandWarn(clientId, cmdArguments)
         cmdClient = tonumber(cmdArguments[1])
     end
 
-    if cmdClient == -1 then
+    if cmdClient == -1 or cmdClient == nil then
         return false
     elseif not et.gentity_get(cmdClient, "pers.netname") then
         return false
@@ -62,7 +62,7 @@ function commandWarn(clientId, cmdArguments)
         cmdClient = tonumber(cmdArguments[1])
     end
 
-    if cmdClient == -1 then
+    if cmdClient == -1 or cmdClient == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
 
         return true
