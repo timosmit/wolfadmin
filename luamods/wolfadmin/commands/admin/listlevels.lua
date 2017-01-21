@@ -29,35 +29,41 @@ local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandListLevels(clientId, cmdArguments)
     if cmdArguments[1] == nil then
-        local fileName = et.trap_Cvar_Get("g_shrubbot")
-        local functionStart = et.trap_Milliseconds()
-        local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
-        local levelsCount = 0
-        
-        if fileLength == -1 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9an error happened (shrubbot file could not be opened)\";")
-            
-            error("failed to open "..fileName.."\n")
+        if settings.get("g_standalone") ~= 0 then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels usage: "..commands.getadmin("listlevels")["syntax"].."\";")
+
+            return true
+        else
+            local fileName = et.trap_Cvar_Get("g_shrubbot")
+            local functionStart = et.trap_Milliseconds()
+            local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+            local levelsCount = 0
+
+            if fileLength == -1 then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9an error happened (shrubbot file could not be opened)\";")
+
+                error("failed to open "..fileName.."\n")
+            end
+
+            local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
+
+            et.trap_FS_FCloseFile(fileDescriptor)
+
+            for entry, levelNr, levelName, levelFlags in string.gmatch(fileString, "(%[level%]\nlevel%s+=%s+(-?[0-9]+)\nname%s+=%s+([%a%d%p ]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
+                -- et.G_Print(string.format("%d %s %s\n", levelNr, levelName, levelFlags))
+
+                local numberOfSpaces = 24 - string.len(util.removeColors(levelName))
+                local spaces = string.rep(" ", numberOfSpaces)
+
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..string.format("%5s", levelNr).." ^7"..spaces..levelName.." ^7"..levelFlags.."\";")
+
+                levelsCount = levelsCount + 1
+            end
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistlevels: ^9"..levelsCount.." available levels (open console for the full list)\";")
+
+            return true
         end
-        
-        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
-        
-        et.trap_FS_FCloseFile(fileDescriptor)
-        
-        for entry, levelNr, levelName, levelFlags in string.gmatch(fileString, "(%[level%]\nlevel%s+=%s+(-?[0-9]+)\nname%s+=%s+([%a%d%p ]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
-            -- et.G_Print(string.format("%d %s %s\n", levelNr, levelName, levelFlags))
-            
-            local numberOfSpaces = 24 - string.len(util.removeColors(levelName))
-            local spaces = string.rep(" ", numberOfSpaces)
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..string.format("%5s", levelNr).." ^7"..spaces..levelName.." ^7"..levelFlags.."\";")
-            
-            levelsCount = levelsCount + 1
-        end
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistlevels: ^9"..levelsCount.." available levels (open console for the full list)\";")
-        
-        return true
     elseif not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9level history is disabled.\";")
         

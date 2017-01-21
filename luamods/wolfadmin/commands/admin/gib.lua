@@ -55,9 +55,9 @@ function commandGib(clientId, cmdArguments)
     end
 
     -- GENTITYNUM_BITS    10                      10
-    -- MAX_GENTITIES      1 << GENTITYNUM_BITS    20
+    -- MAX_GENTITIES      1 << GENTITYNUM_BITS    1024
     -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
-    et.G_Damage(cmdClient, 18, 18, 500, 0, 0) -- MOD_UNKNOWN = 0
+    et.G_Damage(cmdClient, 0, 1024, 500, 0, 0) -- MOD_UNKNOWN = 0
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.\";")
 
