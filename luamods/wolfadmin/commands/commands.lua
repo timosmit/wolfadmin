@@ -19,8 +19,6 @@ require (wolfa_getLuaPath()..".util.debug")
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local teams = require (wolfa_getLuaPath()..".game.teams")
-
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local util = require (wolfa_getLuaPath()..".util.util")

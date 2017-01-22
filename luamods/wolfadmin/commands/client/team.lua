@@ -17,7 +17,12 @@
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
+local teams = require (wolfa_getLuaPath()..".game.teams")
+
 local players = require (wolfa_getLuaPath()..".players.players")
+
+local util = require (wolfa_getLuaPath()..".util.util")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandTeam(clientId, cmdArguments)
     if players.isTeamLocked(clientId) then

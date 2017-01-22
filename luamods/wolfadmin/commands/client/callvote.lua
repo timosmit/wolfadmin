@@ -17,6 +17,8 @@
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
+local events = require (wolfa_getLuaPath()..".util.events")
+
 function commandCallVote(clientId, cmdArguments)
     local voteArguments = {}
     for i = 2, et.trap_Argc() - 1 do
