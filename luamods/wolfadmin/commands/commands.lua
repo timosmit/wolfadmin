@@ -137,7 +137,7 @@ function commands.log(clientId, command, cmdArguments)
             cmdClient = tonumber(cmdArguments[1])
         end
         
-        if cmdClient ~= -1 and et.gentity_get(cmdClient, "pers.netname") then
+        if cmdClient ~= -1 and cmdClient ~= nil and et.gentity_get(cmdClient, "pers.netname") then
             victimId = cmdClient
         end
     end
