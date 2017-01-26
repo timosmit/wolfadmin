@@ -24,7 +24,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local util = require (wolfa_getLuaPath()..".util.util")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandTeam(clientId, cmdArguments)
+function commandTeam(clientId, command)
     if players.isTeamLocked(clientId) then
         local clientTeam = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
         local teamName = util.getTeamName(clientTeam)

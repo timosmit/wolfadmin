@@ -21,8 +21,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-function commandR(clientId, cmdArguments)
-    if #cmdArguments == 0 then
+function commandR(clientId, command, ...)
+    if not ... then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("r")["syntax"].."\";")
 
         return true
@@ -36,21 +36,15 @@ function commandR(clientId, cmdArguments)
         return true
     end
 
-    local message, messageConcatenated = {}, ""
-
-    for i = 1, #cmdArguments do
-        message[i] = cmdArguments[i]
-    end
-
-    messageConcatenated = table.concat(message, " ")
+    local message = table.concat({...}, " ")
 
     players.setLastPMSender(recipient, clientId)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message.."\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
 
     if clientId ~= recipient then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..messageConcatenated.."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message.."\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
     end
 

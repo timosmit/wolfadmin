@@ -21,19 +21,19 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandShowStats(clientId, cmdArguments)
-    if cmdArguments[1] == nil then
+function commandShowStats(clientId, command, victim)
+    if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats usage: "..commands.getadmin("stats")["syntax"].."\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats: ^9no or multiple matches for '^7"..victim.."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then

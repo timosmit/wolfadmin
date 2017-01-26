@@ -21,7 +21,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local rules = require (wolfa_getLuaPath()..".admin.rules")
 local greetings = require (wolfa_getLuaPath()..".players.greetings")
 
-function commandReadconfig(clientId, cmdArguments)
+function commandReadconfig(clientId, command)
     settings.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()

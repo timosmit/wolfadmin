@@ -19,10 +19,10 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandHelp(clientId, cmdArguments)
+function commandHelp(clientId, command, cmd)
     local cmds = commands.getadmin()
     
-    if #cmdArguments == 0 then
+    if not cmd then
         local availableCommands = {}
         
         for command, data in pairs(cmds) do
@@ -53,14 +53,14 @@ function commandHelp(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!help ^d[command] ^9for help with a specific command.\";")
         
         return false
-    elseif #cmdArguments > 0 then
-        local helpCmd = string.lower(cmdArguments[1])
+    else
+        cmd = string.lower(cmd)
         
-        if cmds[helpCmd] ~= nil and (not cmds[helpCmd]["hidden"] or (type(cmds[helpCmd]["hidden"]) == "function" and not cmds[helpCmd]["hidden"]())) then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dhelp: ^9help for '^2"..helpCmd.."^9':\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfunction: ^9"..cmds[helpCmd]["help"].."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsyntax: ^9"..cmds[helpCmd]["syntax"].."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dflag: ^9'^2"..cmds[helpCmd]["flag"].."^9'\";")
+        if cmds[cmd] ~= nil and (not cmds[cmd]["hidden"] or (type(cmds[cmd]["hidden"]) == "function" and not cmds[cmd]["hidden"]())) then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dhelp: ^9help for '^2".. cmd .."^9':\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfunction: ^9"..cmds[cmd]["help"].."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsyntax: ^9"..cmds[cmd]["syntax"].."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dflag: ^9'^2"..cmds[cmd]["flag"].."^9'\";")
             
             return true
         end

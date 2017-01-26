@@ -28,7 +28,7 @@ local constants = require (wolfa_getLuaPath()..".util.constants")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandListPlayers(clientId, cmdArguments)
+function commandListPlayers(clientId, command)
     local playersOnline = {}
 
     for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do

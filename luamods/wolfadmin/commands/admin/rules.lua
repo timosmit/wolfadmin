@@ -19,8 +19,8 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local rules = require (wolfa_getLuaPath()..".admin.rules")
 
-function commandRules(clientId, cmdArguments)
-    if #cmdArguments == 0 then
+function commandRules(clientId, command, rule)
+    if not rule then
         local amountOfRules = 0
         
         local list = rules.get()
@@ -33,8 +33,8 @@ function commandRules(clientId, cmdArguments)
         
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^drules: ^9"..amountOfRules.." rules (open console for the full list)\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!rules ^d[rule] ^9to announce a specific rule.\";")
-    elseif #cmdArguments > 0 then
-        local rule = rules.get(string.lower(cmdArguments[1]))
+    else
+        local rule = rules.get(string.lower(rule))
         
         if rule then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")

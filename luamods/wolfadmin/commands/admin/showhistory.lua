@@ -27,23 +27,23 @@ local util = require (wolfa_getLuaPath()..".util.util")
 local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandListHistory(clientId, cmdArguments)
+function commandListHistory(clientId, command, victim, offset)
     if settings.get("g_standalone") == 0 or not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9warn history is disabled.\";")
 
         return true
-    elseif cmdArguments[1] == nil then
+    elseif victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory usage: "..commands.getadmin("showwarns")["syntax"].."\";")
 
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9no or multiple matches for '^7"..victim.."^9'.\";")
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -53,7 +53,7 @@ function commandListHistory(clientId, cmdArguments)
     end
 
     local count = history.getCount(cmdClient)
-    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local limit, offset = pagination.calculate(count, 30, tonumber(offset))
     local playerHistory = history.getList(cmdClient, limit, offset)
 
     if not (playerHistory and #playerHistory > 0) then

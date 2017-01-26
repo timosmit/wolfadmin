@@ -19,7 +19,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandReset(clientId, cmdArguments)
+function commandReset(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dreset: ^9match reset.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "reset_match")

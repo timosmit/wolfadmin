@@ -27,23 +27,23 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandListAliases(clientId, cmdArguments)
+function commandListAliases(clientId, command, victim, offset)
     if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")
         
         return true
-    elseif cmdArguments[1] == nil then
+    elseif victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases usage: "..commands.getadmin("listaliases")["syntax"].."\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9no or multiple matches for '^7"..victim.."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -65,7 +65,7 @@ function commandListAliases(clientId, cmdArguments)
     local player = db.getplayer(players.getGUID(cmdClient))["id"]
     
     local count = db.getaliasescount(player)
-    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local limit, offset = pagination.calculate(count, 30, tonumber(offset))
     local aliases = db.getaliases(player, limit, offset)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")

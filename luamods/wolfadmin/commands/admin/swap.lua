@@ -19,7 +19,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandSwap(clientId, cmdArguments)
+function commandSwap(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dswap: ^9teams swapped.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "swap_teams")

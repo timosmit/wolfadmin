@@ -20,7 +20,7 @@ local util = require (wolfa_getLuaPath()..".util.util")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local game = require (wolfa_getLuaPath()..".game.game")
 
-function commandListMaps(clientId, cmdArguments)
+function commandListMaps(clientId, command)
     local output = ""
     
     local maps = game.getMaps()

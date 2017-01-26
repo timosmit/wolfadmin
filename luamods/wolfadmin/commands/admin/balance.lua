@@ -19,8 +19,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 local balancer = require (wolfa_getLuaPath()..".admin.balancer")
 
-function commandBalance(clientId, cmdArguments)
-    if cmdArguments[1] == "enable" then
+function commandBalance(clientId, command, action)
+    if action == "enable" then
         if not balancer.isRunning() then
             balancer.enable()
 
@@ -28,7 +28,7 @@ function commandBalance(clientId, cmdArguments)
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer is already running.\";")
         end
-    elseif cmdArguments[1] == "disable" then
+    elseif action == "disable" then
         if balancer.isRunning() then
             balancer.disable()
 
@@ -36,7 +36,7 @@ function commandBalance(clientId, cmdArguments)
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer was not running.\";")
         end
-    elseif cmdArguments[1] == "force" then
+    elseif action == "force" then
         balancer.balance(true, true)
     else
         balancer.balance(true, false)

@@ -27,8 +27,8 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandListLevels(clientId, cmdArguments)
-    if cmdArguments[1] == nil then
+function commandListLevels(clientId, command, victim, offset)
+    if victim == nil then
         if settings.get("g_standalone") ~= 0 then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels usage: "..commands.getadmin("listlevels")["syntax"].."\";")
 
@@ -68,14 +68,14 @@ function commandListLevels(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9level history is disabled.\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9no or multiple matches for '^7"..victim.."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -87,7 +87,7 @@ function commandListLevels(clientId, cmdArguments)
     local player = db.getplayer(players.getGUID(cmdClient))["id"]
     
     local count = db.getlevelscount(player)
-    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local limit, offset = pagination.calculate(count, 30, tonumber(offset))
     local levels = db.getlevels(player, limit, offset)
     
     if not (levels and #levels > 0) then

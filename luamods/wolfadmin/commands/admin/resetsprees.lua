@@ -21,14 +21,14 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local game = require (wolfa_getLuaPath()..".game.game")
 local sprees = require (wolfa_getLuaPath()..".game.sprees")
 
-function commandResetSprees(clientId, cmdArguments)
+function commandResetSprees(clientId, command, map)
     if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
         
         return true
     end
 
-    if cmdArguments[1] and cmdArguments[1] == "all" then
+    if map and map == "all" then
         sprees.reset(true)
         
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9all spree records have been reset.\";")

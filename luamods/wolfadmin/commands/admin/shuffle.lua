@@ -19,7 +19,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandShuffle(clientId, cmdArguments)
+function commandShuffle(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")

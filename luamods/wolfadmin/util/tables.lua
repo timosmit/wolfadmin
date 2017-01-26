@@ -17,26 +17,26 @@
 
 local tables = {}
 
-function tables.copy(table)
+function tables.copy(tbl)
     local copy = {}
 
-    for key, value in pairs(table) do
+    for key, value in pairs(tbl) do
         copy[key] = value
     end
 
     return copy
 end
 
-function tables.unpack(table)
+function tables.unpack(tbl)
     if table.unpack ~= nil then
-        return table.unpack(table)
+        return table.unpack(tbl)
     elseif unpack ~= nil then
-        return unpack(table)
+        return unpack(tbl)
     end
 end
 
-function tables.contains(table, needle)
-    for key, value in pairs(table) do
+function tables.contains(tbl, needle)
+    for key, value in pairs(tbl) do
         if value == needle then
             return true
         end
@@ -45,8 +45,8 @@ function tables.contains(table, needle)
     return false
 end
 
-function tables.find(table, needle)
-    for key, value in pairs(table) do
+function tables.find(tbl, needle)
+    for key, value in pairs(tbl) do
         if value == needle then
             return key
         end

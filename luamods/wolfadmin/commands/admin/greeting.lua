@@ -21,7 +21,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local greetings = require (wolfa_getLuaPath()..".players.greetings")
 
-function commandGreeting(clientId, cmdArguments)
+function commandGreeting(clientId, command)
     local greeting = greetings.get(clientId)
     
     if greeting then

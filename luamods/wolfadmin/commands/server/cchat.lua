@@ -19,13 +19,13 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandClientChatPrint(cmdArguments)
-    local clientId = tonumber(cmdArguments[1])
+function commandClientChatPrint(command, clientId, text)
+    local clientId = tonumber(clientId)
 
     if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-        et.trap_SendServerCommand(clientId, "chat \""..cmdArguments[2].."\";")
+        et.trap_SendServerCommand(clientId, "chat \""..text.."\";")
     elseif clientId then
-        et.G_Print(util.removeColors(cmdArguments[2]).."\n")
+        et.G_Print(util.removeColors(text).."\n")
     end
 
     return true

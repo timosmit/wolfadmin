@@ -21,13 +21,13 @@ local db = require (wolfa_getLuaPath()..".db.db")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local admin = require (wolfa_getLuaPath()..".admin.admin")
 
-function commandSetLevel(clientId, cmdArguments)
-    if #cmdArguments < 2 then
+function commandSetLevel(clientId, command, victim, level)
+    if not victim or not level then
         return false
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
@@ -36,27 +36,27 @@ function commandSetLevel(clientId, cmdArguments)
         return false
     end
 
-    cmdArguments[2] = tonumber(cmdArguments[2]) or 0 
+    level = tonumber(level) or 0 
 
-    admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
+    admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
 
     return false
 end
 commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true, (settings.get("g_standalone") == 1))
 
-function commandSetLevel(clientId, cmdArguments)
-    if cmdArguments[1] == nil then
+function commandSetLevel(clientId, command, victim, level)
+    if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel usage: "..commands.getadmin("setlevel")["syntax"].."\";")
 
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..victim.."^9'.\";")
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -69,17 +69,17 @@ function commandSetLevel(clientId, cmdArguments)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true
-    elseif not db.getLevel(tonumber(cmdArguments[2])) then
+    elseif not db.getLevel(tonumber(level)) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9this admin level does not exist.\";")
 
         return true
     end
 
-    cmdArguments[2] = tonumber(cmdArguments[2]) or 0
+    level = tonumber(level) or 0
 
-    admin.setPlayerLevel(cmdClient, tonumber(cmdArguments[2]), clientId)
+    admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..cmdArguments[2].." ^9player.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
 
     return false
 end

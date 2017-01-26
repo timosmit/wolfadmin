@@ -19,7 +19,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandNextMap(clientId, cmdArguments)
+function commandNextMap(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dnextmap: ^9next map was loaded.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "vstr nextmap")

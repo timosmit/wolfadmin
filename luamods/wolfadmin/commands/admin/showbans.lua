@@ -27,7 +27,7 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandShowBans(clientId, cmdArguments)
+function commandShowBans(clientId, offset)
     if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowbans: ^9bans are disabled.\";")
 
@@ -35,7 +35,7 @@ function commandShowBans(clientId, cmdArguments)
     end
 
     local count = bans.getCount()
-    local limit, offset = pagination.calculate(count, 30, tonumber(cmdArguments[2]))
+    local limit, offset = pagination.calculate(count, 30, tonumber(offset))
     local bans = bans.getList(limit, offset)
 
     if not (bans and #bans > 0) then

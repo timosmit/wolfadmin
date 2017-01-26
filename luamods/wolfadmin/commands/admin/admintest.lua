@@ -23,7 +23,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandAdminTest(clientId, cmdArguments)
+function commandAdminTest(clientId, command)
     local level = auth.getPlayerLevel(clientId)
     local levelName = auth.getLevelName(level)
 

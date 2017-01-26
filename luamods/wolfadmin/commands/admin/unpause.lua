@@ -20,7 +20,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local game = require (wolfa_getLuaPath()..".game.game")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandUnpause(clientId, cmdArguments)
+function commandUnpause(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dpause: ^9map unpaused.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ref unpause")

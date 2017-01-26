@@ -26,19 +26,19 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local util = require (wolfa_getLuaPath()..".util.util")
 
-function commandVoiceMute(clientId, cmdArguments)
-    if cmdArguments[1] == nil then
+function commandVoiceMute(clientId, command, victim, ...)
+    if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^9no or multiple matches for '^7"..victim.."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -46,16 +46,17 @@ function commandVoiceMute(clientId, cmdArguments)
         
         return true
     end
-    
+
+    local args = {...}
     local duration, reason = 600, "muted by admin"
     
-    if cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) and cmdArguments[3] then
-        duration = util.getTimeFromString(cmdArguments[2])
-        reason = table.concat(cmdArguments, " ", 3)
-    elseif cmdArguments[2] and util.getTimeFromString(cmdArguments[2]) then
-        duration = util.getTimeFromString(cmdArguments[2])
-    elseif cmdArguments[2] then
-        reason = table.concat(cmdArguments, " ", 2)
+    if args[1] and util.getTimeFromString(args[1]) and args[2] then
+        duration = util.getTimeFromString(args[1])
+        reason = table.concat(args, " ", 2)
+    elseif args[1] and util.getTimeFromString(args[1]) then
+        duration = util.getTimeFromString(args[1])
+    elseif args[1] then
+        reason = table.concat(args, " ")
     elseif not auth.isPlayerAllowed(clientId, "8") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         

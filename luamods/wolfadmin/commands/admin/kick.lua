@@ -24,19 +24,19 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandKick(clientId, cmdArguments)
-    if cmdArguments[1] == nil then
+function commandKick(clientId, command, victim, ...)
+    if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick usage: "..commands.getadmin("kick")["syntax"].."\";")
 
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no or multiple matches for '^7"..victim.."^9'.\";")
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -55,7 +55,7 @@ function commandKick(clientId, cmdArguments)
         return true
     end
 
-    local reason = table.concat(cmdArguments, " ", 2)
+    local reason = table.concat({...}, " ")
 
     admin.kickPlayer(cmdClient, clientId, reason)
     history.add(cmdClient, clientId, "kick", reason)

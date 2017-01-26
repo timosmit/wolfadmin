@@ -19,7 +19,7 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local bots = require (wolfa_getLuaPath()..".game.bots")
 
-function commandBotsOff(clientId, cmdArguments)
+function commandBotsOff(clientId, command)
     bots.enable(false)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dkickbots: ^9bots were toggled off.\";")

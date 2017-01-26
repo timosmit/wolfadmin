@@ -20,7 +20,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local db = require (wolfa_getLuaPath()..".db.db")
 local sprees = require (wolfa_getLuaPath()..".game.sprees")
 
-function commandShowSprees(clientId, cmdArguments)
+function commandShowSprees(clientId, command)
     if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
         

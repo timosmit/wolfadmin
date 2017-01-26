@@ -21,15 +21,14 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandAclListLevels(cmdArguments)
+function commandAclListLevels(...)
     for _, level in ipairs(acl.getLevels()) do
         et.G_Print(string.format("%5d %30s %6d players", level["id"], level["name"], level["players"]).."\n")
     end
 end
 
-function commandAclAddLevel(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local name = cmdArguments[3]
+function commandAclAddLevel(levelId, name)
+    local levelId = tonumber(levelId)
 
     if not levelId then
         et.G_Print("usage: acl addlevel [id] [name]\n")
@@ -46,8 +45,8 @@ function commandAclAddLevel(cmdArguments)
     et.G_Print("added level "..levelId.." ("..name..")\n")
 end
 
-function commandAclRemoveLevel(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
+function commandAclRemoveLevel(levelId)
+    local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
         et.G_Print("usage: acl removelevel [id]\n")
@@ -61,9 +60,9 @@ function commandAclRemoveLevel(cmdArguments)
     et.G_Print("removed level "..levelId.."\n")
 end
 
-function commandAclReLevel(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local newLevelId = tonumber(cmdArguments[3])
+function commandAclReLevel(levelId, newLevelId)
+    local levelId = tonumber(levelId)
+    local newLevelId = tonumber(newLevelId)
 
     if not levelId or not acl.isLevel(levelId) or not newLevelId or not acl.isLevel(newLevelId) then
         et.G_Print("usage: acl relevel [id] [newid]\n")
@@ -76,8 +75,8 @@ function commandAclReLevel(cmdArguments)
     et.G_Print("releveled all players with "..levelId.." to "..newLevelId.."\n")
 end
 
-function commandAclListLevelRoles(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
+function commandAclListLevelRoles(levelId)
+    local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
         et.G_Print("usage: acl listroles [id]\n")
@@ -92,9 +91,8 @@ function commandAclListLevelRoles(cmdArguments)
     end
 end
 
-function commandAclIsAllowed(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local role = cmdArguments[3]
+function commandAclIsAllowed(levelId, role)
+    local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not role then
         et.G_Print("usage: acl isallowed [id] [role]\n")
@@ -107,9 +105,8 @@ function commandAclIsAllowed(cmdArguments)
     et.G_Print("level "..levelId.." "..(isAllowed and "HAS" or "HAS NOT").." "..role.."\n")
 end
 
-function commandAclAddLevelRole(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local role = cmdArguments[3]
+function commandAclAddLevelRole(levelId, role)
+    local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not role then
         et.G_Print("usage: acl addrole [id] [role]\n")
@@ -130,9 +127,8 @@ function commandAclAddLevelRole(cmdArguments)
     et.G_Print("added role "..role.." to level "..levelId.."\n")
 end
 
-function commandAclRemoveLevelRole(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local role = cmdArguments[3]
+function commandAclRemoveLevelRole(levelId, role)
+    local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not role then
         et.G_Print("usage: acl removerole [id] [role]\n")
@@ -153,9 +149,9 @@ function commandAclRemoveLevelRole(cmdArguments)
     et.G_Print("removed role "..role.." from level "..levelId.."\n")
 end
 
-function commandAclCopyLevelRoles(cmdArguments)
-    local levelId = tonumber(cmdArguments[2])
-    local newLevelId = tonumber(cmdArguments[3])
+function commandAclCopyLevelRoles(levelId, newLevelId)
+    local levelId = tonumber(levelId)
+    local newLevelId = tonumber(newLevelId)
 
     if not levelId or not acl.isLevel(levelId) or not newLevelId or not acl.isLevel(newLevelId) then
         et.G_Print("usage: acl copyroles [id] [newid]\n")
@@ -174,27 +170,25 @@ function commandAclCopyLevelRoles(cmdArguments)
     et.G_Print("copied roles from "..levelId.." to "..newLevelId.."\n")
 end
 
-function commandAcl(cmdArguments)
-    local cmd = cmdArguments[1]
-
-    if cmd == "listlevels" then
-        return commandAclListLevels(cmdArguments)
-    elseif cmd == "addlevel" then
-        return commandAclAddLevel(cmdArguments)
-    elseif cmd == "removelevel" then
-        return commandAclRemoveLevel(cmdArguments)
-    elseif cmd == "relevel" then
-        return commandAclReLevel(cmdArguments)
-    elseif cmd == "listroles" then
-        return commandAclListLevelRoles(cmdArguments)
-    elseif cmd == "isallowed" then
-        return commandAclIsAllowed(cmdArguments)
-    elseif cmd == "addrole" then
-        return commandAclAddLevelRole(cmdArguments)
-    elseif cmd == "removerole" then
-        return commandAclRemoveLevelRole(cmdArguments)
-    elseif cmd == "copyroles" then
-        return commandAclCopyLevelRoles(cmdArguments)
+function commandAcl(command, action, ...)
+    if action == "listlevels" then
+        return commandAclListLevels(...)
+    elseif action == "addlevel" then
+        return commandAclAddLevel(...)
+    elseif action == "removelevel" then
+        return commandAclRemoveLevel(...)
+    elseif action == "relevel" then
+        return commandAclReLevel(...)
+    elseif action == "listroles" then
+        return commandAclListLevelRoles(...)
+    elseif action == "isallowed" then
+        return commandAclIsAllowed(...)
+    elseif action == "addrole" then
+        return commandAclAddLevelRole(...)
+    elseif action == "removerole" then
+        return commandAclRemoveLevelRole(...)
+    elseif action == "copyroles" then
+        return commandAclCopyLevelRoles(...)
     else
         et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listroles|isallowed|addrole|removerole|copyroles]")
     end

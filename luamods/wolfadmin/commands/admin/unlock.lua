@@ -25,12 +25,12 @@ local util = require (wolfa_getLuaPath()..".util.util")
 local constants = require (wolfa_getLuaPath()..".util.constants")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandUnlock(clientId, cmdArguments)
-    if cmdArguments[1] == nil or (cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC and cmdArguments[1] ~= "all") then
+function commandUnlock(clientId, command, team)
+    if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then
         return false
     end
     
-    if cmdArguments[1] == "all" then
+    if team == "all" then
         teams.unlock(constants.TEAM_AXIS)
         teams.unlock(constants.TEAM_ALLIES)
         teams.unlock(constants.TEAM_SPECTATORS)
@@ -38,20 +38,20 @@ function commandUnlock(clientId, cmdArguments)
         return false
     end
     
-    teams.unlock(util.getTeamFromCode(cmdArguments[1]))
+    teams.unlock(util.getTeamFromCode(team))
     
     return false
 end
 commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") == 1))
 
-function commandUnlock(clientId, cmdArguments)
-    if cmdArguments[1] == nil or (cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC and cmdArguments[1] ~= "all") then
+function commandUnlock(clientId, command, team)
+    if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunlock usage: "..commands.getadmin("unlock")["syntax"].."\";")
 
         return true
     end
 
-    if cmdArguments[1] == "all" then
+    if team == "all" then
         teams.unlock(constants.TEAM_AXIS)
         teams.unlock(constants.TEAM_ALLIES)
         teams.unlock(constants.TEAM_SPECTATORS)
@@ -61,7 +61,7 @@ function commandUnlock(clientId, cmdArguments)
         return false
     end
 
-    local team = util.getTeamFromCode(cmdArguments[1])
+    local team = util.getTeamFromCode(team)
     teams.unlock(team)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been unlocked.\";")

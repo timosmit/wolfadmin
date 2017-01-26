@@ -25,25 +25,25 @@ local db = require (wolfa_getLuaPath()..".db.db")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandRemoveBan(clientId, cmdArguments)
+function commandRemoveBan(clientId, command, ban)
     if settings.get("g_standalone") == 0 or not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9bans are disabled.\";")
 
         return true
-    elseif #cmdArguments < 1 or tonumber(cmdArguments[1]) == nil then
+    elseif not ban or tonumber(ban) == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban usage: "..commands.getadmin("unban")["syntax"].."\";")
 
         return true
     end
 
-    local ban = bans.get(tonumber(cmdArguments[1]))
+    local ban = bans.get(tonumber(ban))
 
     if not ban then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..cmdArguments[1].." does not exist.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..ban.." does not exist.\";")
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..cmdArguments[1].." removed.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..ban.." removed.\";")
 
-        bans.remove(tonumber(cmdArguments[1]))
+        bans.remove(tonumber(ban))
     end
 
     return true

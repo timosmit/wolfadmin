@@ -22,27 +22,18 @@ local balancer = require (wolfa_getLuaPath()..".admin.balancer")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local bots = require (wolfa_getLuaPath()..".game.bots")
 
-function commandPutBots(clientId, cmdArguments)
-    if cmdArguments[1] == nil and cmdArguments[1] ~= constants.TEAM_AXIS_SC and cmdArguments[1] ~= constants.TEAM_ALLIES_SC and cmdArguments[1] ~= constants.TEAM_SPECTATORS_SC then
+function commandPutBots(clientId, command, team)
+    if team == nil and team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
     end
-    
-    local team
-    if cmdArguments[1] == constants.TEAM_AXIS_SC then
-        team = constants.TEAM_AXIS
-    elseif cmdArguments[1] == constants.TEAM_ALLIES_SC then
-        team = constants.TEAM_ALLIES
-    elseif cmdArguments[1] == constants.TEAM_SPECTATORS_SC then
-        team = constants.TEAM_SPECTATORS
-    end
-    
-    local teamname = util.getTeamColor(team)..util.getTeamName(team)
+
+    team = util.getTeamFromCode(team)
     
     bots.put(team)
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dputbots: ^9all bots were set to ^7"..teamname.." ^9team.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dputbots: ^9all bots were set to ^7"..util.getTeamColor(team)..util.getTeamName(team).." ^9team.\";")
 
     if (team == constants.TEAM_AXIS or team == constants.TEAM_ALLIES) and balancer.isRunning() then
         balancer.disable()

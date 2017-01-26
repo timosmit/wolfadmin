@@ -25,19 +25,19 @@ local util = require (wolfa_getLuaPath()..".util.util")
 local constants = require (wolfa_getLuaPath()..".util.constants")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandPlayerLock(clientId, cmdArguments)
-    if cmdArguments[2] == nil or (cmdArguments[2] ~= constants.TEAM_AXIS_SC and cmdArguments[2] ~= constants.TEAM_ALLIES_SC and cmdArguments[2] ~= constants.TEAM_SPECTATORS_SC) then
+function commandPlayerLock(clientId, command, victim, team)
+    if victim == nil or team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput usage: "..commands.getadmin("put")["syntax"].."\";")
         
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^9no or multiple matches for '^7"..victim.."^9'.\";")
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -56,19 +56,11 @@ function commandPlayerLock(clientId, cmdArguments)
         return true
     end
     
-    local team
-    if cmdArguments[2] == constants.TEAM_AXIS_SC then
-        team = constants.TEAM_AXIS
-    elseif cmdArguments[2] == constants.TEAM_ALLIES_SC then
-        team = constants.TEAM_ALLIES
-    elseif cmdArguments[2] == constants.TEAM_SPECTATORS_SC then
-        team = constants.TEAM_SPECTATORS
-    end
-    
-    local teamname = util.getTeamColor(team)..util.getTeamName(team)
+    local team = util.getTeamFromCode(team)
 
-    -- TODO fix behaviour, cannot unbalance teams (see g_svcmds.c:SetTeam)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..teamname.."\";")
+    -- cannot unbalance teams in certain mods (see g_svcmds.c:SetTeam)
+    -- fixed in legacymod
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..util.getTeamColor(team)..util.getTeamName(team).."\";")
 
     admin.putPlayer(cmdClient, team)
 

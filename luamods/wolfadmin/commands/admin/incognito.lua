@@ -21,7 +21,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-function commandIncognito(clientId, cmdArguments)
+function commandIncognito(clientId, command)
     local fileName = et.trap_Cvar_Get("g_shrubbot")
     local functionStart = et.trap_Milliseconds()
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)

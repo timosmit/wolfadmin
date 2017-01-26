@@ -28,15 +28,15 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandWarn(clientId, cmdArguments)
+function commandWarn(clientId, command, victim, ...)
     if settings.get("g_warnHistory") == 0 or not db.isconnected() then
         return false
-    elseif #cmdArguments < 2 then
+    elseif not victim or not ... then
         return false
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
@@ -45,25 +45,25 @@ function commandWarn(clientId, cmdArguments)
         return false
     end
 
-    history.add(cmdClient, clientId, os.time(), "warn", table.concat(cmdArguments, " ", 2))
+    history.add(cmdClient, clientId, os.time(), "warn", table.concat({...}, " "))
 
     return false
 end
 commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") == 1))
 
-function commandWarn(clientId, cmdArguments)
-    if #cmdArguments < 2 then
+function commandWarn(clientId, command, victim, ...)
+    if not victim or not ... then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn usage: "..commands.getadmin("warn")["syntax"].."\";")
 
         return true
-    elseif tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(cmdArguments[1])
+    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        cmdClient = et.ClientNumberFromString(victim)
     else
-        cmdClient = tonumber(cmdArguments[1])
+        cmdClient = tonumber(victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9no or multiple matches for '^7"..cmdArguments[1].."^9'.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9no or multiple matches for '^7"..victim.."^9'.\";")
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
@@ -78,7 +78,7 @@ function commandWarn(clientId, cmdArguments)
         return true
     end
 
-    local reason = table.concat(cmdArguments, " ", 2)
+    local reason = table.concat({...}, " ")
 
     history.add(cmdClient, clientId, "warn", reason)
 
