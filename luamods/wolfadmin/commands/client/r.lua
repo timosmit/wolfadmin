@@ -15,10 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
+local logs = require (wolfa_getLuaPath()..".util.logs")
 local players = require (wolfa_getLuaPath()..".players.players")
 
 function commandR(clientId, command, ...)
@@ -50,6 +49,8 @@ function commandR(clientId, command, ...)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
+
+    logs.writeChat(clientId, "priv", recipient, ...)
 
     return true
 end

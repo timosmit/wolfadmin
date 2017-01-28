@@ -15,16 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require (wolfa_getLuaPath()..".util.debug")
-
 local auth = require (wolfa_getLuaPath()..".auth.auth")
-
-local players = require (wolfa_getLuaPath()..".players.players")
 
 local util = require (wolfa_getLuaPath()..".util.util")
 local events = require (wolfa_getLuaPath()..".util.events")
 local files = require (wolfa_getLuaPath()..".util.files")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local logs = require (wolfa_getLuaPath()..".util.logs")
 local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local commands = {}
@@ -123,19 +119,19 @@ function commands.load()
     return totalAmount
 end
 
-function commands.log(clientId, command, cmdArguments)
+function commands.log(clientId, command, victim, ...)
     local victimId
     
     -- funny, NoQuarter actually checks EACH command for a victim (so even 
     -- !help [playername] will log a victimname). so why not do the same :D
     -- todo: do this more nicely, maybe change .register() function
-    if cmdArguments[1] then
+    if victim then
         local cmdClient
-        
-        if tonumber(cmdArguments[1]) == nil or tonumber(cmdArguments[1]) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-            cmdClient = et.ClientNumberFromString(cmdArguments[1])
+
+        if tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+            cmdClient = et.ClientNumberFromString(victim)
         else
-            cmdClient = tonumber(cmdArguments[1])
+            cmdClient = tonumber(victim)
         end
         
         if cmdClient ~= -1 and cmdClient ~= nil and et.gentity_get(cmdClient, "pers.netname") then
@@ -143,35 +139,7 @@ function commands.log(clientId, command, cmdArguments)
         end
     end
 
-    local fileDescriptor = files.open(settings.get("g_logAdmin"), et.FS_APPEND)
-
-    local logLine
-
-    local clientGUID = clientId and players.getGUID(clientId) or "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    local clientName = clientId and players.getName(clientId) or "console"
-    local clientFlags = ""
-
-    if settings.get("g_standalone") == 1 then
-        if victimId then
-            local victimName = players.getName(victimId)
-            logLine = string.format("[%s] %s: %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, victimName, table.concat(cmdArguments, " ", 2))
-        else
-            logLine = string.format("[%s] %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, table.concat(cmdArguments, " "))
-        end
-    else
-        local levelTime = et.trap_Milliseconds() / 1000
-
-        if victimId then
-            local victimName = players.getName(victimId)
-            logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, victimId, victimName, table.concat(cmdArguments, " ", 2))
-        else
-            logLine = string.format("%3i:%02f: %i: %s: %s: %s: %s: \"%s\"\n", math.floor(levelTime / 60), (levelTime % 60), clientId, clientGUID, clientName, clientFlags, command, table.concat(cmdArguments, " "))
-        end
-    end
-
-    et.trap_FS_Write(logLine, string.len(logLine), fileDescriptor)
-
-    et.trap_FS_FCloseFile(fileDescriptor)
+    logs.writeAdmin(clientId, command, victimId, ...)
 end
 
 function commands.onGameInit()
@@ -179,51 +147,51 @@ function commands.onGameInit()
 end
 events.handle("onGameInit", commands.onGameInit)
 
-function commands.onServerCommand(cmdText)
-    local wolfCmd = string.lower(cmdText)
-    local cmdArguments = {}
-    
+function commands.onServerCommand(command)
+    local wolfCmd = string.lower(command)
+    local args = {}
+
     if servercmds[wolfCmd] and servercmds[wolfCmd]["function"] then
         for i = 1, et.trap_Argc() - 1 do
-            table.insert(cmdArguments, et.trap_Argv(i))
+            table.insert(args, et.trap_Argv(i))
         end
 
-        return servercmds[wolfCmd]["function"](wolfCmd, tables.unpack(cmdArguments)) and 1 or 0
+        return servercmds[wolfCmd]["function"](wolfCmd, tables.unpack(args)) and 1 or 0
     end
 
-    local shrubCmd = cmdText
-    
-    if string.find(cmdText, "!") == 1 then
-        shrubCmd = string.lower(string.sub(cmdText, 2, string.len(cmdText)))
+    local shrubCmd = command
+
+    if string.find(command, "!") == 1 then
+        shrubCmd = string.lower(string.sub(command, 2, string.len(command)))
     end
     
     if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
         for i = 1, et.trap_Argc() - 1 do
-            table.insert(cmdArguments, et.trap_Argv(i))
+            table.insert(args, et.trap_Argv(i))
         end
 
         if not admincmds[shrubCmd]["hidden"] then
-            commands.log(-1337, shrubCmd, cmdArguments)
+            commands.log(-1337, shrubCmd, tables.unpack(args))
         end
 
-        return admincmds[shrubCmd]["function"](-1337, shrubCmd, tables.unpack(cmdArguments)) and 1 or 0
+        return admincmds[shrubCmd]["function"](-1337, shrubCmd, tables.unpack(args)) and 1 or 0
     end
 end
 events.handle("onServerCommand", commands.onServerCommand)
 
-function commands.onClientCommand(clientId, cmdText)
-    local wolfCmd = string.lower(cmdText)
-    local cmdArguments = {}
+function commands.onClientCommand(clientId, command)
+    local wolfCmd = string.lower(command)
+    local args = {}
 
     -- mod-specific or custom commands loading
     -- syntax: command arg1 arg2 ... argN
     if clientcmds[wolfCmd] and clientcmds[wolfCmd]["function"] and clientcmds[wolfCmd]["flag"] then
         if clientcmds[wolfCmd]["flag"] == "" or auth.isPlayerAllowed(clientId, clientcmds[wolfCmd]["flag"]) then
             for i = 1, et.trap_Argc() - 1 do
-                table.insert(cmdArguments, et.trap_Argv(i))
+                table.insert(args, et.trap_Argv(i))
             end
 
-            local isFinished = clientcmds[wolfCmd]["function"](clientId, wolfCmd, tables.unpack(cmdArguments))
+            local isFinished = clientcmds[wolfCmd]["function"](clientId, wolfCmd, tables.unpack(args))
 
             if isFinished ~= nil then
                 return isFinished and 1 or 0
@@ -236,20 +204,20 @@ function commands.onClientCommand(clientId, cmdText)
     local clientCmd = nil
 
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "/") == 1 then
-        cmdArguments = util.split(et.trap_Argv(1), " ")
-        
+        args = util.split(et.trap_Argv(1), " ")
+
         -- say "/command arg1 arg2 argN"
-        if #cmdArguments > 1 then
-            clientCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
-            table.remove(cmdArguments, 1)
+        if #args > 1 then
+            clientCmd = string.sub(args[1], 2, string.len(args[1]))
+            table.remove(args, 1)
         -- say /command arg1 arg2 argN
         else
             clientCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
-            
+
             for i = 2, et.trap_Argc() - 1 do
-                table.insert(cmdArguments, et.trap_Argv(i))
+                table.insert(args, et.trap_Argv(i))
             end
-            if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
+            if args[1] == et.trap_Argv(1) then table.remove(args, 1) end
         end
     end
 
@@ -259,7 +227,7 @@ function commands.onClientCommand(clientId, cmdText)
         
         if clientcmds[clientCmd] and clientcmds[clientCmd]["function"] and clientcmds[clientCmd]["chat"] then
             if clientcmds[clientCmd]["flag"] == "" or auth.isPlayerAllowed(clientId, clientcmds[clientCmd]["flag"]) then
-                return clientcmds[clientCmd]["function"](clientId, clientCmd, tables.unpack(cmdArguments)) and 1 or 0
+                return clientcmds[clientCmd]["function"](clientId, clientCmd, tables.unpack(args)) and 1 or 0
             end
         end
     end
@@ -269,28 +237,28 @@ function commands.onClientCommand(clientId, cmdText)
     
     -- syntax: say or say_*
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "!") == 1 then
-        cmdArguments = util.split(et.trap_Argv(1), " ")
-        
-        -- syntax: say "!command arg1 arg2 ... argN"
-        if #cmdArguments > 1 then
-            shrubCmd = string.sub(cmdArguments[1], 2, string.len(cmdArguments[1]))
+        args = util.split(et.trap_Argv(1), " ")
 
-            table.remove(cmdArguments, 1)
+        -- syntax: say "!command arg1 arg2 ... argN"
+        if #args > 1 then
+            shrubCmd = string.sub(args[1], 2, string.len(args[1]))
+
+            table.remove(args, 1)
         -- syntax: say !command arg1 arg2 ... argN
         else
             shrubCmd = string.sub(et.trap_Argv(1), 2, string.len(et.trap_Argv(1)))
             
             for i = 2, et.trap_Argc() - 1 do
-                table.insert(cmdArguments, et.trap_Argv(i))
+                table.insert(args, et.trap_Argv(i))
             end
-            if cmdArguments[1] == et.trap_Argv(1) then table.remove(cmdArguments, 1) end
+            if args[1] == et.trap_Argv(1) then table.remove(args, 1) end
         end
     -- syntax: !command arg1 arg2 ... argN
     elseif string.find(wolfCmd, "!") == 1 then
         shrubCmd = string.sub(wolfCmd, 2, string.len(wolfCmd))
         
         for i = 1, et.trap_Argc() - 1 do
-            table.insert(cmdArguments, et.trap_Argv(i))
+            table.insert(args, et.trap_Argv(i))
         end
     end
 
@@ -301,10 +269,10 @@ function commands.onClientCommand(clientId, cmdText)
         if admincmds[shrubCmd] and admincmds[shrubCmd]["function"] and admincmds[shrubCmd]["flag"] then
             if wolfCmd == "say" or (((wolfCmd == "say_team" and et.gentity_get(cmdClient, "sess.sessionTeam") ~= et.TEAM_SPECTATORS) or wolfCmd == "say_buddy") and auth.isPlayerAllowed(clientId, auth.PERM_TEAMCMDS)) or (wolfCmd == "!"..shrubCmd and auth.isPlayerAllowed(clientId, auth.PERM_SILENTCMDS)) then
                 if admincmds[shrubCmd]["flag"] ~= "" and auth.isPlayerAllowed(clientId, admincmds[shrubCmd]["flag"]) then
-                    local isFinished = admincmds[shrubCmd]["function"](clientId, shrubCmd, tables.unpack(cmdArguments))
+                    local isFinished = admincmds[shrubCmd]["function"](clientId, shrubCmd, tables.unpack(args))
                     
                     if not admincmds[shrubCmd]["hidden"] then
-                        commands.log(clientId, shrubCmd, cmdArguments)
+                        commands.log(clientId, shrubCmd, tables.unpack(args))
                     end
                     
                     if isFinished and "!"..shrubCmd == wolfCmd then -- silent command via console, removes "unknown command" message

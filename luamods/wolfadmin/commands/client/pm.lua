@@ -15,12 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
+local logs = require (wolfa_getLuaPath()..".util.logs")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandPersonalMessage(clientId, command, recipient, ...)
@@ -84,6 +83,8 @@ function commandPersonalMessage(clientId, command, recipient, ...)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..cmdClient.." \"^9reply: ^7r [^2message^7]\";")
     end
+
+    logs.writeChat(clientId, "priv", cmdClient, ...)
 end
 commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
 commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
