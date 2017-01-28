@@ -22,16 +22,6 @@ local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local logs = {}
 
-function logs.writeServer(...)
-    local fileDescriptor = files.open(settings.get("g_logServer"), et.FS_APPEND)
-
-    local logLine = string.format("[%s] %s\n", os.date("%Y-%m-%d %H:%M:%S"), table.concat({...}, " "))
-
-    et.trap_FS_Write(logLine, string.len(logLine), fileDescriptor)
-
-    et.trap_FS_FCloseFile(fileDescriptor)
-end
-
 function logs.writeChat(clientId, type, ...)
     local fileDescriptor = files.open(settings.get("g_logChat"), et.FS_APPEND)
 
