@@ -21,9 +21,9 @@ local bots = require (wolfa_getLuaPath()..".game.bots")
 
 function commandBotsOff(clientId, command)
     bots.enable(false)
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dkickbots: ^9bots were toggled off.\";")
-    
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkickbots: ^9bots were toggled off.\";")
+
     return true
 end
 commands.addadmin("kickbots", commandBotsOff, auth.PERM_BOTADMIN, "kicks all bots from the game")

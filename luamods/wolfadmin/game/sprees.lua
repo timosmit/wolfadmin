@@ -131,8 +131,8 @@ function sprees.ongamestatechange(gameState)
             else
                 db.addrecord(currentMapId, os.time(), constants.RECORD_KILL, currentRecords["ksrecord"], currentRecords["ksplayer"])
             end
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest kill spree (^7"..currentRecords["ksrecord"].."^9) by ^7"..db.getlastalias(currentRecords["ksplayer"])["alias"].."^9.\";")
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest kill spree (^7"..currentRecords["ksrecord"].."^9) by ^7"..db.getlastalias(currentRecords["ksplayer"])["alias"].."^9.\";")
         end
         if currentRecords["dsrecord"] and currentRecords["dsrecord"] > 0 then
             if db.getrecord(currentMapId, constants.RECORD_DEATH) then
@@ -140,8 +140,8 @@ function sprees.ongamestatechange(gameState)
             else
                 db.addrecord(currentMapId, os.time(), constants.RECORD_DEATH, currentRecords["dsrecord"], currentRecords["dsplayer"])
             end
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest death spree (^7"..currentRecords["dsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["dsplayer"])["alias"].."^9.\";")
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest death spree (^7"..currentRecords["dsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["dsplayer"])["alias"].."^9.\";")
         end
         if currentRecords["rsrecord"] and currentRecords["rsrecord"] > 0 then
             if db.getrecord(currentMapId, constants.RECORD_REVIVE) then
@@ -149,8 +149,8 @@ function sprees.ongamestatechange(gameState)
             else
                 db.addrecord(currentMapId, os.time(), constants.RECORD_REVIVE, currentRecords["rsrecord"], currentRecords["rsplayer"])
             end
-            
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest revive spree (^7"..currentRecords["rsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["rsplayer"])["alias"].."^9.\";")
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest revive spree (^7"..currentRecords["rsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["rsplayer"])["alias"].."^9.\";")
         end
     end
 end
@@ -219,7 +219,7 @@ function sprees.onrevive(clientMedic, clientVictim)
     -- stats.set(clientMedic, "longestReviveSpree", stats.get(clientMedic, "currentReviveSpree") > stats.get(clientMedic, "longestReviveSpree") and stats.get(clientMedic, "currentReviveSpree") or stats.get(clientMedic, "longestReviveSpree"))
     
     if revivespreeMessages[playerSprees[clientMedic]["revive"]] then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[playerSprees[clientMedic]["revive"]]["msg"].." ^d(^3"..playerSprees[clientMedic]["revive"].." ^drevives in a row!)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[playerSprees[clientMedic]["revive"]]["msg"].." ^d(^3"..playerSprees[clientMedic]["revive"].." ^drevives in a row!)\";")
     end
     
     if (settings.get("g_botRecords") == 1 or not players.isBot(clientMedic)) and (not currentRecords["rsrecord"] or playerSprees[clientMedic]["revive"] > currentRecords["rsrecord"]) then

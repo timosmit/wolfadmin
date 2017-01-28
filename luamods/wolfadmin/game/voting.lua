@@ -52,8 +52,8 @@ function voting.isrestricted(type)
 end
 
 function voting.disablenextmap()
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvote: ^9next map voting has automatically been disabled.\";")
-    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvote: ^9next map voting has automatically been disabled.\";")
+
     voting.allow("nextmap", 0)
 end
 

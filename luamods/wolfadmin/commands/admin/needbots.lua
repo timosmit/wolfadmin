@@ -21,9 +21,9 @@ local bots = require (wolfa_getLuaPath()..".game.bots")
 
 function commandBotsOn(clientId, command)
     bots.enable(true)
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dneedbots: ^9bots were toggled on.\";")
-    
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dneedbots: ^9bots were toggled on.\";")
+
     return true
 end
 commands.addadmin("needbots", commandBotsOn, auth.PERM_BOTADMIN, "adds bots to the game")

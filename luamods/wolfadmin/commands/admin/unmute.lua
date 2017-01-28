@@ -52,7 +52,7 @@ function commandUnmute(clientId, command, victim)
         return true
     end
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unmuted\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unmuted\";")
     
     mutes.removeByClient(cmdClient)
     

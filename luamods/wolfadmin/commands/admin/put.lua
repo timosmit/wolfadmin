@@ -60,7 +60,7 @@ function commandPlayerLock(clientId, command, victim, team)
 
     -- cannot unbalance teams in certain mods (see g_svcmds.c:SetTeam)
     -- fixed in legacymod
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..util.getTeamColor(team)..util.getTeamName(team).."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..util.getTeamColor(team)..util.getTeamName(team).."\";")
 
     admin.putPlayer(cmdClient, team)
 

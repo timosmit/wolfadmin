@@ -47,7 +47,7 @@ function balancer.balance(byAdmin, forceBalance)
         evenerCount = 0
 
         if byAdmin then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9teams are even.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^devener: ^9teams are even.\";")
         end
 
         return
@@ -82,7 +82,7 @@ function balancer.balance(byAdmin, forceBalance)
                 local player = balancer.findPlayer(teamsData[teamGreater], teamGreater, teamSmaller)
 
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..player.." "..(teamGreater == constants.TEAM_AXIS and constants.TEAM_ALLIES_SC or constants.TEAM_AXIS_SC)..";")
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9thank you, ^7"..et.gentity_get(player, "pers.netname").."^9, for helping to even the teams.\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^devener: ^9thank you, ^7"..et.gentity_get(player, "pers.netname").."^9, for helping to even the teams.\";")
 
                 teamsData = teams.get()
             end
@@ -92,7 +92,7 @@ function balancer.balance(byAdmin, forceBalance)
             local teamGreaterName, teamSmallerName = util.getTeamName(teamGreater), util.getTeamName(teamSmaller)
             local teamGreaterColor, teamSmallerColor = util.getTeamColor(teamGreater), util.getTeamColor(teamSmaller)
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^devener: ^9teams seem unfair, would someone from "..teamGreaterColor..teamGreaterName.." ^9please switch to "..teamSmallerColor..teamSmallerName.."^9?\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^devener: ^9teams seem unfair, would someone from "..teamGreaterColor..teamGreaterName.." ^9please switch to "..teamSmallerColor..teamSmallerName.."^9?\";")
         end
     end
 end

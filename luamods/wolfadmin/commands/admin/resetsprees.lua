@@ -30,12 +30,12 @@ function commandResetSprees(clientId, command, map)
 
     if map and map == "all" then
         sprees.reset(true)
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9all spree records have been reset.\";")
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dresetsprees: ^9all spree records have been reset.\";")
     else
         sprees.reset()
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.\";")
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.\";")
     end
     
     return true

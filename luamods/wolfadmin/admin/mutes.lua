@@ -69,7 +69,7 @@ function mutes.checkUnmutes()
         if players.isMuted(clientId) and players.getMuteExpiresAt(clientId) < os.time() then
             mutes.removeByClient(clientId)
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been automatically unmuted\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been automatically unmuted\";")
         end
     end
 end

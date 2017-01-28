@@ -56,7 +56,7 @@ function commandUnlock(clientId, command, team)
         teams.unlock(constants.TEAM_ALLIES)
         teams.unlock(constants.TEAM_SPECTATORS)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: ^9all teams have been unlocked.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlock: ^9all teams have been unlocked.\";")
 
         return false
     end
@@ -64,7 +64,7 @@ function commandUnlock(clientId, command, team)
     local team = util.getTeamFromCode(team)
     teams.unlock(team)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been unlocked.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been unlocked.\";")
 
     return false
 end

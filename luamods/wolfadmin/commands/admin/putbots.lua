@@ -32,13 +32,13 @@ function commandPutBots(clientId, command, team)
     team = util.getTeamFromCode(team)
     
     bots.put(team)
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dputbots: ^9all bots were set to ^7"..util.getTeamColor(team)..util.getTeamName(team).." ^9team.\";")
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dputbots: ^9all bots were set to ^7"..util.getTeamColor(team)..util.getTeamName(team).." ^9team.\";")
 
     if (team == constants.TEAM_AXIS or team == constants.TEAM_ALLIES) and balancer.isRunning() then
         balancer.disable()
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer disabled.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer disabled.\";")
     end
     
     return true

@@ -80,8 +80,8 @@ function commandVoiceMute(clientId, command, victim, ...)
     mutes.add(cmdClient, clientId, players.MUTE_VOICE, duration, reason)
     history.add(cmdClient, clientId, "vmute", reason)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..duration.." seconds\";")
-    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..duration.." seconds\";")
+
     return true
 end
 commands.addadmin("vmute", commandVoiceMute, auth.PERM_VOICEMUTE, "voicemutes a player", "^9[^3name|slot#^9]")

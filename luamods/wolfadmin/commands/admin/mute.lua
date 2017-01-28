@@ -82,7 +82,7 @@ function commandMute(clientId, command, victim, ...)
     mutes.add(cmdClient, clientId, players.MUTE_CHAT + players.MUTE_VOICE, duration, reason)
     history.add(cmdClient, clientId, "mute", reason)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds\";")
 
     return true
 end

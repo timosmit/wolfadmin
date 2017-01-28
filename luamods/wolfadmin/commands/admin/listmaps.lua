@@ -31,9 +31,9 @@ function commandListMaps(clientId, command)
         
         output = (output ~= "") and output.." "..prefix..map or map
     end
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dlistmaps: ^9"..output.. "\";")
-    
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlistmaps: ^9"..output.. "\";")
+
     return true
 end
 commands.addadmin("listmaps", commandListMaps, auth.PERM_LISTMAPS, "display the maps in the rotation")

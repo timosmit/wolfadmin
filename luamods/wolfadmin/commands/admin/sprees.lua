@@ -33,13 +33,13 @@ function commandShowSprees(clientId, command)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9there are no records for this map yet.\"")
     else
         if records["ksrecord"] and records["ksrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest kill spree (^7"..records["ksrecord"].."^9) by ^7"..records["ksname"].."^9.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest kill spree (^7"..records["ksrecord"].."^9) by ^7"..records["ksname"].."^9.\";")
         end
         if records["dsrecord"] and records["dsrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest death spree (^7"..records["dsrecord"].."^9) by ^7"..records["dsname"].."^9.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest death spree (^7"..records["dsrecord"].."^9) by ^7"..records["dsname"].."^9.\";")
         end
         if records["rsrecord"] and records["rsrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dsprees: ^9longest revive spree (^7"..records["rsrecord"].."^9) by ^7"..records["rsname"].."^9.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest revive spree (^7"..records["rsrecord"].."^9) by ^7"..records["rsname"].."^9.\";")
         end
     end
     

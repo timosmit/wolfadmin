@@ -24,7 +24,7 @@ function commandBalance(clientId, command, action)
         if not balancer.isRunning() then
             balancer.enable()
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer enabled.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer enabled.\";")
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer is already running.\";")
         end
@@ -32,7 +32,7 @@ function commandBalance(clientId, command, action)
         if balancer.isRunning() then
             balancer.disable()
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dbalancer: ^9balancer disabled.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer disabled.\";")
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer was not running.\";")
         end

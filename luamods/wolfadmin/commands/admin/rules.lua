@@ -37,7 +37,7 @@ function commandRules(clientId, command, rule)
         local rule = rules.get(string.lower(rule))
         
         if rule then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")
         end
     end
     

@@ -57,9 +57,9 @@ function commandPlayerLock(clientId, command, victim)
         
         return true
     end
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team\";")
-    
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team\";")
+
     players.setTeamLocked(cmdClient, true)
     
     return true

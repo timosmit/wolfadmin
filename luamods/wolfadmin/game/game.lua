@@ -76,11 +76,11 @@ function game.onstatechange(gameState)
     if gameState == 3 then
         -- do not display when there haven't been any kills
         if lastKillerId ~= nil then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dAnd the last kill of the round goes to.. ^7"..et.gentity_get(lastKillerId, "pers.netname").."^d!\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dA total of ^7"..killCount.." ^dsoldiers died during this battle.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dAnd the last kill of the round goes to.. ^7"..et.gentity_get(lastKillerId, "pers.netname").."^d!\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dA total of ^7"..killCount.." ^dsoldiers died during this battle.\";")
         end
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "chat \"^dNext map: ^7"..game.getNextMap().."^d.\";")
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dNext map: ^7"..game.getNextMap().."^d.\";")
     end
 end
 events.handle("onGameStateChange", game.onstatechange)
