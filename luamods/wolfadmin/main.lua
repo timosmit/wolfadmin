@@ -15,14 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants
-local util
-local events
-local timers
-local settings
-
-local db
-
 local admin
 local balancer
 local bans
@@ -30,10 +22,15 @@ local history
 local mutes
 local rules
 
+local auth
+
+local db
+
 local commands
 
-local game
 local bots
+local fireteams
+local game
 local sprees
 local teams
 local voting
@@ -41,6 +38,17 @@ local voting
 local greetings
 local players
 local stats
+
+local bits
+local constants
+local events
+local files
+local logs
+local pagination
+local settings
+local tables
+local timers
+local util
 
 local version = "1.2.0-dev"
 local release = "TBD"
@@ -79,14 +87,6 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     -- load modules
     require (wolfa_getLuaPath()..".util.debug")
 
-    constants = require (wolfa_getLuaPath()..".util.constants")
-    util = require (wolfa_getLuaPath()..".util.util")
-    events = require (wolfa_getLuaPath()..".util.events")
-    timers = require (wolfa_getLuaPath()..".util.timers")
-    settings = require (wolfa_getLuaPath()..".util.settings")
-
-    db = require (wolfa_getLuaPath()..".db.db")
-
     admin = require (wolfa_getLuaPath()..".admin.admin")
     balancer = require (wolfa_getLuaPath()..".admin.balancer")
     bans = require (wolfa_getLuaPath()..".admin.bans")
@@ -94,10 +94,15 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     mutes = require (wolfa_getLuaPath()..".admin.mutes")
     rules = require (wolfa_getLuaPath()..".admin.rules")
 
+    auth = require (wolfa_getLuaPath()..".auth.auth")
+
+    db = require (wolfa_getLuaPath()..".db.db")
+
     commands = require (wolfa_getLuaPath()..".commands.commands")
 
-    game = require (wolfa_getLuaPath()..".game.game")
     bots = require (wolfa_getLuaPath()..".game.bots")
+    game = require (wolfa_getLuaPath()..".game.game")
+    fireteams = require (wolfa_getLuaPath()..".game.fireteams")
     sprees = require (wolfa_getLuaPath()..".game.sprees")
     teams = require (wolfa_getLuaPath()..".game.teams")
     voting = require (wolfa_getLuaPath()..".game.voting")
@@ -105,6 +110,17 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     greetings = require (wolfa_getLuaPath()..".players.greetings")
     players = require (wolfa_getLuaPath()..".players.players")
     stats = require (wolfa_getLuaPath()..".players.stats")
+
+    bits = require (wolfa_getLuaPath()..".util.bits")
+    constants = require (wolfa_getLuaPath()..".util.constants")
+    events = require (wolfa_getLuaPath()..".util.events")
+    files = require (wolfa_getLuaPath()..".util.files")
+    logs = require (wolfa_getLuaPath()..".util.logs")
+    pagination = require (wolfa_getLuaPath()..".util.pagination")
+    settings = require (wolfa_getLuaPath()..".util.settings")
+    tables = require (wolfa_getLuaPath()..".util.tables")
+    timers = require (wolfa_getLuaPath()..".util.timers")
+    util = require (wolfa_getLuaPath()..".util.util")
 
     -- register the module
     et.RegisterModname("WolfAdmin "..wolfa_getVersion())
@@ -143,11 +159,6 @@ function et_ClientCommand(clientId, cmdText)
     return events.trigger("onClientCommand", clientId, cmdText)
 end
 
--- gameState
---   0 - game (also when paused)
---   1 - warmup
---   2 - unknown
---   3 - intermission
 function et_RunFrame(levelTime)
     local gameState = tonumber(et.trap_Cvar_Get("gamestate"))
     
