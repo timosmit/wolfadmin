@@ -54,8 +54,6 @@ function files.open(fileName, fileMode, fileCreate)
         fileDescriptor, fileLength = files.create(fileName)
     end
     
-    outputDebug("util.files.open(): file "..fileName.." opened")
-    
     if fileMode == et.FS_READ then
         local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
         
@@ -70,7 +68,6 @@ function files.open(fileName, fileMode, fileCreate)
 end
 
 function files.loadCFG(fileName, idExpr, fileCreate)
-    local functionStart = et.trap_Milliseconds()
     local fileString = files.open(fileName, et.FS_READ, fileCreate)
     local arrayCount = 0
     local array = {}
@@ -94,13 +91,10 @@ function files.loadCFG(fileName, idExpr, fileCreate)
         table.insert(array[id], data)
     end
     
-    outputDebug("util.files.loadCFG(): "..arrayCount.." entries loaded in "..et.trap_Milliseconds() - functionStart.." ms")
-    
     return arrayCount, array
 end
 
 function files.save(fileName, array)
-    local functionStart = et.trap_Milliseconds()
     local fileDescriptor = files.open(fileName, et.FS_WRITE)
     local arrayCount = 0
     
@@ -127,8 +121,6 @@ function files.save(fileName, array)
     end
     
     et.trap_FS_FCloseFile(fileDescriptor)
-    
-    outputDebug("util.files.save(): "..arrayCount.." entries saved in "..et.trap_Milliseconds() - functionStart.." ms")
     
     return true
 end
