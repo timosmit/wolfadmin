@@ -85,6 +85,8 @@ function commandPersonalMessage(clientId, command, recipient, ...)
     end
 
     logs.writeChat(clientId, "priv", cmdClient, ...)
+
+    return true
 end
 commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
 commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
