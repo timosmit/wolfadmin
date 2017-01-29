@@ -118,7 +118,7 @@ function util.getAreaName(areaId)
     elseif areaId == constants.AREA_POPUPS then
         return "cpm"
     elseif areaId == constants.AREA_CHAT then
-        return "chat -1"
+        return "cchat -1"
     elseif areaId == constants.AREA_CP then
         return "cp"
     else
