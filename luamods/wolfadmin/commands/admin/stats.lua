@@ -57,11 +57,17 @@ function commandShowStats(clientId, command, victim)
         ["damagereceived"] = et.gentity_get(cmdClient, "sess.damage_received"),
         ["deaths"] = et.gentity_get(cmdClient, "sess.deaths")
     }
-
+    
     if et.trap_Cvar_Get("fs_game") == "legacy" then
         stats["teamdamage"] = et.gentity_get(cmdClient, "sess.team_damage_given")
+        stats["teamdamagereceived"] = et.gentity_get(cmdClient, "sess.team_damage_received")
         stats["totaldamage"] = et.gentity_get(cmdClient, "sess.damage_given") + et.gentity_get(cmdClient, "sess.team_damage_given")
-        stats["suicides"] = et.gentity_get(cmdClient, "sess.self_kills")
+        stats["totaldamagereceived"] = et.gentity_get(cmdClient, "sess.damage_received") + et.gentity_get(cmdClient, "sess.team_damage_received")
+        stats["selfkills"] = et.gentity_get(cmdClient, "sess.self_kills")
+        stats["gibs"] = et.gentity_get(cmdClient, "sess.gibs")
+        stats["teamgibs"] = et.gentity_get(cmdClient, "sess.team_gibs")
+        stats["totaldeaths"] = et.gentity_get(cmdClient, "sess.deaths") + et.gentity_get(cmdClient, "sess.self_kills")
+        stats["totalgibs"] = et.gentity_get(cmdClient, "sess.gibs") + et.gentity_get(cmdClient, "sess.team_gibs")
     elseif settings.get("fs_game") == "etpro" then
         stats["teamdamagereceived"] = et.gentity_get(cmdClient, "sess.team_received") -- ETPro only
     else
@@ -72,6 +78,11 @@ function commandShowStats(clientId, command, victim)
     
     if stats["totalkills"] == 0 then stats["totalkills"] = 1 end
     if stats["totaldamage"] == 0 then stats["totaldamage"] = 1 end
+    if et.trap_Cvar_Get("fs_game") == "legacy" then
+        if stats["totaldeaths"] == 0 then stats["totaldeaths"] = 1 end
+        if stats["totalgibs"] == 0 then stats["totalgibs"] = 1 end
+        if stats["totaldamagereceived"] == 0 then stats["totaldamagereceived"] = 1 end
+    end
     
     --[[ for key, value in pairs(stats) do
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats: ^9"..string.format("%-15s", key..":").." ^7"..value.."\";")
@@ -86,11 +97,20 @@ function commandShowStats(clientId, command, victim)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dClass:   ^2"..util.getClassName(stats["class"]).."\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dHealth:  ^2"..(stats["health"] < 0 and "dead" or stats["health"]).."\";")
     end
-    
+    if et.trap_Cvar_Get("fs_game") == "legacy" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDamage given:  ^2"..string.format("%-8s", stats["damage"]).." ^dTeam damage given:  ^2"..stats["teamdamage"].." ^9("..string.format("%0.2f", (stats["teamdamage"] / (stats["totaldamage"] or 1) * 100)).." percent)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDamage recvd:  ^2"..string.format("%-8s", stats["damagereceived"]).." ^dTeam damage recvd:  ^2"..stats["teamdamagereceived"].." ^9("..string.format("%0.2f", (stats["teamdamagereceived"] / (stats["totaldamagereceived"] or 1) * 100)).." percent)\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDamage:  ^2"..string.format("%-8s", stats["damage"]).." ^dTeam damage:  ^2"..stats["teamdamage"].." ^9("..string.format("%0.2f", (stats["teamdamage"] / (stats["totaldamage"] or 1) * 100)).." percent)\";")
+    end
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dKills:   ^2"..string.format("%-8s", stats["kills"]).." ^dTeam kills:   ^2"..stats["teamkills"].." ^9("..string.format("%0.2f", (stats["teamkills"] / (stats["totalkills"] or 1) * 100)).." percent)\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDamage:  ^2"..string.format("%-8s", stats["damage"]).." ^dTeam damage:  ^2"..stats["teamdamage"].." ^9("..string.format("%0.2f", (stats["teamdamage"] / (stats["totaldamage"] or 1) * 100)).." percent)\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDeaths:  ^2"..string.format("%-8s", stats["deaths"]).." ^dSuicides:     ^2"..stats["suicides"].."\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dK/D:     ^2"..string.format("%0.2f", (stats["kills"] / ((stats["deaths"] > 0) and stats["deaths"] or 1))).."\";")
+    if et.trap_Cvar_Get("fs_game") == "legacy" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDeaths:  ^2"..string.format("%-8s", stats["deaths"]).." ^dSelf kills:   ^2"..stats["selfkills"].." ^9("..string.format("%0.2f", (stats["selfkills"] / (stats["totaldeaths"] or 1) * 100)).." percent)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dGibs:    ^2"..string.format("%-8s", stats["gibs"]).." ^dTeam gibs:    ^2"..stats["teamgibs"].." ^9("..string.format("%0.2f", (stats["teamgibs"] / (stats["totalgibs"] or 1) * 100)).." percent)\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDeaths:  ^2"..string.format("%-8s", stats["deaths"]).." ^dSuicides:     ^2"..stats["suicides"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dK/D:     ^2"..string.format("%0.2f", (stats["kills"] / ((stats["deaths"] > 0) and stats["deaths"] or 1))).."\";")
+    end
     
     -- NQ 1.3.0 and higher
     --[[ for key, value in ipairs(stats["weapstats"]) do
