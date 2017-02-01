@@ -73,7 +73,10 @@ function commandBan(clientId, command, victim, ...)
     end
 
     bans.add(cmdClient, clientId, duration, reason)
-    history.add(cmdClient, clientId, "ban", reason)
+
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "ban", reason)
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
 

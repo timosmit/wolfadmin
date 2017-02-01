@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require (wolfa_getLuaPath()..".util.util")
 local events = require (wolfa_getLuaPath()..".util.events")
 
 local settings = {}
@@ -25,14 +24,12 @@ local data = {
     ["g_logAdmin"] = "admin.log",
     ["g_fileGreetings"] = "greetings.cfg",
     ["g_fileRules"] = "rules.cfg",
-    ["g_fileSprees"] = "sprees.cfg",
-    ["g_jukeboxEnabled"] = 0,
+    ["g_playerHistory"] = 1,
     ["g_spreeRecords"] = 1,
-    ["g_warnHistory"] = 1,
+    ["g_botRecords"] = 1,
     ["g_announceRevives"] = 1,
     ["g_greetingArea"] = 3,
     ["g_botGreetings"] = 1,
-    ["g_botRecords"] = 1,
     ["g_welcomeMessage"] = "^dwolfadmin: ^9This server is running WolfAdmin, type ^7/wolfadmin ^9for more information.",
     ["g_welcomeArea"] = 3,
     ["g_evenerMinDifference"] = 2,

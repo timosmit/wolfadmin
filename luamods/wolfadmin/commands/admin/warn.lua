@@ -17,7 +17,6 @@
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
-local admin = require (wolfa_getLuaPath()..".admin.admin")
 local history = require (wolfa_getLuaPath()..".admin.history")
 
 local db = require (wolfa_getLuaPath()..".db.db")
@@ -29,7 +28,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandWarn(clientId, command, victim, ...)
-    if settings.get("g_warnHistory") == 0 or not db.isconnected() then
+    if not db.isconnected() or settings.get("g_playerHistory") == 0 then
         return false
     elseif not victim or not ... then
         return false
@@ -49,7 +48,7 @@ function commandWarn(clientId, command, victim, ...)
 
     return false
 end
-commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") == 1))
+commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") == 1 or settings.get("g_playerHistory") == 0))
 
 function commandWarn(clientId, command, victim, ...)
     if not victim or not ... then
@@ -80,7 +79,9 @@ function commandWarn(clientId, command, victim, ...)
 
     local reason = table.concat({...}, " ")
 
-    history.add(cmdClient, clientId, "warn", reason)
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "warn", reason)
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")

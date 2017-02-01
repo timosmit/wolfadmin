@@ -28,8 +28,8 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandListHistory(clientId, command, victim, offset)
-    if settings.get("g_standalone") == 0 or not db.isconnected() then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9warn history is disabled.\";")
+    if not db.isconnected() or settings.get("g_playerHistory") == 0 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9player history is disabled.\";")
 
         return true
     elseif victim == nil then
@@ -70,4 +70,4 @@ function commandListHistory(clientId, command, victim, offset)
 
     return true
 end
-commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))

@@ -58,7 +58,10 @@ function commandKick(clientId, command, victim, ...)
     local reason = table.concat({...}, " ")
 
     admin.kickPlayer(cmdClient, clientId, reason)
-    history.add(cmdClient, clientId, "kick", reason)
+
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "kick", reason)
+    end
 
     return true
 end
