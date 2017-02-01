@@ -17,20 +17,30 @@ INSTRUCTIONS (NEW)
     /.etwolf/nq on Linux systems)
   * Optionally, copy the contents of the cvars.cfg to your own server 
     configuration file
-  * Copy the .pk3 file corresponding to this WolfAdmin version to your 
-    /nq directory
   * Modify /nq/wolfadmin.cfg to your needs
   * Modify /nq/shrubbot.cfg to add WolfAdmin specific flags
   * Add /luascripts/wolfadmin/main.lua to the lua_modules cvar
-  * Run the .sql script in /database/new on your MySQL server
+  * Run the .sql script in /database/new on your server:
+    - for SQLite3, run wolfadmin_sqlite3.sql in your SQLite3 CLI or manager
+    - for MySQL, run wolfadmin_mysql.sql in your MySQL manager
   * Run your server
 
 INSTRUCTIONS (UPGRADE)
 
   * Unpack the /luascripts folder into your /nq directory
   * Run the .sql script in /database/upgrade/previous-version-here on your 
-    MySQL server
+    server:
+    - for SQLite3, run wolfadmin_sqlite3.sql in your SQLite3 CLI or manager
+    - for MySQL, run wolfadmin_mysql.sql in your MySQL manager
   * Run your server
+
+INSTRUCTIONS (MENU)
+
+  If you want to use the menu that can be used for the voting, use the
+  following instructions.
+
+  * Copy the .pk3 file corresponding to this WolfAdmin version to your 
+    /nq directory
 
 TROUBLESHOOTING
 
