@@ -15,11 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local db = require (wolfa_getLuaPath()..".db.db")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
 local admin = require (wolfa_getLuaPath()..".admin.admin")
+
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+
+local db = require (wolfa_getLuaPath()..".db.db")
+
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandSetLevel(clientId, command, victim, level)
     if not victim or not level then
@@ -36,9 +40,15 @@ function commandSetLevel(clientId, command, victim, level)
         return false
     end
 
+    if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
+        return false
+    elseif level > auth.getPlayerLevel(clientId) then
+        return false
+    end
+
     level = tonumber(level) or 0 
 
-    admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
+    admin.setPlayerLevel(cmdClient, level, clientId)
 
     return false
 end
@@ -54,7 +64,7 @@ function commandSetLevel(clientId, command, victim, level)
     else
         cmdClient = tonumber(victim)
     end
-    
+
     if cmdClient == -1 or cmdClient == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..victim.."^9'.\";")
 
@@ -64,22 +74,26 @@ function commandSetLevel(clientId, command, victim, level)
 
         return true
     end
+
+    level = tonumber(level) or 0
     
     if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
 
         return true
-    elseif not db.getLevel(tonumber(level)) then
+    elseif not db.getLevel(level) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9this admin level does not exist.\";")
+
+        return true
+    elseif level > auth.getPlayerLevel(clientId) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9you may not setlevel higher than your current level.\";")
 
         return true
     end
 
-    level = tonumber(level) or 0
-
     admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
 
     return false
 end
