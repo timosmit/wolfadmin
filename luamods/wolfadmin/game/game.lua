@@ -50,7 +50,7 @@ function game.getNextMap()
 end
 
 function game.oninit()
-    local gameType = game.getMode() -- 2: objective, 3: stopwatch, 4: campaign, 5: LMS
+    local gameType = game.getMode() -- 2: objective, 3: stopwatch, 4: campaign, 5: LMS, 6: map-voting
     local campaignMaps = tostring(et.trap_Cvar_Get("campaign_maps"))
     local objectiveMaps = tostring(et.trap_Cvar_Get("objective_maps"))
     
@@ -66,7 +66,7 @@ function game.oninit()
         if map == game.getMap() then nextMap = currentMaps[i + 1] break end
     end
     
-    nextMap = nextMap and nextMap or "unknown"
+    nextMap = nextMap and nextMap or nil
 end
 events.handle("onGameInit", game.oninit)
 
@@ -80,7 +80,9 @@ function game.onstatechange(gameState)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dA total of ^7"..killCount.." ^dsoldiers died during this battle.\";")
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dNext map: ^7"..game.getNextMap().."^d.\";")
+        if game.getNextMap() ~= nil then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dNext map: ^7"..game.getNextMap().."^d.\";")
+        end
     end
 end
 events.handle("onGameStateChange", game.onstatechange)
