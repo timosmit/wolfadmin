@@ -71,8 +71,4 @@ constants.VOTE_TYPES = { "antilag", "balancedteams", "comp", "friendlyfire", "ga
     "surrender", "swapteams", "timelimit", "warmupdamage"
 }
 
-constants.RECORD_KILL = 0
-constants.RECORD_DEATH = 1
-constants.RECORD_REVIVE = 2
-
 return constants

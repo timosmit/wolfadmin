@@ -16,10 +16,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
+
 local db = require (wolfa_getLuaPath()..".db.db")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
+
 local game = require (wolfa_getLuaPath()..".game.game")
 local sprees = require (wolfa_getLuaPath()..".game.sprees")
+
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandResetSprees(clientId, command, map)
     if not db.isconnected() then
@@ -40,4 +45,4 @@ function commandResetSprees(clientId, command, map)
     
     return true
 end
-commands.addadmin("resetsprees", commandResetSprees, auth.PERM_READCONFIG, "resets the spree records")
+commands.addadmin("resetsprees", commandResetSprees, auth.PERM_READCONFIG, "resets the spree records", nil, (settings.get("g_spreeRecords") == 0))

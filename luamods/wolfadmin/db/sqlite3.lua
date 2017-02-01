@@ -442,19 +442,7 @@ function sqlite3.getrecords(mapid)
     local row = cur:fetch({}, "a")
 
     while row do
-        local typestr = ""
-
-        if tonumber(row["type"]) == constants.RECORD_KILL then
-            typestr = "ks"
-        elseif tonumber(row["type"]) == constants.RECORD_DEATH then
-            typestr = "ds"
-        elseif tonumber(row["type"]) == constants.RECORD_REVIVE then
-            typestr = "rs"
-        end
-
-        records[typestr.."player"] = tonumber(row["player_id"])
-        records[typestr.."record"] = tonumber(row["record"])
-
+        table.insert(records, tables.copy(row))
         row = cur:fetch({}, "a")
     end
     
@@ -474,26 +462,11 @@ end
 
 function sqlite3.getrecord(mapid, recordtype)
     cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
-    
-    local row = cur:fetch({}, "a")
+
+    local record = cur:fetch({}, "a")
     cur:close()
-    
-    if row then
-        local record, typestr = {}, ""
-        
-        if tonumber(row["type"]) == constants.RECORD_KILL then
-            typestr = "ks"
-        elseif tonumber(row["type"]) == constants.RECORD_DEATH then
-            typestr = "ds"
-        elseif tonumber(row["type"]) == constants.RECORD_REVIVE then
-            typestr = "rs"
-        end
-        
-        record[typestr.."player"] = tonumber(row["player"])
-        record[typestr.."record"] = tonumber(row["record"])
-        
-        return record
-    end
+
+    return record
 end
 
 function sqlite3.isconnected()

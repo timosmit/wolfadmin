@@ -25,6 +25,7 @@ local data = {
     ["g_fileGreetings"] = "greetings.cfg",
     ["g_fileRules"] = "rules.cfg",
     ["g_playerHistory"] = 1,
+    ["g_spreeMessages"] = 7,
     ["g_spreeRecords"] = 1,
     ["g_botRecords"] = 1,
     ["g_announceRevives"] = 1,

@@ -16,8 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
+
 local db = require (wolfa_getLuaPath()..".db.db")
+
 local sprees = require (wolfa_getLuaPath()..".game.sprees")
 
 function commandShowSprees(clientId, command)
@@ -28,18 +31,14 @@ function commandShowSprees(clientId, command)
     end
 
     local records = sprees.get()
-    
-    if not (records["ksrecord"] or records["dsrecord"] or records["rsrecord"]) then
+
+    if #records == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9there are no records for this map yet.\"")
     else
-        if records["ksrecord"] and records["ksrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest kill spree (^7"..records["ksrecord"].."^9) by ^7"..records["ksname"].."^9.\";")
-        end
-        if records["dsrecord"] and records["dsrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest death spree (^7"..records["dsrecord"].."^9) by ^7"..records["dsname"].."^9.\";")
-        end
-        if records["rsrecord"] and records["rsrecord"] > 0 then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest revive spree (^7"..records["rsrecord"].."^9) by ^7"..records["rsname"].."^9.\";")
+        for i = 0, sprees.RECORD_NUM - 1 do
+            if records[i] and records[i]["record"] > 0 then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..records[i]["record"].."^9) by ^7"..db.getlastalias(records[i]["player"])["alias"].."^9.\";")
+            end
         end
     end
     

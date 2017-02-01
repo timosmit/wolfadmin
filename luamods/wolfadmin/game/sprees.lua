@@ -20,52 +20,146 @@ local db = require (wolfa_getLuaPath()..".db.db")
 local game = require (wolfa_getLuaPath()..".game.game")
 
 local players = require (wolfa_getLuaPath()..".players.players")
--- local stats = require (wolfa_getLuaPath()..".players.stats")
 
+local bits = require (wolfa_getLuaPath()..".util.bits")
 local constants = require (wolfa_getLuaPath()..".util.constants")
 local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local sprees = {}
 
-local revivespreeMessages = {
-    [3] = {
-        ["msg"] = "^dis on a ^2revive spree^d!",
-        ["sound"] = "",
-    },
-    [5] = {
-        ["msg"] = "^dis a ^2revive magnet^d!",
-        ["sound"] = "",
-    },
-    [10] = {
-        ["msg"] = "^dis a ^2syringe maniac^d!",
-        ["sound"] = "",
-    },
-    [15] = {
-        ["msg"] = "^dis the new ^2Dr. Frankenstein^d!",
-        ["sound"] = "",
-    },
+sprees.RECORD_KILL = 0
+sprees.RECORD_DEATH = 1
+sprees.RECORD_REVIVE = 2
+sprees.RECORD_NUM = 3
+
+local spreeNames = {
+    [sprees.RECORD_KILL] = "kill",
+    [sprees.RECORD_DEATH] = "death",
+    [sprees.RECORD_REVIVE] = "revive"
 }
 
+local spreeMessagesByType = {
+    [sprees.RECORD_KILL] = {
+        {
+            ["amount"] = 5,
+            ["msg"] = "^dis on a ^2killing spree^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 10,
+            ["msg"] = "^dis on a ^2rampage^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 15,
+            ["msg"] = "^dis ^2dominating^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 20,
+            ["msg"] = "^drevels in his ^2bloodbath^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 25,
+            ["msg"] = "^dis a walking ^2slaughterhouse^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 30,
+            ["msg"] = "^dwreaks ^2havoc ^dupon his foes^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 35,
+            ["msg"] = "^dcuts through enemies like a ^2god ^2of ^2war^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 40,
+            ["msg"] = "^dis the ^2prophet of doom^d!",
+            ["sound"] = ""
+        }
+    },
+    [sprees.RECORD_DEATH] = {
+        {
+            ["amount"] = 5,
+            ["msg"] = "^dmust be having a bad day!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 10,
+            ["msg"] = "^dhis day just got worse!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 15,
+            ["msg"] = "^dtries to kill with flowers!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 20,
+            ["msg"] = "^dis getting his ass kicked!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 25,
+            ["msg"] = "^dis a death magnet!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 30,
+            ["msg"] = "^dneeds remedial combat training!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 40,
+            ["msg"] = "^dstill can't kill shit!",
+            ["sound"] = ""
+        }
+    },
+    [sprees.RECORD_REVIVE] = {
+        {
+            ["amount"] = 3,
+            ["msg"] = "^dis on a ^2revive spree^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 5,
+            ["msg"] = "^dis a ^2health dealer^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 10,
+            ["msg"] = "^dis a ^2perfect nurse^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 15,
+            ["msg"] = "^dis a ^2syringe maniac^d!",
+            ["sound"] = ""
+        },
+        {
+            ["amount"] = 25,
+            ["msg"] = "^dis the new ^2Dr. Frankenstein^d!",
+            ["sound"] = ""
+        }
+    }
+}
+
+local spreeMessages = {}
+
 local playerSprees = {}
-local currentRecords -- cached version
+local currentRecords = {} -- cached version
 local currentMapId
 
+function sprees.getRecordNameByType(type)
+    return spreeNames[type]
+end
+
 function sprees.get()
-    local records = currentRecords
-    
-    if records["ksrecord"] and records["ksrecord"] > 0 then
-        records["ksname"] = db.getlastalias(records["ksplayer"])["alias"]
-    end
-    if records["dsrecord"] and records["dsrecord"] > 0 then
-        records["dsname"] = db.getlastalias(records["dsplayer"])["alias"]
-    end
-    if records["rsrecord"] and records["rsrecord"] > 0 then
-        records["rsname"] = db.getlastalias(records["rsplayer"])["alias"]
-    end
-    
-    return records
+    return currentRecords
 end
 
 function sprees.reset(truncate)
@@ -74,158 +168,238 @@ function sprees.reset(truncate)
     else
         db.removerecords(currentMapId)
     end
-    
-    currentRecords = db.getrecords(currentMapId)
+
+    currentRecords = {}
 end
 
 function sprees.load()
-    local map = db.getmap(game.getMap())
-    
-    if map then
-        currentMapId = map["id"]
-        db.updatemap(currentMapId, os.time())
-    else
-        db.addmap(game.getMap(), os.time())
-        currentMapId = db.getmap(game.getMap())["id"]
+    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
+        local map = db.getmap(game.getMap())
+
+        if map then
+            currentMapId = map["id"]
+            db.updatemap(currentMapId, os.time())
+        else
+            db.addmap(game.getMap(), os.time())
+            currentMapId = db.getmap(game.getMap())["id"]
+        end
+
+        local records = db.getrecords(currentMapId)
+
+        for _, record in ipairs(records) do
+            currentRecords[record["type"]] = {
+                ["player"] = tonumber(record["player_id"]),
+                ["record"] = tonumber(record["record"])
+            }
+        end
     end
-    
-    currentRecords = db.getrecords(currentMapId)
-    
-    return db.getrecordscount(currentMapId)
-end
 
-function sprees.oninit(levelTime, randomSeed, restartMap)
-    if
-        (db.isconnected() and settings.get("g_spreeRecords") ~= 0)
-    then
-        sprees.load()
-        
-        events.handle("onGameStateChange", sprees.ongamestatechange)
+    for i = 0, sprees.RECORD_NUM - 1 do
+        spreeMessages[i] = {}
+
+        for _, spree in ipairs(spreeMessagesByType[i]) do
+            spreeMessages[i][spree["amount"]] = spree
+        end
     end
 end
-events.handle("onGameInit", sprees.oninit)
 
-function sprees.onconnect(clientId, firstTime, isBot)
-    playerSprees[clientId] = {["kill"] = 0, ["death"] = 0, ["revive"] = 0}
+function sprees.save()
+    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
+        for i = 0, sprees.RECORD_NUM - 1 do
+            if currentRecords[i] and currentRecords[i]["record"] > 0 then
+                if db.getrecord(currentMapId, i) then
+                    db.updaterecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
+                else
+                    db.addrecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
+                end
+            end
+        end
+    end
 end
-events.handle("onClientConnect", sprees.onconnect)
 
-function sprees.ondisconnect(clientId)
+function sprees.printRecords()
+    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
+        for i = 0, sprees.RECORD_NUM - 1 do
+            if currentRecords[i] and currentRecords[i]["record"] > 0 then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getlastalias(currentRecords[i]["player"])["alias"].."^9.\";")
+            end
+        end
+    end
+end
+
+function sprees.onGameInit(levelTime, randomSeed, restartMap)
+    sprees.load()
+
+    events.handle("onGameStateChange", sprees.onGameStateChange)
+end
+events.handle("onGameInit", sprees.onGameInit)
+
+function sprees.onClientConnect(clientId, firstTime, isBot)
+    playerSprees[clientId] = {}
+
+    for i = 0, sprees.RECORD_NUM - 1 do
+        playerSprees[clientId][i] = 0
+    end
+end
+events.handle("onClientConnect", sprees.onClientConnect)
+
+function sprees.onClientDisconnect(clientId)
     playerSprees[clientId] = nil
 end
-events.handle("onClientDisconnect", sprees.ondisconnect)
+events.handle("onClientDisconnect", sprees.onClientDisconnect)
 
-function sprees.onteamchange(clientId, old, new)
-    playerSprees[clientId] = {["kill"] = 0, ["death"] = 0, ["revive"] = 0}
+function sprees.onClientTeamChange(clientId, old, new)
+    events.trigger("onPlayerSpreeEnd", clientId, clientId)
 end
 
-function sprees.ongamestatechange(gameState)
+function sprees.onGameStateChange(gameState)
     if gameState == constants.GAME_STATE_RUNNING then
-        events.handle("onClientTeamChange", sprees.onteamchange)
-        events.handle("onPlayerDeath", sprees.ondeath)
-        events.handle("onPlayerRevive", sprees.onrevive)
+        events.handle("onClientTeamChange", sprees.onClientTeamChange)
+        events.handle("onPlayerDeath", sprees.onPlayerDeath)
+        events.handle("onPlayerRevive", sprees.onPlayerRevive)
+        events.handle("onPlayerSpree", sprees.onPlayerSpree)
+        events.handle("onPlayerSpreeEnd", sprees.onPlayerSpreeEnd)
     elseif gameState == constants.GAME_STATE_INTERMISSION then
-        if currentRecords["ksrecord"] and currentRecords["ksrecord"] > 0 then
-            if db.getrecord(currentMapId, constants.RECORD_KILL) then
-                db.updaterecord(currentMapId, os.time(), constants.RECORD_KILL, currentRecords["ksrecord"], currentRecords["ksplayer"])
-            else
-                db.addrecord(currentMapId, os.time(), constants.RECORD_KILL, currentRecords["ksrecord"], currentRecords["ksplayer"])
+        sprees.save()
+        sprees.printRecords()
+    end
+end
+
+function sprees.onPlayerSpree(clientId, type, sourceId)
+    playerSprees[clientId][type] = playerSprees[clientId][type] + 1
+
+    local currentSpree = playerSprees[clientId][type]
+
+    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 and
+            (settings.get("g_botRecords") == 1 or not players.isBot(clientId)) and
+            (not currentRecords[type] or currentSpree > currentRecords[type]["record"]) then
+        currentRecords[type] = {
+            ["player"] = db.getplayerid(clientId),
+            ["record"] = currentSpree
+        }
+    end
+
+    local settingSpreeMessages = settings.get("g_spreeMessages")
+    if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) then
+        local spreeMessage = spreeMessages[type][currentSpree]
+
+        if spreeMessage then
+            local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
+                string.upper(spreeNames[type]),
+                players.getName(clientId),
+                spreeMessage["msg"],
+                currentSpree,
+                spreeNames[type])
+
+            if spreeMessage["sound"] and spreeMessage["sound"] ~= "" then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/"..spreeMessage["sound"].."\";")
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest kill spree (^7"..currentRecords["ksrecord"].."^9) by ^7"..db.getlastalias(currentRecords["ksplayer"])["alias"].."^9.\";")
-        end
-        if currentRecords["dsrecord"] and currentRecords["dsrecord"] > 0 then
-            if db.getrecord(currentMapId, constants.RECORD_DEATH) then
-                db.updaterecord(currentMapId, os.time(), constants.RECORD_DEATH, currentRecords["dsrecord"], currentRecords["dsplayer"])
-            else
-                db.addrecord(currentMapId, os.time(), constants.RECORD_DEATH, currentRecords["dsrecord"], currentRecords["dsplayer"])
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+        elseif currentSpree % 5 == 0 then
+            local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
+
+            local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
+                string.upper(spreeNames[type]),
+                players.getName(clientId),
+                maxSpreeMessage["msg"],
+                currentSpree,
+                spreeNames[type])
+
+            if maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/"..maxSpreeMessage["sound"].."\";")
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest death spree (^7"..currentRecords["dsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["dsplayer"])["alias"].."^9.\";")
-        end
-        if currentRecords["rsrecord"] and currentRecords["rsrecord"] > 0 then
-            if db.getrecord(currentMapId, constants.RECORD_REVIVE) then
-                db.updaterecord(currentMapId, os.time(), constants.RECORD_REVIVE, currentRecords["rsrecord"], currentRecords["rsplayer"])
-            else
-                db.addrecord(currentMapId, os.time(), constants.RECORD_REVIVE, currentRecords["rsrecord"], currentRecords["rsplayer"])
-            end
-
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest revive spree (^7"..currentRecords["rsrecord"].."^9) by ^7"..db.getlastalias(currentRecords["rsplayer"])["alias"].."^9.\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
         end
     end
 end
 
-function sprees.ondeath(victimId, killerId, mod)
-    if killerId == 1022 then -- killed by map
-        playerSprees[victimId]["kill"] = 0
-        playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
-        playerSprees[victimId]["revive"] = 0
-    
-        -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
+function sprees.onPlayerSpreeEnd(clientId, causeId, type)
+    if type == sprees.RECORD_DEATH then
+        if playerSprees[clientId][sprees.RECORD_DEATH] > spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
+            local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
+                players.getName(causeId),
+                players.getName(clientId),
+                playerSprees[clientId][sprees.RECORD_DEATH],
+                spreeNames[sprees.RECORD_DEATH])
 
-        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
-            currentRecords["dsplayer"] = db.getplayerid(victimId)
-            currentRecords["dsrecord"] = playerSprees[victimId]["death"]
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
         end
+
+        playerSprees[clientId][sprees.RECORD_DEATH] = 0
+    elseif type == nil then
+        for i = 0, sprees.RECORD_NUM - 1 do
+            if i ~= sprees.RECORD_DEATH then
+                if playerSprees[clientId][i] > spreeMessagesByType[i][1]["amount"] then
+                    local msg = ""
+
+                    if clientId == causeId then
+                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end by ^1himself^d!",
+                            players.getName(clientId),
+                            playerSprees[clientId][i],
+                            spreeNames[i])
+                    elseif causeId then
+                        local prefix = ""
+
+                        if et.gentity_get(clientId, "sess.sessionTeam") == et.gentity_get(causeId, "sess.sessionTeam") then
+                            prefix = "^1TEAMMATE "
+                        end
+
+                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end by %s^7%s^d!",
+                            players.getName(clientId),
+                            playerSprees[clientId][i],
+                            spreeNames[i],
+                            prefix,
+                            players.getName(causeId))
+                    else
+                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end.",
+                            players.getName(clientId),
+                            playerSprees[clientId][i],
+                            spreeNames[i])
+                    end
+
+                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+                end
+
+                playerSprees[clientId][i] = 0
+            end
+        end
+    end
+end
+
+function sprees.onPlayerDeath(victimId, killerId, mod)
+    if killerId == 1022 then -- killed by map
+        events.trigger("onPlayerSpreeEnd", victimId)
+        events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
     elseif victimId == killerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
         if not players.isConnected(victimId) then return end
-        
-        playerSprees[victimId]["kill"] = 0
-        playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
-        playerSprees[victimId]["revive"] = 0
-        
-        -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
-        
-        if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
-            currentRecords["dsplayer"] = db.getplayerid(victimId)
-            currentRecords["dsrecord"] = playerSprees[victimId]["death"]
-        end
+
+        events.trigger("onPlayerSpreeEnd", victimId, killerId)
+        events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
     else -- regular kills
         if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(killerId, "sess.sessionTeam") then
             -- teamkill handling
+            events.trigger("onPlayerSpreeEnd", victimId, killerId)
+            events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
         else
-            playerSprees[killerId]["kill"] = playerSprees[killerId]["kill"] + 1
-            playerSprees[victimId]["death"] = 0
-            
-            -- stats.set(killerId, "longestKillSpree", stats.get(killerId, "currentKillSpree") > stats.get(killerId, "longestKillSpree") and stats.get(killerId, "currentKillSpree") or stats.get(killerId, "longestKillSpree"))
-            
-            if (settings.get("g_botRecords") == 1 or not players.isBot(killerId)) and (not currentRecords["ksrecord"] or playerSprees[killerId]["kill"] > currentRecords["ksrecord"]) then
-                currentRecords["ksplayer"] = db.getplayerid(killerId)
-                currentRecords["ksrecord"] = playerSprees[killerId]["kill"]
-            end
-            
+            events.trigger("onPlayerSpreeEnd", killerId, victimId, sprees.RECORD_DEATH)
+            events.trigger("onPlayerSpree", killerId, sprees.RECORD_KILL)
+
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
             if not players.isConnected(victimId) then return end
-            
-            playerSprees[victimId]["kill"] = 0
-            playerSprees[victimId]["death"] = playerSprees[victimId]["death"] + 1
-            playerSprees[victimId]["revive"] = 0
-            
-            -- stats.set(victimId, "longestDeathSpree", stats.get(victimId, "currentDeathSpree") > stats.get(victimId, "longestDeathSpree") and stats.get(victimId, "currentDeathSpree") or stats.get(victimId, "longestDeathSpree"))
-            
-            if (settings.get("g_botRecords") == 1 or not players.isBot(victimId)) and (not currentRecords["dsrecord"] or playerSprees[victimId]["death"] > currentRecords["dsrecord"]) then
-                currentRecords["dsplayer"] = db.getplayerid(victimId)
-                currentRecords["dsrecord"] = playerSprees[victimId]["death"]
-            end
+
+            events.trigger("onPlayerSpreeEnd", victimId, killerId)
+            events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
         end
     end
 end
 
-function sprees.onrevive(clientMedic, clientVictim)
-    playerSprees[clientMedic]["revive"] = playerSprees[clientMedic]["revive"] + 1
-    -- stats.set(clientMedic, "longestReviveSpree", stats.get(clientMedic, "currentReviveSpree") > stats.get(clientMedic, "longestReviveSpree") and stats.get(clientMedic, "currentReviveSpree") or stats.get(clientMedic, "longestReviveSpree"))
-    
-    if revivespreeMessages[playerSprees[clientMedic]["revive"]] then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^1REVIVE SPREE! ^*"..players.getName(clientMedic).." ^*"..revivespreeMessages[playerSprees[clientMedic]["revive"]]["msg"].." ^d(^3"..playerSprees[clientMedic]["revive"].." ^drevives in a row!)\";")
-    end
-    
-    if (settings.get("g_botRecords") == 1 or not players.isBot(clientMedic)) and (not currentRecords["rsrecord"] or playerSprees[clientMedic]["revive"] > currentRecords["rsrecord"]) then
-        currentRecords["rsplayer"] = db.getplayerid(clientMedic)
-        currentRecords["rsrecord"] = playerSprees[clientMedic]["revive"]
-    end
+function sprees.onPlayerRevive(clientMedic, clientVictim)
+    events.trigger("onPlayerSpree", clientMedic, sprees.RECORD_REVIVE)
 end
 
 return sprees
