@@ -40,13 +40,13 @@ function commandSetLevel(clientId, command, victim, level)
         return false
     end
 
+    level = tonumber(level) or 0
+
     if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         return false
     elseif level > auth.getPlayerLevel(clientId) then
         return false
     end
-
-    level = tonumber(level) or 0 
 
     admin.setPlayerLevel(cmdClient, level, clientId)
 
