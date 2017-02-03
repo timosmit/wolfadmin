@@ -64,7 +64,7 @@ function commandListHistory(clientId, command, victim, offset)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", history["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(history["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", history["datetime"]).." ^7"..string.format("%-8s", history["type"]..":").." "..history["reason"].."\";")
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowhistory: ^9history for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9was printed to the console.\";")
     end
 

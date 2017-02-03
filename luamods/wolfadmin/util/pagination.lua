@@ -25,10 +25,8 @@ function pagination.calculate(count, limit, offset)
         offset = count + offset
     end
 
-    limit = limit + offset
-
-    if limit > count then
-        limit = count
+    if limit + offset > count then
+        limit = count % limit
     end
 
     return limit, offset
