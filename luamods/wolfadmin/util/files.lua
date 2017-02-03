@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require (wolfa_getLuaPath()..".util.util")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local files = {}
@@ -68,7 +67,7 @@ function files.open(fileName, fileMode, fileCreate)
 end
 
 function files.loadCFG(fileName, idExpr, fileCreate)
-    local fileString = files.open(fileName, et.FS_READ, fileCreate)
+    local fileString = files.open(fileName, et.FS_READ, fileCreate).."\n\n"
     local arrayCount = 0
     local array = {}
     
