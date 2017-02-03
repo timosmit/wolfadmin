@@ -87,7 +87,7 @@ function commandListLevels(clientId, cmdArguments)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", level["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(level["admin_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", level["datetime"]).." ^7"..level["level"].."\";")
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistlevels: ^9recorded levels for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
     end
     

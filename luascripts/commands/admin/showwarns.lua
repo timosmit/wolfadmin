@@ -60,7 +60,7 @@ function commandShowWarns(clientId, cmdArguments)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", warn["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(warn["admin_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", warn["datetime"]).." ^7"..warn["reason"].."\";")
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..limit.." ^9of ^7"..count.."^9.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowwarns: ^9warnings for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
     end
     
