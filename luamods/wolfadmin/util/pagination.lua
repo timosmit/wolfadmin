@@ -22,10 +22,14 @@ function pagination.calculate(count, limit, offset)
     offset = offset or 0
 
     if offset < 0 then
-        offset = count + offset
-    end
-
-    if limit + offset > count then
+        if count < math.abs(offset) then
+            limit = count
+            offset = 0
+        else
+            limit = math.min(math.abs(offset), 30)
+            offset = count + offset
+        end
+    elseif limit + offset > count then
         limit = count % limit
     end
 
