@@ -307,6 +307,7 @@ function sqlite3.start()
 
     -- enable foreign key enforcement
     cur = assert(con:execute("PRAGMA foreign_keys=1"))
+    cur = assert(con:execute("PRAGMA synchronous=0"))
 end
 
 function sqlite3.close(doSave)
