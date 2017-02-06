@@ -95,7 +95,7 @@ function commands.loadFiles(dir)
     local files = files.ls("commands/"..dir.."/")
     
     for _, file in pairs(files) do
-        if string.match(string.lower(file), "^[a-z]+%.lua$") then
+        if string.match(string.lower(file), "^[a-z0-9]+%.lua$") then
             require (wolfa_getLuaPath()..".commands."..dir.."."..string.sub(file, 1, string.len(file) - 4))
             
             amount = amount + 1

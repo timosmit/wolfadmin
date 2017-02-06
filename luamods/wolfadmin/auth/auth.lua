@@ -81,6 +81,7 @@ auth.PERM_ENABLEVOTE = "enablevote"
 auth.PERM_CANCELVOTE = "cancelvote"
 auth.PERM_PASSVOTE = "passvote"
 
+auth.PERM_COINTOSS = "cointoss"
 auth.PERM_NEWS = "news"
 
 auth.PERM_UPTIME = "uptime"
