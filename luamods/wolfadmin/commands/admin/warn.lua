@@ -84,7 +84,9 @@ function commandWarn(clientId, command, victim, ...)
     end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
 
     return true
 end
