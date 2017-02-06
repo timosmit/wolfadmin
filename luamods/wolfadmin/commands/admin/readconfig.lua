@@ -15,19 +15,34 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
 local rules = require (wolfa_getLuaPath()..".admin.rules")
+
+local auth = require (wolfa_getLuaPath()..".auth.auth")
+
+local commands = require (wolfa_getLuaPath()..".commands.commands")
+
 local greetings = require (wolfa_getLuaPath()..".players.greetings")
+
+local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandReadconfig(clientId, command)
     settings.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
-    
+
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
-    
+
     return false
 end
 commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true, (settings.get("g_standalone") == 1))
+
+function commandReadconfig(clientId, command)
+    settings.load()
+    local rulesCount = rules.load()
+    local greetingsCount = greetings.load()
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
+
+    return false
+end
+commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the config file", nil, nil, (settings.get("g_standalone") == 0))

@@ -51,12 +51,16 @@ function commandFinger(clientId, command, victim)
         ["codedsname"] = players.getName(cmdClient):gsub("%^([^^])", "^^2%1"),
         ["slot"] = cmdClient,
         ["guid"] = players.getGUID(cmdClient),
+        ["ip"] = players.getIP(cmdClient),
+        ["version"] = players.getVersion(cmdClient)
     }
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dInformation about ^7"..stats["name"].."^d:\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dName:    ^2"..stats["cleanname"].." ("..stats["codedsname"]..")\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dSlot:    ^2"..stats["slot"]..(stats["slot"] < tonumber(et.trap_Cvar_Get("sv_privateClients")) and " ^9(private)" or "").."\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dGUID:    ^2"..stats["guid"].."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dIP:      ^2"..stats["ip"].."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dVersion: ^2"..stats["version"].."\";")
 
     return true
 end
