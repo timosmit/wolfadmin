@@ -244,7 +244,7 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'lockteam');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'shuffle');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'swap');
 
-INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'cointoss');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'cointoss');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'pause');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'nextmap');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'restart');
@@ -316,7 +316,7 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'lockteam');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'shuffle');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'swap');
 
-INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'cointoss');
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'cointoss');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'pause');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'nextmap');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'restart');
