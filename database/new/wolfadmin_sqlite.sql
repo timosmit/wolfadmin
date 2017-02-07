@@ -115,7 +115,7 @@ INSERT INTO `level` (`id`, `name`) VALUES (1, 'Regular');
 INSERT INTO `level` (`id`, `name`) VALUES (2, 'VIP');
 INSERT INTO `level` (`id`, `name`) VALUES (3, 'Admin');
 INSERT INTO `level` (`id`, `name`) VALUES (4, 'Senior Admin');
-INSERT INTO `level` (`id`, `name`) VALUES (5, 'Admin');
+INSERT INTO `level` (`id`, `name`) VALUES (5, 'Server Owner');
 COMMIT;
 
 -- add roles for level 0
@@ -182,6 +182,7 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'voicemute');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'spec999');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'balance');
 
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'cointoss');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'pause');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'nextmap');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'restart');
@@ -243,6 +244,7 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'lockteam');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'shuffle');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'swap');
 
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'cointoss');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'pause');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'nextmap');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'restart');
@@ -314,6 +316,7 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'lockteam');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'shuffle');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'swap');
 
+INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'cointoss');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'pause');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'nextmap');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'restart');
