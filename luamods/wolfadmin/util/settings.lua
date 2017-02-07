@@ -24,6 +24,7 @@ local data = {
     ["g_logAdmin"] = "admin.log",
     ["g_fileGreetings"] = "greetings.cfg",
     ["g_fileRules"] = "rules.cfg",
+    ["g_fileSprees"] = "sprees.cfg",
     ["g_playerHistory"] = 1,
     ["g_spreeMessages"] = 7,
     ["g_spreeRecords"] = 1,

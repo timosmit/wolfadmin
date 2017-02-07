@@ -24,6 +24,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local bits = require (wolfa_getLuaPath()..".util.bits")
 local constants = require (wolfa_getLuaPath()..".util.constants")
 local events = require (wolfa_getLuaPath()..".util.events")
+local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local sprees = {}
@@ -33,122 +34,24 @@ sprees.RECORD_DEATH = 1
 sprees.RECORD_REVIVE = 2
 sprees.RECORD_NUM = 3
 
+sprees.RECORD_KILL_NAME = "kill"
+sprees.RECORD_DEATH_NAME = "death"
+sprees.RECORD_REVIVE_NAME = "revive"
+
 local spreeNames = {
-    [sprees.RECORD_KILL] = "kill",
-    [sprees.RECORD_DEATH] = "death",
-    [sprees.RECORD_REVIVE] = "revive"
+    [sprees.RECORD_KILL] = sprees.RECORD_KILL_NAME,
+    [sprees.RECORD_DEATH] = sprees.RECORD_DEATH_NAME,
+    [sprees.RECORD_REVIVE] = sprees.RECORD_REVIVE_NAME
 }
 
-local spreeMessagesByType = {
-    [sprees.RECORD_KILL] = {
-        {
-            ["amount"] = 5,
-            ["msg"] = "^dis on a ^2killing spree^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 10,
-            ["msg"] = "^dis on a ^2rampage^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 15,
-            ["msg"] = "^dis ^2dominating^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 20,
-            ["msg"] = "^drevels in his ^2bloodbath^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 25,
-            ["msg"] = "^dis a walking ^2slaughterhouse^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 30,
-            ["msg"] = "^dwreaks ^2havoc ^dupon his foes^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 35,
-            ["msg"] = "^dcuts through enemies like a ^2god ^2of ^2war^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 40,
-            ["msg"] = "^dis the ^2prophet of doom^d!",
-            ["sound"] = ""
-        }
-    },
-    [sprees.RECORD_DEATH] = {
-        {
-            ["amount"] = 5,
-            ["msg"] = "^dmust be having a bad day!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 10,
-            ["msg"] = "^dhis day just got worse!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 15,
-            ["msg"] = "^dtries to kill with flowers!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 20,
-            ["msg"] = "^dis getting his ass kicked!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 25,
-            ["msg"] = "^dis a death magnet!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 30,
-            ["msg"] = "^dneeds remedial combat training!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 40,
-            ["msg"] = "^dstill can't kill shit!",
-            ["sound"] = ""
-        }
-    },
-    [sprees.RECORD_REVIVE] = {
-        {
-            ["amount"] = 3,
-            ["msg"] = "^dis on a ^2revive spree^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 5,
-            ["msg"] = "^dis a ^2health dealer^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 10,
-            ["msg"] = "^dis a ^2perfect nurse^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 15,
-            ["msg"] = "^dis a ^2syringe maniac^d!",
-            ["sound"] = ""
-        },
-        {
-            ["amount"] = 25,
-            ["msg"] = "^dis the new ^2Dr. Frankenstein^d!",
-            ["sound"] = ""
-        }
-    }
+local spreeTypes = {
+    [sprees.RECORD_KILL_NAME] = sprees.RECORD_KILL,
+    [sprees.RECORD_DEATH_NAME] = sprees.RECORD_DEATH,
+    [sprees.RECORD_REVIVE_NAME] = sprees.RECORD_REVIVE
 }
 
 local spreeMessages = {}
+local spreeMessagesByType = {}
 
 local playerSprees = {}
 local currentRecords = {} -- cached version
@@ -156,6 +59,10 @@ local currentMapId
 
 function sprees.getRecordNameByType(type)
     return spreeNames[type]
+end
+
+function sprees.getRecordTypeByName(name)
+    return spreeTypes[name]
 end
 
 function sprees.get()
@@ -194,13 +101,29 @@ function sprees.load()
         end
     end
 
+    local fileName = settings.get("g_fileSprees")
+
+    local amount, array = files.loadCFG(fileName, "[a-z]+", true)
+
     for i = 0, sprees.RECORD_NUM - 1 do
         spreeMessages[i] = {}
+        spreeMessagesByType[i] = {}
+    end
 
-        for _, spree in ipairs(spreeMessagesByType[i]) do
-            spreeMessages[i][spree["amount"]] = spree
+    for name, block in pairs(array) do
+        for _, spree in ipairs(block) do
+            for k, v in pairs(spree) do
+                if k == "amount" then
+                    spree[k] = tonumber(v)
+                end
+            end
+            table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
+
+            spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
         end
     end
+
+    return amount
 end
 
 function sprees.save()
@@ -292,7 +215,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
                 spreeNames[type])
 
             if spreeMessage["sound"] and spreeMessage["sound"] ~= "" then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/"..spreeMessage["sound"].."\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
@@ -307,7 +230,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
                 spreeNames[type])
 
             if maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/"..maxSpreeMessage["sound"].."\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")

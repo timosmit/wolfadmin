@@ -21,6 +21,8 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
+local sprees = require (wolfa_getLuaPath()..".game.sprees")
+
 local greetings = require (wolfa_getLuaPath()..".players.greetings")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
@@ -29,8 +31,9 @@ function commandReadconfig(clientId, command)
     settings.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
+    local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules, "..spreesCount.." sprees\";")
 
     return false
 end
@@ -40,8 +43,9 @@ function commandReadconfig(clientId, command)
     settings.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
+    local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules, "..spreesCount.." sprees\";")
 
     return false
 end
