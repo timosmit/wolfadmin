@@ -103,12 +103,16 @@ function sprees.load()
 
     local fileName = settings.get("g_fileSprees")
 
-    local amount, array = files.loadCFG(fileName, "[a-z]+", true)
-
     for i = 0, sprees.RECORD_NUM - 1 do
         spreeMessages[i] = {}
         spreeMessagesByType[i] = {}
     end
+
+    if fileName == "" then
+        return 0
+    end
+
+    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
 
     for name, block in pairs(array) do
         for _, spree in ipairs(block) do

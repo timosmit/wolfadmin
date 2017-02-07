@@ -36,38 +36,14 @@ function files.ls(directory)
     return entries
 end
 
-function files.create(fileName)
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
-    
-    return fileDescriptor, fileLength
-end
+function files.loadFromCFG(fileName, idExpr, fileCreate)
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
-function files.open(fileName, fileMode, fileCreate)
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, fileMode)
-    
     if fileLength == -1 then
-        if not fileCreate then
-            error("failed to open "..fileName.."\n")
-        end
-        
-        fileDescriptor, fileLength = files.create(fileName)
+        return nil
     end
-    
-    if fileMode == et.FS_READ then
-        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
-        
-        et.trap_FS_FCloseFile(fileDescriptor)
-        
-        return fileString
-    else
-        return fileDescriptor
-    end
-    
-    return false
-end
 
-function files.loadCFG(fileName, idExpr, fileCreate)
-    local fileString = files.open(fileName, et.FS_READ, fileCreate).."\n\n"
+    local fileString = et.trap_FS_Read(fileDescriptor, fileLength).."\n\n"
     local arrayCount = 0
     local array = {}
     
@@ -93,8 +69,8 @@ function files.loadCFG(fileName, idExpr, fileCreate)
     return arrayCount, array
 end
 
-function files.save(fileName, array)
-    local fileDescriptor = files.open(fileName, et.FS_WRITE)
+function files.saveToCFG(fileName, array)
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
     local arrayCount = 0
     
     for id, subdata in pairs(array) do

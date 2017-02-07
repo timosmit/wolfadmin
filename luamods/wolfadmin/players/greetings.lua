@@ -81,19 +81,23 @@ end
 
 function greetings.load()
     local fileName = settings.get("g_fileGreetings")
-    
-    local amount, array = files.loadCFG(fileName, "[a-z]+", true)
-    
+
+    if fileName == "" then
+        return 0
+    end
+
+    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+
     if amount == 0 then return 0 end
-    
-    for id, greeting in ipairs(array["level"]) do
+
+    for _, greeting in ipairs(array["level"]) do
         levelGreetings[tonumber(greeting["level"])] = {
             ["text"] = greeting["greeting"],
             ["sound"] = greeting["sound"],
         }
     end
-    
-    for id, greeting in ipairs(array["user"]) do
+
+    for _, greeting in ipairs(array["user"]) do
         userGreetings[greeting["guid"]] = {
             ["text"] = greeting["greeting"],
             ["sound"] = greeting["sound"],

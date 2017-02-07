@@ -27,25 +27,25 @@ function rules.get(shortcut)
     if shortcut then
         return data[shortcut]
     end
-    
+
     return data
 end
 
 function rules.load()
     local fileName = settings.get("g_fileRules")
-    
+
     if fileName == "" then
         return 0
     end
-    
-    local amount, array = files.loadCFG(fileName, "[a-z]+", true)
-    
+
+    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+
     if amount == 0 then return 0 end
-    
+
     for id, rule in ipairs(array["rule"]) do
         data[rule["shortcut"]] = rule["rule"]
     end
-    
+
     return amount
 end
 
