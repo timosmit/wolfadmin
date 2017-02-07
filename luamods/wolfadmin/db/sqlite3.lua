@@ -47,6 +47,34 @@ function sqlite3.getplayerid(clientId)
     return sqlite3.getplayer(players.getGUID(clientId))["id"]
 end
 
+function sqlite3.getPlayersCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function sqlite3.getPlayers(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `player` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local players = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(players, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return players
+end
+
 function sqlite3.getplayer(guid)
     cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
     
@@ -474,18 +502,28 @@ function sqlite3.isconnected()
 end
 
 function sqlite3.start()
-    con = env:connect(wolfa_getHomePath()..settings.get("db_file"))
+    local uri, file = nil, settings.get("db_file")
+
+    if string.find(file, ":memory:?cache=shared") then
+        uri = file
+    else
+        uri = wolfa_getHomePath()..file
+    end
+
+    con = env:connect(uri)
 
     if not con then
-        return
+        error("could not connect to database")
     end
 
     -- enable foreign key enforcement
-    cur = assert(con:execute("PRAGMA foreign_keys=1"))
-    cur = assert(con:execute("PRAGMA synchronous=0"))
+    assert(con:execute("PRAGMA foreign_keys=1"))
+    assert(con:execute("PRAGMA synchronous=0"))
 end
 
 function sqlite3.close(doSave)
+    con:close()
+    env:close()
 end
 
 return sqlite3

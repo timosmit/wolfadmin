@@ -294,11 +294,13 @@ function mysql.start()
     con = env:connect(settings.get("db_database"), settings.get("db_username"), settings.get("db_password"), settings.get("db_hostname"), settings.get("db_port"))
 
     if not con then
-        return
+        error("could not connect to database")
     end
 end
 
 function mysql.close(doSave)
+    con:close()
+    env:close()
 end
 
 return mysql
