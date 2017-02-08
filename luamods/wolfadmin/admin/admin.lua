@@ -18,15 +18,14 @@
 local db = require (wolfa_getLuaPath()..".db.db")
 
 local players = require (wolfa_getLuaPath()..".players.players")
--- local stats = require (wolfa_getLuaPath()..".players.stats")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
 local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 local admin = {}
+
+local playerRenames = {}
 
 function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
@@ -86,37 +85,46 @@ function admin.onconnect(clientId, firstTime, isBot)
 end
 events.handle("onClientConnect", admin.onconnect)
 
-function players.oninfochange(clientId)
-    local clientInfo = et.trap_GetUserinfo(clientId)
+function admin.onClientNameChange(clientId, oldName, newName)
+    -- rename filter
+    if not playerRenames[clientId] or playerRenames[clientId]["last"] < os.time() - 60 then
+        playerRenames[clientId] = {
+            ["first"] = os.time(),
+            ["last"] = os.time(),
+            ["count"] = 1
+        }
+    else
+        playerRenames[clientId]["count"] = playerRenames[clientId]["count"] + 1
+        playerRenames[clientId]["last"] = os.time()
 
-    local old = players.getCachedName(clientId)
-    local new = et.Info_ValueForKey(clientInfo, "name")
+        -- give them some time
+        if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
+            local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
 
-    -- TODO fix for Legacy
-    -- prints messages by itself, also when rename is rejected - not desirable
-    --[[ if new ~= old then
-        if (os.time() - stats.get(clientId, "namechangeStart")) < settings.get("g_renameInterval") and stats.get(clientId, "namechangePts") >= settings.get("g_renameLimit") and not players.isNameForced(clientId) then
-            players.setNameForced(clientId, true)
-
-            clientInfo = et.Info_SetValueForKey(clientInfo, "name", old)
-            et.trap_SetUserinfo(clientId, clientInfo)
-            et.ClientUserinfoChanged(clientId)
-
-            players.setNameForced(clientId, false)
-
-            et.trap_SendServerCommand(clientId, "cp \"Too many name changes in 1 minute.\";")
-        else
-            if (os.time() - stats.get(clientId, "namechangeStart")) > settings.get("g_renameInterval") then
-                stats.set(clientId, "namechangeStart", os.time())
-                stats.get(clientId, "namechangePts", 0)
+            if renamesPerMinute > settings.get("g_renameLimit") then
+                admin.kickPlayer(clientId, -1337, "Too many name changes.")
             end
-
-            stats.add(clientId, "namechangePts", 1)
-
-            events.trigger("onClientNameChange", clientId, old, new)
         end
-    end ]]
+    end
+
+    -- on some mods, this message is already printed
+    -- known: old NQ versions, Legacy
+    if et.trap_Cvar_Get("fs_game") ~= "legacy" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..oldName.." ^7is now known as "..newName.."\";")
+    end
+
+    -- update database
+    if db.isconnected() then
+        local playerId = db.getplayer(players.getGUID(clientId))["id"]
+        local alias = db.getaliasbyname(playerId, newName)
+
+        if alias then
+            db.updatealias(alias["id"], os.time())
+        else
+            db.addalias(playerId, newName, os.time())
+        end
+    end
 end
-events.handle("onClientInfoChange", players.oninfochange)
+events.handle("onClientNameChange", admin.onClientNameChange)
 
 return admin

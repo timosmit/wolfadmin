@@ -31,10 +31,6 @@ function players.isConnected(clientId)
     return (data[clientId] ~= nil)
 end
 
-function players.getCachedName(clientId)
-    return data[clientId]["name"]
-end
-
 function players.getName(clientId)
     if clientId == -1337 then
         return "console"
@@ -65,14 +61,6 @@ end
 
 function players.getLastPMSender(clientId)
     return data[clientId]["lastpmsender"]
-end
-
-function players.setNameForced(clientId, state)
-    data[clientId]["nameforced"] = state
-end
-
-function players.isNameForced(clientId)
-    return data[clientId]["nameforced"]
 end
 
 function players.setMuted(clientId, state, type, issued, expires)
@@ -119,7 +107,7 @@ function players.isTeamLocked(clientId)
     return data[clientId]["teamlock"]
 end
 
-function players.onconnect(clientId, firstTime, isBot)
+function players.onClientConnect(clientId, firstTime, isBot)
     local clientInfo = et.trap_GetUserinfo(clientId)
 
     -- name is NOT yet set in pers.netname, so get all info out of infostring
@@ -159,58 +147,39 @@ function players.onconnect(clientId, firstTime, isBot)
         end
     end
 end
-events.handle("onClientConnect", players.onconnect)
+events.handle("onClientConnect", players.onClientConnect)
 
-function players.onbegin(clientId)
-    -- TODO:
-    -- new approach: load necessary data in onClientConnect event handlers,
-    -- load rest in onClientBegin handlers (avoids useless loading of stats, 
-    -- less coupling between main.lua and stats.lua)
-    -- ensures that all data is loaded from this moment on
-
+function players.onClientBegin(clientId)
     events.trigger("onPlayerReady", clientId, data[clientId]["new"])
 
     data[clientId]["new"] = false
 end
-events.handle("onClientBegin", players.onbegin)
+events.handle("onClientBegin", players.onClientBegin)
 
-function players.ondisconnect(clientId)
+function players.onClientDisconnect(clientId)
     data[clientId] = nil
 end
-events.handle("onClientDisconnect", players.ondisconnect)
+events.handle("onClientDisconnect", players.onClientDisconnect)
 
-function players.onnamechange(clientId, old, new)
-    -- TODO: on some mods, this message is already printed
-    -- known: old NQ versions, Legacy
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..old.." ^7is now known as "..new.."\";")
+function players.onClientInfoChange(clientId)
+    local oldTeam = data[clientId]["team"]
+    local newTeam = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
 
-    data[clientId]["name"] = new
+    if newTeam ~= oldTeam then
+        data[clientId]["team"] = newTeam
 
-    if db.isconnected() then
-        local playerid = db.getplayer(players.getGUID(clientId))["id"]
-        local name = players.getName(clientId)
-        local alias = db.getaliasbyname(playerid, name)
+        events.trigger("onClientTeamChange", clientId, oldTeam, newTeam)
+    end
 
-        if alias then
-            db.updatealias(alias["id"], os.time())
-        else
-            db.addalias(playerid, name, os.time())
-        end
+    local oldName = data[clientId]["name"]
+    local newName = et.gentity_get(clientId, "pers.netname")
+
+    if newName ~= oldName then
+        data[clientId]["name"] = newName
+
+        events.trigger("onClientNameChange", clientId, oldName, newName)
     end
 end
-events.handle("onClientNameChange", players.onnamechange)
-
-function players.oninfochange(clientId)
-    local clientInfo = et.trap_GetUserinfo(clientId)
-    local old = data[clientId]["team"]
-    local new = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
-
-    if new ~= old then
-        data[clientId]["team"] = new
-
-        events.trigger("onClientTeamChange", clientId, old, new)
-    end
-end
-events.handle("onClientInfoChange", players.oninfochange)
+events.handle("onClientInfoChange", players.onClientInfoChange)
 
 return players
