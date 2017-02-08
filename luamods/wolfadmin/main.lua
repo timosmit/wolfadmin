@@ -172,7 +172,14 @@ end
 -- no callbacks defined for these things, so had to invent some special regexes
 -- note for etlegacy team: please take a look at this, might come in handy :-)
 function et_Print(consoleText)
-    local result, poll = string.match(consoleText, "^Vote (%w+): %[poll%] ([%w%s]+)\n$")
+    local result, poll
+
+    if et.trap_Cvar_Get("fs_game") == "legacy" then
+        result, poll = string.match(consoleText, "^Vote (%w+): %(Y:%d+-N:%d+%) %[poll%] ([%w%s]+)\n$")
+    else
+        result, poll = string.match(consoleText, "^Vote (%w+): %[poll%] ([%w%s]+)\n$")
+    end
+
     if result then
         events.trigger("onPollFinish", (result == "Passed"), poll)
     end
