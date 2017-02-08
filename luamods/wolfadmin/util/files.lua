@@ -36,7 +36,7 @@ function files.ls(directory)
     return entries
 end
 
-function files.loadFromCFG(fileName, idExpr, fileCreate)
+function files.loadFromCFG(fileName, idExpr)
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
     if fileLength == -1 then
