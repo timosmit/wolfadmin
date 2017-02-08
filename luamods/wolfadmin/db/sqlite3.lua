@@ -504,7 +504,7 @@ end
 function sqlite3.start()
     local uri, file = nil, settings.get("db_file")
 
-    if string.find(file, ":memory:?cache=shared") then
+    if string.find(file, ":memory:%?cache=shared") then
         uri = file
     else
         uri = wolfa_getHomePath()..file
