@@ -175,7 +175,7 @@ end
 events.handle("onClientBegin", players.onbegin)
 
 function players.ondisconnect(clientId)
-    -- stats.remove(clientId)
+    data[clientId] = nil
 end
 events.handle("onClientDisconnect", players.ondisconnect)
 
