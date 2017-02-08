@@ -32,7 +32,7 @@ function commandWarn(clientId, command, victim, ...)
         return false
     elseif not victim or not ... then
         return false
-    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+    elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(victim)
     else
         cmdClient = tonumber(victim)
@@ -55,7 +55,7 @@ function commandWarn(clientId, command, victim, ...)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn usage: "..commands.getadmin("warn")["syntax"].."\";")
 
         return true
-    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+    elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(victim)
     else
         cmdClient = tonumber(victim)

@@ -31,7 +31,7 @@ function commandVoiceMute(clientId, command, victim, ...)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
-    elseif tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+    elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(victim)
     else
         cmdClient = tonumber(victim)

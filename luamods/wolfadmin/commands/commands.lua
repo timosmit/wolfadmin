@@ -128,7 +128,7 @@ function commands.log(clientId, command, victim, ...)
     if victim then
         local cmdClient
 
-        if tonumber(victim) == nil or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+        if tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
             cmdClient = et.ClientNumberFromString(victim)
         else
             cmdClient = tonumber(victim)
