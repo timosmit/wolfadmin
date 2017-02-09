@@ -140,6 +140,17 @@ function voting.onPollFinish(passed, poll)
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot difficulty "..difficulty)
+        elseif string.find(poll, "set bot max") == 1 then
+            local amount = string.sub(poll, 13)
+
+            if tonumber(amount) then
+                amount = tonumber(amount)
+            else
+                return
+            end
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot maxbots "..amount)
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmaxbots: ^9maximum set to ^7"..amount.." ^9bots.\";")
         end
     end
 end
