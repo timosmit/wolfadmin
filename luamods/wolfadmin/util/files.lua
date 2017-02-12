@@ -44,6 +44,9 @@ function files.loadFromCFG(fileName, idExpr)
     end
 
     local fileString = et.trap_FS_Read(fileDescriptor, fileLength).."\n\n"
+
+    et.trap_FS_FCloseFile(fileDescriptor)
+
     local arrayCount = 0
     local array = {}
     
