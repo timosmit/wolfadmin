@@ -71,7 +71,10 @@ end
 
 function files.loadCFG(fileName, idExpr, fileCreate)
     local functionStart = et.trap_Milliseconds()
-    local fileString = files.open(fileName, et.FS_READ, fileCreate)
+    local fileString = files.open(fileName, et.FS_READ, fileCreate).."\n\n"
+
+    et.trap_FS_FCloseFile(fileDescriptor)
+
     local arrayCount = 0
     local array = {}
     
