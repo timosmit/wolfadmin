@@ -17,12 +17,15 @@
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local logs = {}
 
 function logs.writeChat(clientId, type, ...)
+    if settings.get("g_logChat") == "" then
+        return
+    end
+
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_APPEND)
 
     local logLine
@@ -45,6 +48,10 @@ function logs.writeChat(clientId, type, ...)
 end
 
 function logs.writeAdmin(clientId, command, victimId, ...)
+    if settings.get("g_logAdmin") == "" then
+        return
+    end
+
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_APPEND)
 
     local logLine
