@@ -90,15 +90,14 @@ end
 
 function settings.determineOS()
     local system = io.popen("uname -s"):read("*l")
-    
-    if system == "Linux" or system == "unix" or system == "FreeBSD" or system == "OpenBSD" or system == "NetBSD" or system == "Darwin" or system == "SunOS" or (system and system:match("^CYGWIN")) then
+    local platform
+
+    if system then
         platform = "unix"
-    elseif system and (system:match("^Windows") or system:match("^MINGW")) then
+    else
         platform = "windows"
-    else -- likely it's unix now
-        platform = "unix"
     end
-    
+
     return platform
 end
 
