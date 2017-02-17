@@ -35,8 +35,8 @@ function sqlite3.addplayer(guid, ip)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0)"))
 end
 
-function sqlite3.updateplayerip(guid, ip)
-    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+function sqlite3.updateplayer(guid, ip, lastSeen)
+    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."', `lastseen`="..lastSeen..", `seen`=`seen`+1 WHERE `guid`='"..util.escape(guid).."'"))
 end
 
 function sqlite3.updateplayerlevel(id, level)
