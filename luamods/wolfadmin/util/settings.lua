@@ -74,7 +74,7 @@ function settings.load()
     end
     
     local files = require (wolfa_getLuaPath()..".util.files")
-    local amount, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
+    local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
 
     for blocksname, settings in pairs(array) do
         for k, v in pairs(settings[1]) do

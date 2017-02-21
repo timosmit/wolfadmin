@@ -16,7 +16,6 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 local auth = {}

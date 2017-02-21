@@ -24,7 +24,6 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local pagination = require (wolfa_getLuaPath()..".util.pagination")
-local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandListAliases(clientId, command, victim, offset)

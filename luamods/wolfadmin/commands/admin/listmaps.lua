@@ -16,8 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
-local util = require (wolfa_getLuaPath()..".util.util")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
+
 local game = require (wolfa_getLuaPath()..".game.game")
 
 function commandListMaps(clientId, command)

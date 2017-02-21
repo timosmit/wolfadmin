@@ -16,8 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
-local game = require (wolfa_getLuaPath()..".game.game")
+
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandPause(clientId, command)

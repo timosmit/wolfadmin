@@ -22,7 +22,6 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandFinger(clientId, command, victim)
     if victim == nil then

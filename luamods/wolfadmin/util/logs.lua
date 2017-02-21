@@ -26,7 +26,7 @@ function logs.writeChat(clientId, type, ...)
         return
     end
 
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_APPEND)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_APPEND)
 
     local logLine
 
@@ -52,7 +52,7 @@ function logs.writeAdmin(clientId, command, victimId, ...)
         return
     end
 
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_APPEND)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_APPEND)
 
     local logLine
 

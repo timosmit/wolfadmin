@@ -21,7 +21,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandAclListLevels(...)
+function commandAclListLevels()
     for _, level in ipairs(acl.getLevels()) do
         et.G_Print(string.format("%5d %30s %6d players", level["id"], level["name"], level["players"]).."\n")
     end

@@ -36,7 +36,7 @@ function tables.unpack(tbl)
 end
 
 function tables.contains(tbl, needle)
-    for key, value in pairs(tbl) do
+    for _, value in pairs(tbl) do
         if value == needle then
             return true
         end

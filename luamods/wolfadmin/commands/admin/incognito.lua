@@ -23,7 +23,6 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 function commandIncognito(clientId, command)
     local fileName = et.trap_Cvar_Get("g_shrubbot")
-    local functionStart = et.trap_Milliseconds()
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
     
     if fileLength == -1 then
@@ -36,7 +35,7 @@ function commandIncognito(clientId, command)
     
     et.trap_FS_FCloseFile(fileDescriptor)
     
-    for entry, adminName, adminGUID, adminLevel, adminFlags in string.gmatch(fileString, "(%[admin%]\nname%s+=%s+([%a%d%p]+)\nguid%s+=%s+([%u%d]+)\nlevel%s+=%s+([%d]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
+    for _, adminName, adminGUID, adminLevel, adminFlags in string.gmatch(fileString, "(%[admin%]\nname%s+=%s+([%a%d%p]+)\nguid%s+=%s+([%u%d]+)\nlevel%s+=%s+([%d]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
         -- et.G_Print(string.format("%s %s %d %s\n", adminName, adminGUID, adminLevel, adminFlags))
         
         if players.getGUID(clientId) == adminGUID then
@@ -63,7 +62,7 @@ function commandIncognito(clientId, command)
         end
     end
     
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
     
     local writeCount = et.trap_FS_Write(fileString, string.len(fileString), fileDescriptor)
     

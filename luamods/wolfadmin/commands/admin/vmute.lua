@@ -48,14 +48,16 @@ function commandVoiceMute(clientId, command, victim, ...)
     end
 
     local args = {...}
-    local duration, reason = 600, "muted by admin"
+    local duration, reason
     
     if args[1] and util.getTimeFromString(args[1]) and args[2] then
         duration = util.getTimeFromString(args[1])
         reason = table.concat(args, " ", 2)
     elseif args[1] and util.getTimeFromString(args[1]) then
         duration = util.getTimeFromString(args[1])
+        reason = "muted by admin"
     elseif args[1] then
+        duration = 600
         reason = table.concat(args, " ")
     elseif not auth.isPlayerAllowed(clientId, "8") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")

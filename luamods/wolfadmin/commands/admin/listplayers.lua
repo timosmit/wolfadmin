@@ -19,12 +19,10 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local game = require (wolfa_getLuaPath()..".game.game")
 local fireteams = require (wolfa_getLuaPath()..".game.fireteams")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 

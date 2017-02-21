@@ -19,9 +19,6 @@ local db = require (wolfa_getLuaPath()..".db.db")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-
 local bans = {}
 
 function bans.get(banId)

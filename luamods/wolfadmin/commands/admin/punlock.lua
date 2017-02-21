@@ -21,8 +21,6 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local util = require (wolfa_getLuaPath()..".util.util")
-
 function commandPlayerUnlock(clientId, command, victim)
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock usage: "..commands.getadmin("punlock")["syntax"].."\";")

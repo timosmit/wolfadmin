@@ -15,17 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local util = require (wolfa_getLuaPath()..".util.util")
-local bits = require (wolfa_getLuaPath()..".util.bits")
-local tables = require (wolfa_getLuaPath()..".util.tables")
-local events = require (wolfa_getLuaPath()..".util.events")
-local timers = require (wolfa_getLuaPath()..".util.timers")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-
-local admin = require (wolfa_getLuaPath()..".admin.admin")
-
 local teams = require (wolfa_getLuaPath()..".game.teams")
+
+local constants = require (wolfa_getLuaPath()..".util.constants")
+local bits = require (wolfa_getLuaPath()..".util.bits")
+local events = require (wolfa_getLuaPath()..".util.events")
+local settings = require (wolfa_getLuaPath()..".util.settings")
+local tables = require (wolfa_getLuaPath()..".util.tables")
+local timers = require (wolfa_getLuaPath()..".util.timers")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 local balancer = {}
 
@@ -40,7 +38,6 @@ local lastJoined = {[constants.TEAM_AXIS] = {}, [constants.TEAM_ALLIES] = {}, [c
 local evenerCount = 0
 
 function balancer.balance(byAdmin, forceBalance)
-    local teamsData = teams.get()
     local teamsDifference = teams.difference()
 
     if teamsDifference == 0 then
@@ -78,6 +75,8 @@ function balancer.balance(byAdmin, forceBalance)
         evenerCount = evenerCount + 1
 
         if forceBalance or evenerCount >= 3 then
+            local teamsData = teams.get()
+
             for i = 1, math.floor(teamsDifference / 2) do
                 local player = balancer.findPlayer(teamsData[teamGreater], teamGreater, teamSmaller)
 

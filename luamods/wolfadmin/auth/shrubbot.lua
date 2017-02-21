@@ -15,9 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
-
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local shrubbot = {}

@@ -19,7 +19,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 local voting = require (wolfa_getLuaPath()..".game.voting")
 
-function commandEnableVote(clientId, command, ...)
+function commandEnableVote(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^denablevote: ^9next map voting has been enabled.\";")
 
     voting.force("nextmap")

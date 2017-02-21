@@ -17,7 +17,6 @@
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
 local util = require (wolfa_getLuaPath()..".util.util")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local tables = require (wolfa_getLuaPath()..".util.tables")

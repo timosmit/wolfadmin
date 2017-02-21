@@ -73,7 +73,7 @@ function files.loadFromCFG(fileName, idExpr)
 end
 
 function files.saveToCFG(fileName, array)
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
     local arrayCount = 0
     
     for id, subdata in pairs(array) do
@@ -82,11 +82,12 @@ function files.saveToCFG(fileName, array)
             et.trap_FS_Write(blockId, string.len(blockId), fileDescriptor)
             
             local maxKeyLength = 0
-            
-            for k, v in pairs(data) do
+
+            for k, _ in pairs(data) do
                 maxKeyLength = math.max(maxKeyLength, string.len(k))
             end
-            
+
+            local dataLine
             for k, v in pairs(data) do
                 dataLine = string.format("%-"..maxKeyLength.."s = %s\n", k, v)
                 et.trap_FS_Write(dataLine, string.len(dataLine), fileDescriptor)

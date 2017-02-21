@@ -35,7 +35,6 @@ function commandListLevels(clientId, command, victim, offset)
             return true
         else
             local fileName = et.trap_Cvar_Get("g_shrubbot")
-            local functionStart = et.trap_Milliseconds()
             local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
             local levelsCount = 0
 
@@ -49,7 +48,7 @@ function commandListLevels(clientId, command, victim, offset)
 
             et.trap_FS_FCloseFile(fileDescriptor)
 
-            for entry, levelNr, levelName, levelFlags in string.gmatch(fileString, "(%[level%]\nlevel%s+=%s+(-?[0-9]+)\nname%s+=%s+([%a%d%p ]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
+            for _, levelNr, levelName, levelFlags in string.gmatch(fileString, "(%[level%]\nlevel%s+=%s+(-?[0-9]+)\nname%s+=%s+([%a%d%p ]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
                 -- et.G_Print(string.format("%d %s %s\n", levelNr, levelName, levelFlags))
 
                 local numberOfSpaces = 24 - string.len(util.removeColors(levelName))
@@ -94,7 +93,7 @@ function commandListLevels(clientId, command, victim, offset)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9there are no recorded levels for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.\";")
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dLevels for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
-        for id, level in pairs(levels) do
+        for _, level in pairs(levels) do
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", level["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(level["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", level["datetime"]).." ^7"..level["level_id"].."\";")
         end
         

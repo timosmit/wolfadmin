@@ -15,11 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local teams = require (wolfa_getLuaPath()..".game.teams")
-
 local bits = require (wolfa_getLuaPath()..".util.bits")
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local events = require (wolfa_getLuaPath()..".util.events")
 
 local fireteams = {}
 

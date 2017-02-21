@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local util = require (wolfa_getLuaPath()..".util.util")
 local auth = require (wolfa_getLuaPath()..".auth.auth")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+
 local greetings = require (wolfa_getLuaPath()..".players.greetings")
 
 function commandGreeting(clientId, command)
