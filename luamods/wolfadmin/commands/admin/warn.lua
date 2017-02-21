@@ -28,6 +28,8 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandWarn(clientId, command, victim, ...)
+    local cmdClient
+
     if not db.isconnected() or settings.get("g_playerHistory") == 0 then
         return false
     elseif not victim or not ... then

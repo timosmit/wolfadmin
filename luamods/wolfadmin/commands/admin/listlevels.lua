@@ -28,6 +28,8 @@ local settings = require (wolfa_getLuaPath()..".util.settings")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandListLevels(clientId, command, victim, offset)
+    local cmdClient
+
     if victim == nil then
         if settings.get("g_standalone") ~= 0 then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels usage: "..commands.getadmin("listlevels")["syntax"].."\";")

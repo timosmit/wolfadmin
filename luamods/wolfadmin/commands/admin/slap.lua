@@ -24,6 +24,8 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandSlap(clientId, command, victim)
+    local cmdClient
+
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dslap usage: "..commands.getadmin("slap")["syntax"].."\";")
 

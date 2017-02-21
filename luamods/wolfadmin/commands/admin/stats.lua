@@ -22,6 +22,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandShowStats(clientId, command, victim)
+    local cmdClient
+
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dstats usage: "..commands.getadmin("stats")["syntax"].."\";")
 

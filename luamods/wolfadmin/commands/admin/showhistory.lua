@@ -28,6 +28,8 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandListHistory(clientId, command, victim, offset)
+    local cmdClient
+
     if not db.isconnected() or settings.get("g_playerHistory") == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9player history is disabled.\";")
 

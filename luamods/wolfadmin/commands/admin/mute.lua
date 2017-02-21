@@ -28,6 +28,8 @@ local util = require (wolfa_getLuaPath()..".util.util")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandMute(clientId, command, victim, ...)
+    local cmdClient
+
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
 

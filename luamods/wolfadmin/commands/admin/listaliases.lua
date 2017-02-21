@@ -27,6 +27,8 @@ local pagination = require (wolfa_getLuaPath()..".util.pagination")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandListAliases(clientId, command, victim, offset)
+    local cmdClient
+
     if not db.isconnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")
         

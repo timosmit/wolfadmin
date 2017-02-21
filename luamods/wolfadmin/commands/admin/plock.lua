@@ -22,6 +22,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local players = require (wolfa_getLuaPath()..".players.players")
 
 function commandPlayerLock(clientId, command, victim)
+    local cmdClient
+
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock usage: "..commands.getadmin("plock")["syntax"].."\";")
         

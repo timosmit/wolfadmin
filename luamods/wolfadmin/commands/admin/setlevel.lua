@@ -26,6 +26,8 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandSetLevel(clientId, command, victim, level)
+    local cmdClient
+
     if not victim or not level then
         return false
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then

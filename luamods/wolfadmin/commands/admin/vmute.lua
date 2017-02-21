@@ -27,6 +27,8 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandVoiceMute(clientId, command, victim, ...)
+    local cmdClient
+
     if victim == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
