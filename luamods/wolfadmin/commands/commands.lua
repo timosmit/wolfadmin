@@ -201,7 +201,7 @@ function commands.onClientCommand(clientId, command)
 
     -- client cmds
     -- syntax: say or say_*
-    local clientCmd = nil
+    local clientCmd
 
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "/") == 1 then
         args = util.split(et.trap_Argv(1), " ")
@@ -233,8 +233,8 @@ function commands.onClientCommand(clientId, command)
     end
     
     -- shrub cmds
-    local shrubCmd = nil
-    
+    local shrubCmd
+
     -- syntax: say or say_*
     if (wolfCmd == "say" or wolfCmd == "say_team" or wolfCmd == "say_buddy") and string.find(et.trap_Argv(1), "!") == 1 then
         args = util.split(et.trap_Argv(1), " ")

@@ -87,8 +87,8 @@ function events.trigger(name, ...)
         error("event not added: "..name)
     end
     
-    local returnValue = nil
-    
+    local returnValue
+
     for _, handler in pairs(handlers) do
         local handlerReturn = handler(...)
         

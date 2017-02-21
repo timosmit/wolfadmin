@@ -27,8 +27,8 @@ local luasql = require "luasql.sqlite3"
 local sqlite3 = {}
 
 local env = assert(luasql.sqlite3())
-local con = nil
-local cur = nil
+local con
+local cur
 
 -- players
 function sqlite3.addplayer(guid, ip)

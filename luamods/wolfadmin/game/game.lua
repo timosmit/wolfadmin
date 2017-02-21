@@ -24,10 +24,11 @@ local players = require (wolfa_getLuaPath()..".players.players")
 local game = {}
 
 local killCount = 0
-local lastKillerId = nil
+local lastKillerId
 
-local currentState = nil
-local currentMaps, currentMap, nextMap = {}, nil, nil
+local currentState
+local currentMaps = {}
+local currentMap, nextMap
 
 function game.getState()
     return currentState

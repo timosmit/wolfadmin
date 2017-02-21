@@ -26,8 +26,8 @@ local luasql = require "luasql.mysql"
 local mysql = {}
 
 local env = assert(luasql.mysql())
-local con = nil
-local cur = nil
+local con
+local cur
 
 -- players
 function mysql.addplayer(guid, ip)

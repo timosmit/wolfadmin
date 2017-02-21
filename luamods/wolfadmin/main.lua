@@ -53,9 +53,9 @@ local util
 local version = "1.2.0-dev"
 local release = "TBD"
 
-local basepath = nil
-local homepath = nil
-local luapath = nil
+local basepath
+local homepath
+local luapath
 
 -- need to do this somewhere else
 function wolfa_getVersion()

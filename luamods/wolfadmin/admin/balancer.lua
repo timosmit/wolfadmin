@@ -32,7 +32,7 @@ balancer.BALANCE_LAST_JOINED = 1
 balancer.BALANCE_ONLY_DEAD = 2
 balancer.BALANCE_NOT_OBJECTIVE = 4
 
-local balancerTimer = nil
+local balancerTimer
 
 local lastJoined = {[constants.TEAM_AXIS] = {}, [constants.TEAM_ALLIES] = {}, [constants.TEAM_SPECTATORS] = {}}
 local evenerCount = 0
