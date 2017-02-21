@@ -53,6 +53,8 @@ end
 commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") == 1 or settings.get("g_playerHistory") == 0))
 
 function commandWarn(clientId, command, victim, ...)
+    local cmdClient
+
     if not victim or not ... then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn usage: "..commands.getadmin("warn")["syntax"].."\";")
 
