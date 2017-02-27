@@ -31,8 +31,8 @@ local con
 local cur
 
 -- players
-function sqlite3.addplayer(guid, ip)
-    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0)"))
+function sqlite3.addplayer(guid, ip, lastSeen, seen)
+    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
 end
 
 function sqlite3.updateplayer(guid, ip, lastSeen)

@@ -139,7 +139,7 @@ function players.onClientConnect(clientId, firstTime, isBot)
                     db.addalias(player["id"], data[clientId]["name"], os.time())
                 end
             else
-                db.addplayer(data[clientId]["guid"], data[clientId]["ip"])
+                db.addplayer(data[clientId]["guid"], data[clientId]["ip"], os.time(), 1)
 
                 local player = db.getplayer(data[clientId]["guid"])
                 db.addalias(player["id"], data[clientId]["name"], os.time())
