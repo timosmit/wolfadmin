@@ -351,6 +351,6 @@ COMMIT;
 
 -- add console to players table
 BEGIN;
-INSERT INTO `player` (`id`, `guid`, `ip`, `level_id`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5);
+INSERT INTO `player` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5, 0, 0);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);
 COMMIT;
