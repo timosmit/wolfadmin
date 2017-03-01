@@ -19,11 +19,11 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-function commandShuffle(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+function commandShuffleSR(clientId, command)
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
 
     return true
 end
-commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams by XP to try and even them", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", nil, nil, (settings.get("fs_game") == "legacy"))
