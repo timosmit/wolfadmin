@@ -67,9 +67,9 @@ function settings.load()
         local cvar = et.trap_Cvar_Get(setting)
         
         if type(default) == "string" then
-            data[setting] = (cvar ~= "" and tostring(cvar) or default)
+            data[setting] = (cvar ~= nil and tostring(cvar) or default)
         elseif type(default) == "number" then
-            data[setting] = (cvar ~= "" and tonumber(cvar) or default)
+            data[setting] = (cvar ~= nil and tonumber(cvar) or default)
         end
     end
     
