@@ -74,34 +74,34 @@ function admin.unlockPlayer(clientId)
     stats.set(clientId, "teamLock", false)
 end
 
-function admin.updatePlayer(clientId)
+function admin.updatePlayer(clientId, firstTime)
     local player = db.getplayer(stats.get(clientId, "playerGUID"))
     
-    if player then
+    if player and firstTime then
         local guid = stats.get(clientId, "playerGUID")
         local ip = stats.get(clientId, "playerIP")
         
         db.updateplayer(guid, ip)
-    else
+    elseif not player then
         local guid = stats.get(clientId, "playerGUID")
         local ip = stats.get(clientId, "playerIP")
         
         db.addplayer(guid, ip)
-        admin.setPlayerLevel(clientId, et.G_shrubbot_level(clientId), 1)
+        admin.setPlayerLevel(clientId, et.G_shrubbot_level(clientId), clientId)
     end
 end
 
-function admin.updateAlias(clientId)
+function admin.updateAlias(clientId, firstTime)
     local playerid = db.getplayer(stats.get(clientId, "playerGUID"))["id"]
     local name = stats.get(clientId, "playerName")
     local alias = db.getaliasbyname(playerid, name)
     
-    if alias then
+    if alias and firstTime then
         db.updatealias(alias["id"], os.time())
         if alias["cleanalias"] == "" then
             db.updatecleanalias(alias["id"], name)
         end
-    else
+    elseif not alias then
         db.addalias(playerid, name, os.time())
     end
 end
@@ -123,11 +123,11 @@ function admin.onconnect(clientId, firstTime, isBot)
         if stats.get(clientId, "playerGUID") == "NO_GUID" or stats.get(clientId, "playerGUID") == "unknown" then
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
-        
-        if db.isconnected() then
-            admin.updatePlayer(clientId)
-            admin.updateAlias(clientId)
-        end
+    end
+
+    if db.isconnected() then
+        admin.updatePlayer(clientId, firstTime)
+        admin.updateAlias(clientId, firstTime)
     end
 end
 events.handle("onClientConnect", admin.onconnect)
