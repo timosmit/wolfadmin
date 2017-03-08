@@ -17,6 +17,16 @@
 
 local tables = {}
 
+function tables.copy(table)
+    local copy = {}
+
+    for key, value in pairs(table) do
+        copy[key] = value
+    end
+
+    return copy
+end
+
 function tables.contains(table, needle)
     for key, value in pairs(table) do
         if value == needle then

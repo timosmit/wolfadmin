@@ -18,6 +18,7 @@
 local constants = require "luascripts.wolfadmin.util.constants"
 local util = require "luascripts.wolfadmin.util.util"
 local settings = require "luascripts.wolfadmin.util.settings"
+local tables = require "luascripts.wolfadmin.util.tables"
 
 local stats = require "luascripts.wolfadmin.players.stats"
 
@@ -83,7 +84,7 @@ function sqlite3.getaliases(playerid, limit, offset)
     local row = cur:fetch({}, "a")
 
     while row do
-        table.insert(aliases, row)
+        table.insert(aliases, tables.copy(row))
         row = cur:fetch(row, "a")
     end
 
@@ -143,7 +144,7 @@ function sqlite3.getlevels(playerid, limit, offset)
     local row = cur:fetch({}, "a")
     
     while row do
-        table.insert(levels, row)
+        table.insert(levels, tables.copy(row))
         row = cur:fetch(row, "a")
     end
     
@@ -180,7 +181,7 @@ function sqlite3.getwarns(playerid, limit, offset)
     local row = cur:fetch({}, "a")
     
     while row do
-        table.insert(warns, row)
+        table.insert(warns, tables.copy(row))
         row = cur:fetch(row, "a")
     end
 
