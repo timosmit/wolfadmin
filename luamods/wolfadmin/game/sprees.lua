@@ -207,7 +207,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
     end
 
     local settingSpreeMessages = settings.get("g_spreeMessages")
-    if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) then
+    if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) and #spreeMessagesByType[type] > 0 then
         local spreeMessage = spreeMessages[type][currentSpree]
 
         if spreeMessage then
