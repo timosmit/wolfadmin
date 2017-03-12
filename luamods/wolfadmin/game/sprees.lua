@@ -243,7 +243,9 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
 end
 
 function sprees.onPlayerSpreeEnd(clientId, causeId, type)
-    if type == sprees.RECORD_DEATH then
+    local settingSpreeMessages = settings.get("g_spreeMessages")
+
+    if type == sprees.RECORD_DEATH and settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) then
         if playerSprees[clientId][sprees.RECORD_DEATH] > spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
             local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
                 players.getName(causeId),
@@ -258,7 +260,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     elseif type == nil then
         for i = 0, sprees.RECORD_NUM - 1 do
             if i ~= sprees.RECORD_DEATH then
-                if playerSprees[clientId][i] > spreeMessagesByType[i][1]["amount"] then
+                if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^i) and playerSprees[clientId][i] > spreeMessagesByType[i][1]["amount"] then
                     local msg = ""
 
                     if clientId == causeId then
