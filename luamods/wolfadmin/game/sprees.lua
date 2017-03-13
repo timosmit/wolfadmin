@@ -116,14 +116,16 @@ function sprees.load()
 
     for name, block in pairs(array) do
         for _, spree in ipairs(block) do
-            for k, v in pairs(spree) do
-                if k == "amount" then
-                    spree[k] = tonumber(v)
+            if spree["msg"] then
+                for k, v in pairs(spree) do
+                    if k == "amount" then
+                        spree[k] = tonumber(v)
+                    end
                 end
-            end
-            table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
+                table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
 
-            spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
+                spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
+            end
         end
     end
 

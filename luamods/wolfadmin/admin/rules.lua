@@ -43,7 +43,9 @@ function rules.load()
     if amount == 0 then return 0 end
 
     for _, rule in ipairs(array["rule"]) do
-        data[rule["shortcut"]] = rule["rule"]
+        if rule["shortcut"] and rule["rule"] then
+            data[rule["shortcut"]] = rule["rule"]
+        end
     end
 
     return amount
