@@ -292,9 +292,9 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
 
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
                 end
-            end
 
-            playerSprees[clientId][i] = 0
+                playerSprees[clientId][i] = 0
+            end
         end
     end
 end
