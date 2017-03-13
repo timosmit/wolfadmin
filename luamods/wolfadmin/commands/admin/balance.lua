@@ -38,10 +38,14 @@ function commandBalance(clientId, command, action)
         end
     elseif action == "force" then
         balancer.balance(true, true)
-    else
+    elseif not action then
         balancer.balance(true, false)
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalance usage: "..commands.getadmin("balance")["syntax"].."\";")
+
+        return true
     end
 
     return true
 end
-commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^hforce^9)")
+commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^henable|disable|force^9)")
