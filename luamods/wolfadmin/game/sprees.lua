@@ -247,8 +247,8 @@ end
 function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     local settingSpreeMessages = settings.get("g_spreeMessages")
 
-    if type == sprees.RECORD_DEATH and settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) then
-        if playerSprees[clientId][sprees.RECORD_DEATH] > spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
+    if type == sprees.RECORD_DEATH then
+        if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.RECORD_DEATH] > spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
             local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
                 players.getName(causeId),
                 players.getName(clientId),
@@ -292,9 +292,9 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
 
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
                 end
-
-                playerSprees[clientId][i] = 0
             end
+
+            playerSprees[clientId][i] = 0
         end
     end
 end
