@@ -52,7 +52,7 @@ function files.loadFromCFG(fileName, idExpr)
     
     if not fileString then return 0, {} end
     
-    local blockExpr = "%[("..idExpr..")%][\r\n]+(.-[\r\n]+)[\r\n]+[\r\n]+"
+    local blockExpr = "%[("..idExpr..")%][\r\n]+([^[]+)[\r\n]+"
     local attrExpr = "([a-z0-9_]+) += +(.-)[\r\n]+"
 
     for id, values in string.gmatch(fileString, blockExpr) do
