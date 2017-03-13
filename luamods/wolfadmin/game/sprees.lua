@@ -211,6 +211,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
     local settingSpreeMessages = settings.get("g_spreeMessages")
     if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) and #spreeMessagesByType[type] > 0 then
         local spreeMessage = spreeMessages[type][currentSpree]
+        local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
 
         if spreeMessage then
             local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
@@ -225,9 +226,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
-        elseif currentSpree % 5 == 0 then
-            local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
-
+        elseif currentSpree % 5 == 0 and currentSpree > maxSpreeMessage["amount"] then
             local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
                 string.upper(spreeNames[type]),
                 players.getName(clientId),
