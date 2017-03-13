@@ -21,6 +21,7 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
+local constants = require (wolfa_getLuaPath()..".util.constants")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandSlap(clientId, command, victim)
@@ -52,6 +53,14 @@ function commandSlap(clientId, command, victim)
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dslap: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+
+        return true
+    elseif et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_AXIS and et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_ALLIES then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dslap: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not playing.\";")
+
+        return true
+    elseif et.gentity_get(cmdClient, "health") <= 0 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dslap: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not alive.\";")
 
         return true
     end
