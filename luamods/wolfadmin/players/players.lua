@@ -47,6 +47,10 @@ function players.getIP(clientId)
     return data[clientId]["ip"]
 end
 
+function players.getProtocol(clientId)
+    return data[clientId]["protocol"]
+end
+
 function players.getVersion(clientId)
     return data[clientId]["version"]
 end
@@ -118,7 +122,7 @@ function players.onClientConnect(clientId, firstTime, isBot)
     data[clientId]["name"] = et.Info_ValueForKey(clientInfo, "name")
     data[clientId]["guid"] = et.Info_ValueForKey(clientInfo, "cl_guid")
     data[clientId]["ip"] = string.gsub(et.Info_ValueForKey(clientInfo, "ip"), ":%d*", "")
-    data[clientId]["version"] = et.Info_ValueForKey(clientInfo, "cg_etVersion")
+    data[clientId]["protocol"] = tonumber(et.Info_ValueForKey(clientInfo, "protocol"))
     data[clientId]["bot"] = isBot
     data[clientId]["team"] = tonumber(et.gentity_get(clientId, "sess.sessionTeam"))
 
@@ -153,6 +157,11 @@ function players.onClientBegin(clientId)
     events.trigger("onPlayerReady", clientId, data[clientId]["new"])
 
     data[clientId]["new"] = false
+
+    -- this is now available
+    local clientInfo = et.trap_GetUserinfo(clientId)
+
+    data[clientId]["version"] = et.Info_ValueForKey(clientInfo, "cg_etVersion")
 end
 events.handle("onClientBegin", players.onClientBegin)
 
