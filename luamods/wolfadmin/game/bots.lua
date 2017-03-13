@@ -25,10 +25,17 @@ local bots = {}
 
 function bots.put(team)
     local team = util.getTeamCode(team)
-    
+
+    local command
+    if settings.get("g_standalone") ~= 0 then
+        command = "forceteam"
+    else
+        command = "!put"
+    end
+
     for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
         if players.isConnected(playerId) and players.isBot(playerId) then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "!put "..playerId.." "..team..";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, command.." "..playerId.." "..team..";")
         end
     end
 end
