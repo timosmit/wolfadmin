@@ -30,7 +30,7 @@ local COLOURS_CONSOLE = {
     [2] = "^1", -- error
     [3] = "^3", -- warning
     [4] = "^2", -- success
-    [5] = "^7", -- information
+    [5] = "", -- information
 }
 
 local neededSeverity = 5
@@ -39,6 +39,7 @@ function outputDebug(msg, severity)
     local severity = severity or 5
 
     if severity <= neededSeverity then
+        -- FIXME check whether non-legacymod servers handle colouring correctly
         et.G_Print("[WolfAdmin] "..COLOURS_CONSOLE[severity]..msg.."\n")
 
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
