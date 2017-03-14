@@ -17,10 +17,18 @@
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
-local SEVERITY_LEVELS = {
+local COLOURS_CHAT = {
     [1] = "^_", -- termination
     [2] = "^1", -- error
     [3] = "^8", -- warning
+    [4] = "^2", -- success
+    [5] = "^7", -- information
+}
+
+local COLOURS_CONSOLE = {
+    [1] = "^_", -- termination
+    [2] = "^1", -- error
+    [3] = "^3", -- warning
     [4] = "^2", -- success
     [5] = "^7", -- information
 }
@@ -29,13 +37,13 @@ local neededSeverity = 5
 
 function outputDebug(msg, severity)
     local severity = severity or 5
-    
+
     if severity <= neededSeverity then
-        et.G_Print("[WolfAdmin] "..msg.."\n")
-        
+        et.G_Print("[WolfAdmin] "..COLOURS_CONSOLE[severity]..msg.."\n")
+
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
             if settings.get("g_debugWolfAdmin") ~= 0 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..playerId.." \"^:[WolfAdmin DEBUG] "..SEVERITY_LEVELS[severity]..msg.."\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..playerId.." \"^:[WolfAdmin DEBUG] "..COLOURS_CHAT[severity]..msg.."\";")
             end
         end
     end
