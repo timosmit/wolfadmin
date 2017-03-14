@@ -1,0 +1,64 @@
+# Sample config file for WolfAdmin. Adjust to your needs.
+
+# See http://dev.timosmit.com/wolfadmin/
+#     http://dev.timosmit.com/wolfadmin/configuration.html
+
+[main]
+# os = "unix"
+standalone = 1
+debug = 0
+
+[db]
+type = "sqlite3"
+file = "wolfadmin.db"
+# the settings below are only used for type 'mysql', uncomment if needed
+# hostname = "localhost"
+# port = 3306
+# database = "wolfadmin"
+# username = "wolfadmin"
+# password = "suchasecret"
+
+[logs]
+chat = "chat.log"
+admin = "admin.log"
+
+[omnibot]
+minbots = -1
+maxbots = 10
+
+[admin]
+history = 1
+maxrenames = 80
+
+[balancer]
+mindif = 2
+maxdif = 5
+selection = 0
+interval = 30
+
+[game]
+announcerevives = 1
+
+[voting]
+timeout = 0
+restricted = []
+
+[banners]
+welcome = "^dwolfadmin: ^9This server is running WolfAdmin, type ^7/wolfadmin ^9for more information."
+area = 3
+
+[rules]
+file = "rules.cfg"
+
+[greetings]
+file = "greetings.cfg"
+area = 3
+bots = 1
+
+[records]
+bots = 1
+
+[sprees]
+file = "sprees.cfg"
+messages = 7
+records = 1

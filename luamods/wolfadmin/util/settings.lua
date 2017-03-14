@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local toml = require "toml"
 local events = require (wolfa_getLuaPath()..".util.events")
 
 local settings = {}
@@ -54,6 +55,68 @@ local data = {
     ["sv_os"] = "unix"
 }
 
+local cfgStructure = {
+    ["main"] = {
+        ["os"] = "sv_os",
+        ["standalone"] = "g_standalone",
+        ["debug"] = "g_debugWolfAdmin",
+    },
+    ["db"] = {
+        ["type"] = "db_type",
+        ["file"] = "db_file",
+        ["hostname"] = "db_hostname",
+        ["port"] = "db_port",
+        ["database"] = "db_database",
+        ["username"] = "db_username",
+        ["password"] = "db_password",
+    },
+    ["logs"] = {
+        ["chat"] = "g_logChat",
+        ["admin"] = "g_logAdmin"
+    },
+    ["omnibot"] = {
+        ["minbots"] = "omnibot_minbots",
+        ["maxbots"] = "omnibot_maxbots"
+    },
+    ["admin"] = {
+        ["history"] = "g_playerHistory",
+        ["maxrenames"] = "g_renameLimit"
+    },
+    ["balancer"] = {
+        ["mindif"] = "g_evenerMinDifference",
+        ["maxdif"] = "g_evenerMaxDifference",
+        ["selection"] = "g_evenerPlayerSelection",
+        ["interval"] = "g_evenerInterval"
+    },
+    ["game"] = {
+        ["announcerevives"] = "g_announceRevives"
+    },
+    ["voting"] = {
+        ["timeout"] = "g_voteNextMapTimeout",
+        ["restricted"] = "g_restrictedVotes"
+    },
+    ["banners"] = {
+        ["welcome"] = "g_welcomeMessage",
+        ["area"] = "g_welcomeArea"
+    },
+    ["rules"] = {
+        ["file"] = "g_fileRules"
+    },
+    ["greetings"] = {
+        ["file"] = "g_fileGreetings",
+        ["area"] = "g_greetingsArea",
+        ["bots"] = "g_botGreetings"
+    },
+    ["records"] = {
+        ["bots"] = "g_botRecords"
+    },
+    ["sprees"] = {
+        ["file"] = "g_fileSprees",
+        ["messages"] = "g_spreeMessages",
+        ["records"] = "g_spreeRecords"
+    }
+}
+
 function settings.get(name)
     return data[name]
 end
@@ -72,17 +135,42 @@ function settings.load()
             data[setting] = (cvar ~= "" and tonumber(cvar) or default)
         end
     end
-    
-    local files = require (wolfa_getLuaPath()..".util.files")
-    local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
 
-    for blocksname, settings in pairs(array) do
-        for k, v in pairs(settings[1]) do
-            data[blocksname.."_"..k] = v
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile("wolfadmin.toml", et.FS_READ)
+
+    if fileLength ~= -1 then
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
+
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        local fileTable = toml.parse(fileString)
+        for module, settings in pairs(fileTable) do
+            for setting, value in pairs(settings) do
+                if cfgStructure[module][setting] then
+                    data[cfgStructure[module][setting]] = value
+                end
+            end
+        end
+
+        -- compatibility for 1.1.* and lower
+        if type(data["g_restrictedVotes"]) == "table" then
+            data["g_restrictedVotes"] = table.concat(data["g_restrictedVotes"], " ")
+        end
+    else
+        -- compatibility for 1.1.* and lower
+        outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
+
+        local files = require (wolfa_getLuaPath()..".util.files")
+        local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
+
+        for blocksname, settings in pairs(array) do
+            for k, v in pairs(settings[1]) do
+                data[cfgStructure[blocksname][k]] = v
+            end
         end
     end
-    
-    local platform = string.lower(et.trap_Cvar_Get("sv_os"))
+
+    local platform = string.lower(data["sv_os"])
     if not (platform == "unix" or platform == "windows") then
         settings.set("sv_os", settings.determineOS())
     end
