@@ -120,7 +120,7 @@ function admin.onconnect(clientId, firstTime, isBot)
     stats.set(clientId, "namechangePts", 0)
     
     if firstTime then
-        if stats.get(clientId, "playerGUID") == "NO_GUID" or stats.get(clientId, "playerGUID") == "unknown" then
+        if stats.get(clientId, "playerGUID") == "" or stats.get(clientId, "playerGUID") == "NO_GUID" or stats.get(clientId, "playerGUID") == "unknown" then
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
     end
