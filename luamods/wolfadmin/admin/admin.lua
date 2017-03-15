@@ -43,7 +43,7 @@ function admin.setPlayerLevel(clientId, level, invokerId)
     db.addsetlevel(playerId, level, invokerPlayerId, os.time())
 end
 
-function admin.onconnectattempt(clientId, firstTime, isBot)
+function admin.onClientConnectAttempt(clientId, firstTime, isBot)
     if firstTime then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
 
@@ -63,14 +63,9 @@ function admin.onconnectattempt(clientId, firstTime, isBot)
 
     events.trigger("onClientConnect", clientId, firstTime, isBot)
 end
-events.handle("onClientConnectAttempt", admin.onconnectattempt)
+events.handle("onClientConnectAttempt", admin.onClientConnectAttempt)
 
-function admin.onconnect(clientId, firstTime, isBot)
-    -- only increase the counter on first connection (fixes counter increase on 
-    -- clientbegin which is also triggered on warmup/maprestart/etc)
-    --[[ stats.set(clientId, "namechangeStart", os.time())
-    stats.set(clientId, "namechangePts", 0) ]]
-
+function admin.onClientConnect(clientId, firstTime, isBot)
     local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
     local player = db.getplayer(guid)
 
@@ -83,7 +78,14 @@ function admin.onconnect(clientId, firstTime, isBot)
         end
     end
 end
-events.handle("onClientConnect", admin.onconnect)
+events.handle("onClientConnect", admin.onClientConnect)
+
+function admin.onClientDisconnect(clientId)
+    if playerRenames[clientId] then
+        playerRenames[clientId] = nil
+    end
+end
+events.handle("onClientDisconnect", admin.onClientDisconnect)
 
 function admin.onClientNameChange(clientId, oldName, newName)
     -- rename filter
