@@ -238,8 +238,7 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
         }
     end
 
-    local settingSpreeMessages = settings.get("g_spreeMessages")
-    if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) and #spreeMessagesByType[type] > 0 then
+    if bits.hasbit(settings.get("g_spreeMessages"), 2^type) and #spreeMessagesByType[type] > 0 then
         local spreeMessage = spreeMessages[type][currentSpree]
         local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
 
@@ -277,7 +276,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     local settingSpreeMessages = settings.get("g_spreeMessages")
 
     if type == sprees.RECORD_DEATH then
-        if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.RECORD_DEATH] >= spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
+        if bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.RECORD_DEATH] >= spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
             local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
                 players.getName(causeId),
                 players.getName(clientId),
@@ -291,7 +290,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     elseif type == nil then
         for i = 0, sprees.RECORD_NUM - 1 do
             if i ~= sprees.RECORD_DEATH then
-                if settingSpreeMessages ~= 0 and bits.hasbit(settingSpreeMessages, 2^i) and playerSprees[clientId][i] >= spreeMessagesByType[i][1]["amount"] then
+                if bits.hasbit(settingSpreeMessages, 2^i) and playerSprees[clientId][i] >= spreeMessagesByType[i][1]["amount"] then
                     local msg = ""
 
                     if clientId == causeId then
