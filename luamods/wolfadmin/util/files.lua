@@ -40,7 +40,7 @@ function files.loadFromCFG(fileName, idExpr)
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
     if fileLength == -1 then
-        return nil
+        return 0, {}
     end
 
     local fileString = et.trap_FS_Read(fileDescriptor, fileLength).."\n\n"
