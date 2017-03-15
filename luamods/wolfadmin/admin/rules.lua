@@ -19,6 +19,8 @@ local events = require (wolfa_getLuaPath()..".util.events")
 local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
+local toml = require "toml"
+
 local rules = {}
 
 local data = {}
@@ -38,17 +40,41 @@ function rules.load()
         return 0
     end
 
-    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+    if string.find(fileName, ".toml") == string.len(fileName) - 4 then
+        local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-    if amount == 0 then return 0 end
+        et.trap_FS_FCloseFile(fileDescriptor)
 
-    for _, rule in ipairs(array["rule"]) do
-        if rule["shortcut"] and rule["rule"] then
-            data[rule["shortcut"]] = rule["rule"]
+        local fileTable = toml.parse(fileString)
+
+        local amount
+
+        for _, rule in ipairs(fileTable["rule"]) do
+            if rule["shortcut"] and rule["rule"] then
+                data[rule["shortcut"]] = rule["rule"]
+            end
         end
+
+        return amount
+    else
+        -- compatibility for 1.1.* and lower
+        outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
+
+        local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+
+        if amount == 0 then return 0 end
+
+        for _, rule in ipairs(array["rule"]) do
+            if rule["shortcut"] and rule["rule"] then
+                data[rule["shortcut"]] = rule["rule"]
+            end
+        end
+
+        return amount
     end
 
-    return amount
+    return 0
 end
 
 function rules.oninit(levelTime, randomSeed, restartMap)

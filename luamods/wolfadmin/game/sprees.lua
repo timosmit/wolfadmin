@@ -27,6 +27,8 @@ local events = require (wolfa_getLuaPath()..".util.events")
 local files = require (wolfa_getLuaPath()..".util.files")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
+local toml = require "toml"
+
 local sprees = {}
 
 sprees.RECORD_KILL = 0
@@ -101,35 +103,63 @@ function sprees.load()
         end
     end
 
-    local fileName = settings.get("g_fileSprees")
-
     for i = 0, sprees.RECORD_NUM - 1 do
         spreeMessages[i] = {}
         spreeMessagesByType[i] = {}
     end
 
+    local fileName = settings.get("g_fileSprees")
+
     if fileName == "" then
         return 0
     end
 
-    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+    if string.find(fileName, ".toml") == string.len(fileName) - 4 then
+        local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-    for name, block in pairs(array) do
-        for _, spree in ipairs(block) do
-            if spree["msg"] then
-                for k, v in pairs(spree) do
-                    if k == "amount" then
-                        spree[k] = tonumber(v)
-                    end
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        local fileTable = toml.parse(fileString)
+
+        local amount
+
+        for name, block in pairs(fileTable) do
+            for _, spree in ipairs(block) do
+                if spree["msg"] then
+                    table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
+
+                    spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
                 end
-                table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
-
-                spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
             end
         end
+
+        return amount
+    else
+        -- compatibility for 1.1.* and lower
+        outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
+
+        local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+
+        for name, block in pairs(array) do
+            for _, spree in ipairs(block) do
+                if spree["msg"] then
+                    for k, v in pairs(spree) do
+                        if k == "amount" then
+                            spree[k] = tonumber(v)
+                        end
+                    end
+                    table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
+
+                    spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
+                end
+            end
+        end
+
+        return amount
     end
 
-    return amount
+    return 0
 end
 
 function sprees.save()

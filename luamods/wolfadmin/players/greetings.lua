@@ -25,6 +25,8 @@ local events = require (wolfa_getLuaPath()..".util.events")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local files = require (wolfa_getLuaPath()..".util.files")
 
+local toml = require "toml"
+
 local greetings = {}
 
 local userGreetings = {}
@@ -86,29 +88,61 @@ function greetings.load()
         return 0
     end
 
-    local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+    if string.find(fileName, ".toml") == string.len(fileName) - 4 then
+        local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-    if amount == 0 then return 0 end
+        et.trap_FS_FCloseFile(fileDescriptor)
 
-    for _, greeting in ipairs(array["level"]) do
-        if greeting["text"] then
-            levelGreetings[tonumber(greeting["level"])] = {
-                ["text"] = greeting["greeting"],
-                ["sound"] = greeting["sound"],
-            }
+        local fileTable = toml.parse(fileString)
+
+        for _, greeting in ipairs(fileTable["level"]) do
+            if greeting["greeting"] then
+                levelGreetings[greeting["level"]] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
         end
+
+        for _, greeting in ipairs(fileTable["user"]) do
+            if greeting["greeting"] then
+                userGreetings[greeting["guid"]] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
+        end
+
+        return #fileTable["level"] + #fileTable["user"]
+    else
+        -- compatibility for 1.1.* and lower
+        outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
+
+        local amount, array = files.loadFromCFG(fileName, "[a-z]+")
+
+        for _, greeting in ipairs(array["level"]) do
+            if greeting["text"] then
+                levelGreetings[tonumber(greeting["level"])] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
+        end
+
+        for _, greeting in ipairs(array["user"]) do
+            if greeting["text"] then
+                userGreetings[greeting["guid"]] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
+        end
+
+        return amount
     end
 
-    for _, greeting in ipairs(array["user"]) do
-        if greeting["text"] then
-            userGreetings[greeting["guid"]] = {
-                ["text"] = greeting["greeting"],
-                ["sound"] = greeting["sound"],
-            }
-        end
-    end
-    
-    return amount
+    return 0
 end
 
 function greetings.oninit(levelTime, randomSeed, restartMap)

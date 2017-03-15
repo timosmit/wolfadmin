@@ -1,0 +1,94 @@
+[[kill]]
+amount = 5
+msg    = "^dis on a ^2killing spree^d!"
+sound  = "killingspree.wav"
+
+[[kill]]
+amount = 10
+msg    = "^dis on a ^2rampage^d!"
+sound  = "rampage.wav"
+
+[[kill]]
+amount = 15
+msg    = "^dis ^2dominating^d!"
+sound  = "dominating.wav"
+
+[[kill]]
+amount = 20
+msg    = "^drevels in his ^2bloodbath^d!"
+sound  = "unstoppable.wav"
+
+[[kill]]
+amount = 25
+msg    = "^dis a walking ^2slaughterhouse^d!"
+sound  = "godlike.wav"
+
+[[kill]]
+amount = 30
+msg    = "^dwreaks ^2havoc ^dupon his foes^d!"
+sound  = "wickedsick.wav"
+
+[[kill]]
+amount = 35
+msg    = "^dcuts through enemies like a ^2god ^2of ^2war^d!"
+sound  = "potter.wav"
+
+[[kill]]
+amount = 40
+msg    = "^dis the ^2prophet of doom^d!"
+sound  = "holyshit.wav"
+
+[[death]]
+amount = 10
+msg    = "^dmust be having a bad day!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 15
+msg    = "^dhis day just got worse!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 20
+msg    = "^dtries to kill with flowers!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 25
+msg    = "^dis getting his ass kicked!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 30
+msg    = "^dis a death magnet!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 40
+msg    = "^dneeds remedial combat training!"
+sound  = "humiliation.wav"
+
+[[death]]
+amount = 50
+msg    = "^dstill can't kill shit!"
+sound  = "humiliation.wav"
+
+[[revive]]
+amount = 3
+msg    = "^dis on a ^2revive spree^d!"
+
+[[revive]]
+amount = 5
+msg    = "^dis a ^2health dealer^d!"
+
+[[revive]]
+amount = 10
+msg    = "^dis a ^2perfect nurse^d!"
+
+[[revive]]
+amount = 15
+msg    = "^dis a ^2syringe maniac^d!"
+
+[[revive]]
+amount = 25
+msg    = "^dis the new ^2Dr. Frankenstein^d!"

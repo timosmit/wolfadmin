@@ -48,10 +48,10 @@ welcome = "^dwolfadmin: ^9This server is running WolfAdmin, type ^7/wolfadmin ^9
 area = 3
 
 [rules]
-file = "rules.cfg"
+file = "rules.toml"
 
 [greetings]
-file = "greetings.cfg"
+file = "greetings.toml"
 area = 3
 bots = 1
 
@@ -59,6 +59,6 @@ bots = 1
 bots = 1
 
 [sprees]
-file = "sprees.cfg"
+file = "sprees.toml"
 messages = 7
 records = 1
