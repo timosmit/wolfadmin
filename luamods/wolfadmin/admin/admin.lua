@@ -35,12 +35,12 @@ function admin.kickPlayer(victimId, invokerId, reason)
     et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
 end
 
-function admin.setPlayerLevel(clientId, level, adminId)
-    local playerid = db.getplayer(players.getGUID(clientId))["id"]
-    local adminid = db.getplayer(players.getGUID(clientId))["id"]
+function admin.setPlayerLevel(clientId, level, invokerId)
+    local playerId = db.getplayer(players.getGUID(clientId))["id"]
+    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
 
-    db.updateplayerlevel(playerid, level)
-    db.addsetlevel(playerid, level, adminid, os.time())
+    db.updateplayerlevel(playerId, level)
+    db.addsetlevel(playerId, level, invokerPlayerId, os.time())
 end
 
 function admin.onconnectattempt(clientId, firstTime, isBot)
