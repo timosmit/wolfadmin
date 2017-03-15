@@ -15,4 +15,4 @@ DEPENDENCIES
 
 LICENSE
 ============
-[http://www.gnu.org/licenses/gpl-3.0.html](GNU General Public License 3)
+[GNU General Public License 3](http://www.gnu.org/licenses/gpl-3.0.html)
