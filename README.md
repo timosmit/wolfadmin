@@ -8,6 +8,11 @@ WolfAdmin is a Lua module for Wolfenstein: Enemy Territory servers.
 * Issues [http://dev.timosmit.com/bugtracker/?project_id=1](http://dev.timosmit.com/bugtracker/?project_id=1)
 * Repository [https://github.com/timosmit/wolfadmin](https://github.com/timosmit/wolfadmin)
 
+DEPENDENCIES
+============
+* **luasql.sqlite3** and/or **luasql.mysql**
+* **lua-toml**
+
 LICENSE
 ============
 [http://www.gnu.org/licenses/gpl-3.0.html](GNU General Public License 3)
