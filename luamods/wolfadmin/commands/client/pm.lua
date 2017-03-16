@@ -85,9 +85,9 @@ function commandPersonalMessage(clientId, command, target, ...)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
-    end
 
-    logs.writeChat(clientId, "priv", cmdClient, ...)
+        logs.writeChat(clientId, "priv", recipient, ...)
+    end
 
     return true
 end
