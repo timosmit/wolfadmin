@@ -21,6 +21,7 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local logs = require (wolfa_getLuaPath()..".util.logs")
 local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 function commandPersonalMessage(clientId, command, recipient, ...)
     if recipient and ... then
@@ -42,46 +43,48 @@ end
 commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") ~= "legacy"))
 commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") ~= "legacy"))
 
-function commandPersonalMessage(clientId, command, recipient, ...)
-    if not recipient or not ... then
+function commandPersonalMessage(clientId, command, target, ...)
+    if not target or not ... then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("pm")["syntax"].."\";")
 
         return true
     end
 
-    local cmdClient
+    local recipients = {}
 
-    if tonumber(recipient) == nil or tonumber(recipient) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
-        cmdClient = et.ClientNumberFromString(recipient)
-    else
-        cmdClient = tonumber(recipient)
+    local targetSanitized = string.lower(util.removeColors(target))
+
+    for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
+        if players.isConnected(playerId) then
+            local playerNameSanitized = string.lower(util.removeColors(players.getName(playerId)))
+
+            if string.find(playerNameSanitized, targetSanitized, 1, true) then
+                table.insert(recipients, playerId)
+            end
+        end
     end
 
-    if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9pm: ^7no or multiple matches for '^7"..recipient.."^9'.\";")
-
-        return true
-    elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpm: ^7no connected player by that name or slot #\";")
+    if #recipients == 0 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9pm: ^7no or multiple matches for '^7"..target.."^9'.\";")
 
         return true
     end
 
     local message = table.concat({...}, " ")
 
-    if cmdClient ~= -1 and et.gentity_get(cmdClient, "pers.netname") then
-        players.setLastPMSender(cmdClient, clientId)
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..target.."^7: ("..#recipients.." recipients): ^3"..message.."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient.."^7: (1 recipients): ^3"..message.."\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
+    for _, recipient in ipairs(recipients) do
+        players.setLastPMSender(recipient, clientId)
 
-        if clientId ~= cmdClient then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..cmdClient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient.."^7: (1 recipients): ^3"..message.."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..cmdClient.." \"sound/misc/pm.wav\";")
+        if clientId ~= recipient then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient.."^7: ("..#recipients.." recipients): ^3"..message.."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..cmdClient.." \"^9reply: ^7r [^2message^7]\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
     end
 
     logs.writeChat(clientId, "priv", cmdClient, ...)
