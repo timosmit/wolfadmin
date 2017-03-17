@@ -133,7 +133,7 @@ function mysql.getLevels()
     return levels
 end
 
-function sqlite3.getLevel(id)
+function mysql.getLevel(id)
     cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
     
     local level = cur:fetch({}, "a")
