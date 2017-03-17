@@ -29,7 +29,7 @@ local util = require (wolfa_getLuaPath()..".util.util")
 function commandListAliases(clientId, command, victim, offset)
     local cmdClient
 
-    if not db.isconnected() then
+    if not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")
         
         return true
@@ -63,11 +63,11 @@ function commandListAliases(clientId, command, victim, offset)
         return true
     end
     
-    local player = db.getplayer(players.getGUID(cmdClient))["id"]
+    local player = db.getPlayer(players.getGUID(cmdClient))["id"]
     
-    local count = db.getaliasescount(player)
+    local count = db.getAliasesCount(player)
     local limit, offset = pagination.calculate(count, 30, tonumber(offset))
-    local aliases = db.getaliases(player, limit, offset)
+    local aliases = db.getAliases(player, limit, offset)
     
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
     for _, alias in pairs(aliases) do

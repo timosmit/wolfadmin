@@ -36,11 +36,11 @@ function admin.kickPlayer(victimId, invokerId, reason)
 end
 
 function admin.setPlayerLevel(clientId, level, invokerId)
-    local playerId = db.getplayer(players.getGUID(clientId))["id"]
-    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
+    local playerId = db.getPlayer(players.getGUID(clientId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
 
-    db.updateplayerlevel(playerId, level)
-    db.addsetlevel(playerId, level, invokerPlayerId, os.time())
+    db.updatePlayerLevel(playerId, level)
+    db.addSetLevel(playerId, level, invokerPlayerId, os.time())
 end
 
 function admin.onClientConnectAttempt(clientId, firstTime, isBot)
@@ -51,7 +51,7 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
-        local player = db.getplayer(guid)
+        local player = db.getPlayer(guid)
         if player then
             local playerId = player["id"]
             local ban = db.getBanByPlayer(playerId)
@@ -67,7 +67,7 @@ events.handle("onClientConnectAttempt", admin.onClientConnectAttempt)
 
 function admin.onClientConnect(clientId, firstTime, isBot)
     local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
-    local player = db.getplayer(guid)
+    local player = db.getPlayer(guid)
 
     if player then
         local playerId = player["id"]
@@ -116,14 +116,14 @@ function admin.onClientNameChange(clientId, oldName, newName)
     end
 
     -- update database
-    if db.isconnected() then
-        local playerId = db.getplayer(players.getGUID(clientId))["id"]
-        local alias = db.getaliasbyname(playerId, newName)
+    if db.isConnected() then
+        local playerId = db.getPlayer(players.getGUID(clientId))["id"]
+        local alias = db.getAliasByName(playerId, newName)
 
         if alias then
-            db.updatealias(alias["id"], os.time())
+            db.updateAlias(alias["id"], os.time())
         else
-            db.addalias(playerId, newName, os.time())
+            db.addAlias(playerId, newName, os.time())
         end
     end
 end

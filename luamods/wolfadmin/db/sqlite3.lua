@@ -31,7 +31,7 @@ local con
 local cur
 
 -- players
-function sqlite3.addplayer(guid, ip, lastSeen, seen)
+function sqlite3.addPlayer(guid, ip, lastSeen, seen)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
 end
 
@@ -39,12 +39,12 @@ function sqlite3.updateplayer(guid, ip, lastSeen)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."', `lastseen`="..lastSeen..", `seen`=`seen`+1 WHERE `guid`='"..util.escape(guid).."'"))
 end
 
-function sqlite3.updateplayerlevel(id, level)
+function sqlite3.updatePlayerLevel(id, level)
     cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function sqlite3.getplayerid(clientId)
-    return sqlite3.getplayer(players.getGUID(clientId))["id"]
+function sqlite3.getPlayerId(clientId)
+    return sqlite3.getPlayer(players.getGUID(clientId))["id"]
 end
 
 function sqlite3.getPlayersCount()
@@ -75,7 +75,7 @@ function sqlite3.getPlayers(limit, offset)
     return players
 end
 
-function sqlite3.getplayer(guid)
+function sqlite3.getPlayer(guid)
     cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
     
     local player = cur:fetch({}, "a")
@@ -176,15 +176,15 @@ function sqlite3.removeLevelRoles(levelId)
 end
 
 -- aliases
-function sqlite3.addalias(playerid, alias, lastused)
+function sqlite3.addAlias(playerid, alias, lastused)
     cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
 end
 
-function sqlite3.updatealias(aliasid, lastused)
+function sqlite3.updateAlias(aliasid, lastused)
     cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
 end
 
-function sqlite3.getaliasescount(playerid)
+function sqlite3.getAliasesCount(playerid)
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `alias` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
@@ -193,7 +193,7 @@ function sqlite3.getaliasescount(playerid)
     return count
 end
 
-function sqlite3.getaliases(playerid, limit, offset)
+function sqlite3.getAliases(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
@@ -212,7 +212,7 @@ function sqlite3.getaliases(playerid, limit, offset)
     return aliases
 end
 
-function sqlite3.getaliasbyid(aliasid)
+function sqlite3.getAliasById(aliasid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `id`="..tonumber(aliasid)..""))
     
     local alias = cur:fetch({}, "a")
@@ -221,7 +221,7 @@ function sqlite3.getaliasbyid(aliasid)
     return alias
 end
 
-function sqlite3.getaliasbyname(playerid, aliasname)
+function sqlite3.getAliasByName(playerid, aliasname)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
     
     local alias = cur:fetch({}, "a")
@@ -230,7 +230,7 @@ function sqlite3.getaliasbyname(playerid, aliasname)
     return alias
 end
 
-function sqlite3.getlastalias(playerid)
+function sqlite3.getLastAlias(playerid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     
     local alias = cur:fetch({}, "a")
@@ -240,11 +240,11 @@ function sqlite3.getlastalias(playerid)
 end
 
 -- level history
-function sqlite3.addsetlevel(playerid, level, invokerid, datetime)
+function sqlite3.addSetLevel(playerid, level, invokerid, datetime)
     cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level_id`, `invoker_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(invokerid)..", "..tonumber(datetime)..")"))
 end
 
-function sqlite3.getlevelscount(playerid)
+function sqlite3.getLevelsCount(playerid)
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player_level` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
@@ -253,7 +253,7 @@ function sqlite3.getlevelscount(playerid)
     return count
 end
 
-function sqlite3.getlevels(playerid, limit, offset)
+function sqlite3.getLevels(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
@@ -429,15 +429,15 @@ function sqlite3.getBanByPlayer(playerId)
 end
 
 -- maps
-function sqlite3.addmap(mapname, lastplayed)
+function sqlite3.addMap(mapname, lastplayed)
     cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..util.escape(mapname).."', "..tonumber(lastplayed)..")"))
 end
 
-function sqlite3.updatemap(mapid, lastplayed)
+function sqlite3.updateMap(mapid, lastplayed)
     cur = assert(con:execute("UPDATE `map` SET `lastplayed`="..tonumber(lastplayed).." WHERE `id`="..tonumber(mapid)..""))
 end
 
-function sqlite3.getmap(mapname)
+function sqlite3.getMap(mapname)
     cur = assert(con:execute("SELECT * FROM `map` WHERE `name`='"..util.escape(mapname).."'"))
     
     local map = cur:fetch({}, "a")
@@ -447,23 +447,23 @@ function sqlite3.getmap(mapname)
 end
 
 -- records
-function sqlite3.addrecord(mapid, recorddate, recordtype, record, playerid)
+function sqlite3.addRecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("INSERT INTO `record` (`map_id`, `date`, `type`, `record`, `player_id`) VALUES ("..tonumber(mapid)..", "..tonumber(recorddate)..", "..tonumber(recordtype)..", "..tonumber(record)..", "..tonumber(playerid)..")"))
 end
 
-function sqlite3.updaterecord(mapid, recorddate, recordtype, record, playerid)
+function sqlite3.updateRecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("UPDATE `record` SET `date`="..tonumber(recorddate)..", `record`="..tonumber(record)..", `player_id`="..tonumber(playerid).." WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 end
 
-function sqlite3.removeallrecords()
+function sqlite3.removeAllRecords()
     cur = assert(con:execute("TRUNCATE `record`"))
 end
 
-function sqlite3.removerecords(mapid)
+function sqlite3.removeRecords(mapid)
     cur = assert(con:execute("DELETE FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
 end
 
-function sqlite3.getrecords(mapid)
+function sqlite3.getRecords(mapid)
     cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
 
     local records = {}
@@ -479,7 +479,7 @@ function sqlite3.getrecords(mapid)
     return records
 end
 
-function sqlite3.getrecordscount(mapid)
+function sqlite3.getRecordsCount(mapid)
     cur = assert(con:execute("SELECT COUNT(*) AS `count` FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
     
     local count = cur:fetch({}, "a")
@@ -488,7 +488,7 @@ function sqlite3.getrecordscount(mapid)
     return count["count"]
 end
 
-function sqlite3.getrecord(mapid, recordtype)
+function sqlite3.getRecord(mapid, recordtype)
     cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 
     local record = cur:fetch({}, "a")
@@ -497,7 +497,7 @@ function sqlite3.getrecord(mapid, recordtype)
     return record
 end
 
-function sqlite3.isconnected()
+function sqlite3.isConnected()
     return (con ~= nil)
 end
 

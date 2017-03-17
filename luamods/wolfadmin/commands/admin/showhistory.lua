@@ -30,7 +30,7 @@ local settings = require (wolfa_getLuaPath()..".util.settings")
 function commandListHistory(clientId, command, victim, offset)
     local cmdClient
 
-    if not db.isconnected() or settings.get("g_playerHistory") == 0 then
+    if not db.isConnected() or settings.get("g_playerHistory") == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9player history is disabled.\";")
 
         return true
@@ -63,7 +63,7 @@ function commandListHistory(clientId, command, victim, offset)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dHistory for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
         for _, history in pairs(playerHistory) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", history["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(history["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", history["datetime"]).." ^7"..string.format("%-8s", history["type"]..":").." "..history["reason"].."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", history["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(history["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", history["datetime"]).." ^7"..string.format("%-8s", history["type"]..":").." "..history["reason"].."\";")
         end
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")

@@ -24,7 +24,7 @@ local db = require (wolfa_getLuaPath()..".db.db")
 local sprees = require (wolfa_getLuaPath()..".game.sprees")
 
 function commandShowSprees(clientId, command)
-    if not db.isconnected() then
+    if not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
         
         return true
@@ -37,7 +37,7 @@ function commandShowSprees(clientId, command)
     else
         for i = 0, sprees.RECORD_NUM - 1 do
             if records[i] and records[i]["record"] > 0 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..records[i]["record"].."^9) by ^7"..db.getlastalias(records[i]["player"])["alias"].."^9.\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..records[i]["record"].."^9) by ^7"..db.getLastAlias(records[i]["player"])["alias"].."^9.\";")
             end
         end
     end

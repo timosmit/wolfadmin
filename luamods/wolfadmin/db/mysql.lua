@@ -30,23 +30,23 @@ local con
 local cur
 
 -- players
-function mysql.addplayer(guid, ip)
+function mysql.addPlayer(guid, ip)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
 end
 
-function mysql.updateplayerip(guid, ip)
+function mysql.updatePlayerIp(guid, ip)
     cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
 end
 
-function mysql.updateplayerlevel(id, level)
+function mysql.updatePlayerLevel(id, level)
     cur = assert(con:execute("UPDATE `player` SET `level_id`='"..tonumber(level).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function mysql.getplayerid(clientId)
-    return mysql.getplayer(players.getGUID(clientId))["id"]
+function mysql.getPlayerId(clientId)
+    return mysql.getPlayer(players.getGUID(clientId))["id"]
 end
 
-function mysql.getplayer(guid)
+function mysql.getPlayer(guid)
     cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
     
     local player = cur:fetch({}, "a")
@@ -56,15 +56,15 @@ function mysql.getplayer(guid)
 end
 
 -- levels
-function mysql.addlevel(id, name)
+function mysql.addLevel(id, name)
     cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
 end
 
-function mysql.updatelevel(id, name)
+function mysql.updateLevel(id, name)
     cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function mysql.getlevel(id)
+function mysql.getLevel(id)
     cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
     
     local level = cur:fetch({}, "a")
@@ -74,15 +74,15 @@ function mysql.getlevel(id)
 end
 
 -- aliases
-function mysql.addalias(playerid, alias, lastused)
+function mysql.addAlias(playerid, alias, lastused)
     cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
 end
 
-function mysql.updatealias(aliasid, lastused)
+function mysql.updateAlias(aliasid, lastused)
     cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
 end
 
-function mysql.getaliasescount(playerid)
+function mysql.getAliasesCount(playerid)
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `alias` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
@@ -91,7 +91,7 @@ function mysql.getaliasescount(playerid)
     return count
 end
 
-function mysql.getaliases(playerid, limit, offset)
+function mysql.getAliases(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
@@ -110,7 +110,7 @@ function mysql.getaliases(playerid, limit, offset)
     return aliases
 end
 
-function mysql.getaliasbyid(aliasid)
+function mysql.getAliasById(aliasid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `id`="..tonumber(aliasid)..""))
     
     local alias = cur:fetch({}, "a")
@@ -119,7 +119,7 @@ function mysql.getaliasbyid(aliasid)
     return alias
 end
 
-function mysql.getaliasbyname(playerid, aliasname)
+function mysql.getAliasByName(playerid, aliasname)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
     
     local alias = cur:fetch({}, "a")
@@ -128,7 +128,7 @@ function mysql.getaliasbyname(playerid, aliasname)
     return alias
 end
 
-function mysql.getlastalias(playerid)
+function mysql.getLastAlias(playerid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     
     local alias = cur:fetch({}, "a")
@@ -138,11 +138,11 @@ function mysql.getlastalias(playerid)
 end
 
 -- level history
-function mysql.addsetlevel(playerid, level, adminid, datetime)
+function mysql.addSetLevel(playerid, level, adminid, datetime)
     cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
-function mysql.getlevelscount(playerid)
+function mysql.getLevelsCount(playerid)
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player_level` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
@@ -151,7 +151,7 @@ function mysql.getlevelscount(playerid)
     return count
 end
 
-function mysql.getlevels(playerid, limit, offset)
+function mysql.getLevels(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
@@ -171,15 +171,15 @@ function mysql.getlevels(playerid, limit, offset)
 end
 
 -- warns
-function mysql.addwarn(playerid, reason, adminid, datetime)
+function mysql.addWarn(playerid, reason, adminid, datetime)
     cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
 end
 
-function mysql.removewarn(warnid)
+function mysql.removeWarn(warnid)
     cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
 end
 
-function mysql.getwarnscount(playerid)
+function mysql.getWarnsCount(playerid)
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
@@ -188,7 +188,7 @@ function mysql.getwarnscount(playerid)
     return count
 end
 
-function mysql.getwarns(playerid, limit, offset)
+function mysql.getWarns(playerid, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
@@ -207,7 +207,7 @@ function mysql.getwarns(playerid, limit, offset)
     return warns
 end
 
-function mysql.getwarn(warnid)
+function mysql.getWarn(warnid)
     cur = assert(con:execute("SELECT * FROM `warn` WHERE `id`="..tonumber(warnid)..""))
     
     local warn = cur:fetch({}, "a")
@@ -217,15 +217,15 @@ function mysql.getwarn(warnid)
 end
 
 -- maps
-function mysql.addmap(mapname, lastplayed)
+function mysql.addMap(mapname, lastplayed)
     cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..util.escape(mapname).."', "..tonumber(lastplayed)..")"))
 end
 
-function mysql.updatemap(mapid, lastplayed)
+function mysql.updateMap(mapid, lastplayed)
     cur = assert(con:execute("UPDATE `map` SET `lastplayed`="..tonumber(lastplayed).." WHERE `id`="..tonumber(mapid)..""))
 end
 
-function mysql.getmap(mapname)
+function mysql.getMap(mapname)
     cur = assert(con:execute("SELECT * FROM `map` WHERE `name`='"..util.escape(mapname).."'"))
     
     local map = cur:fetch({}, "a")
@@ -235,23 +235,23 @@ function mysql.getmap(mapname)
 end
 
 -- records
-function mysql.addrecord(mapid, recorddate, recordtype, record, playerid)
+function mysql.addRecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("INSERT INTO `record` (`map_id`, `date`, `type`, `record`, `player_id`) VALUES ("..tonumber(mapid)..", "..tonumber(recorddate)..", "..tonumber(recordtype)..", "..tonumber(record)..", "..tonumber(playerid)..")"))
 end
 
-function mysql.updaterecord(mapid, recorddate, recordtype, record, playerid)
+function mysql.updateRecord(mapid, recorddate, recordtype, record, playerid)
     cur = assert(con:execute("UPDATE `record` SET `date`="..tonumber(recorddate)..", `record`="..tonumber(record)..", `player_id`="..tonumber(playerid).." WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 end
 
-function mysql.removeallrecords()
+function mysql.removeAllRecords()
     cur = assert(con:execute("TRUNCATE `record`"))
 end
 
-function mysql.removerecords(mapid)
+function mysql.removeRecords(mapid)
     cur = assert(con:execute("DELETE FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
 end
 
-function mysql.getrecords(mapid)
+function mysql.getRecords(mapid)
     cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
 
     local records = {}
@@ -267,7 +267,7 @@ function mysql.getrecords(mapid)
     return records
 end
 
-function mysql.getrecordscount(mapid)
+function mysql.getRecordsCount(mapid)
     cur = assert(con:execute("SELECT COUNT(*) AS `count` FROM `record` WHERE `map_id`="..tonumber(mapid)..""))
     
     local count = cur:fetch({}, "a")
@@ -276,7 +276,7 @@ function mysql.getrecordscount(mapid)
     return count["count"]
 end
 
-function mysql.getrecord(mapid, recordtype)
+function mysql.getRecord(mapid, recordtype)
     cur = assert(con:execute("SELECT * FROM `record` WHERE `map_id`="..tonumber(mapid).." AND `type`="..tonumber(recordtype)..""))
 
     local record = cur:fetch({}, "a")
@@ -285,7 +285,7 @@ function mysql.getrecord(mapid, recordtype)
     return record
 end
 
-function mysql.isconnected()
+function mysql.isConnected()
     return (con ~= nil)
 end
 

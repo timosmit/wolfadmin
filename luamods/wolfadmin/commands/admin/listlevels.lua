@@ -65,7 +65,7 @@ function commandListLevels(clientId, command, victim, offset)
 
             return true
         end
-    elseif not db.isconnected() then
+    elseif not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9level history is disabled.\";")
         
         return true
@@ -85,18 +85,18 @@ function commandListLevels(clientId, command, victim, offset)
         return true
     end
     
-    local player = db.getplayer(players.getGUID(cmdClient))["id"]
+    local player = db.getPlayer(players.getGUID(cmdClient))["id"]
     
-    local count = db.getlevelscount(player)
+    local count = db.getLevelsCount(player)
     local limit, offset = pagination.calculate(count, 30, tonumber(offset))
-    local levels = db.getlevels(player, limit, offset)
+    local levels = db.getLevels(player, limit, offset)
     
     if not (levels and #levels > 0) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistlevels: ^9there are no recorded levels for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.\";")
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dLevels for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
         for _, level in pairs(levels) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", level["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getlastalias(level["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", level["datetime"]).." ^7"..level["level_id"].."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", level["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(level["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", level["datetime"]).." ^7"..level["level_id"].."\";")
         end
         
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
@@ -105,4 +105,4 @@ function commandListLevels(clientId, command, victim, offset)
     
     return true
 end
-commands.addadmin("listlevels", commandListLevels, auth.PERM_LISTLEVELS, "display all levels on the server", (not db.isconnected() and nil or "^9(^3name|slot#^9) ^9(^hoffset^9)"))
+commands.addadmin("listlevels", commandListLevels, auth.PERM_LISTLEVELS, "display all levels on the server", (not db.isConnected() and nil or "^9(^3name|slot#^9) ^9(^hoffset^9)"))

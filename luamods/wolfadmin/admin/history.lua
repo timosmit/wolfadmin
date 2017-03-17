@@ -26,20 +26,20 @@ function history.get(clientId, historyId)
 end
 
 function history.getCount(clientId)
-    local playerId = db.getplayer(players.getGUID(clientId))["id"]
+    local playerId = db.getPlayer(players.getGUID(clientId))["id"]
 
     return db.getHistoryCount(playerId)
 end
 
 function history.getList(clientId, start, limit)
-    local playerId = db.getplayer(players.getGUID(clientId))["id"]
+    local playerId = db.getPlayer(players.getGUID(clientId))["id"]
 
     return db.getHistory(playerId, start, limit)
 end
 
 function history.add(victimId, invokerId, type, reason)
-    local victimPlayerId = db.getplayer(players.getGUID(victimId))["id"]
-    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
+    local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
 
     db.addHistory(victimPlayerId, invokerPlayerId, type, os.time(), reason)
 end

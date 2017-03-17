@@ -115,7 +115,7 @@ function acl.removeLevelRoles(levelId)
 end
 
 function acl.getPlayerLevel(clientId)
-    local player = db.getplayer(players.getGUID(clientId))
+    local player = db.getPlayer(players.getGUID(clientId))
 
     return player["level_id"]
 end

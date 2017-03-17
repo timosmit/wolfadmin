@@ -26,7 +26,7 @@ local db = require (wolfa_getLuaPath()..".db.db")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandRemoveBan(clientId, command, ban)
-    if settings.get("g_standalone") == 0 or not db.isconnected() then
+    if settings.get("g_standalone") == 0 or not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9bans are disabled.\";")
 
         return true

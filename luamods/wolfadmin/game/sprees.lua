@@ -73,27 +73,27 @@ end
 
 function sprees.reset(truncate)
     if truncate then
-        db.removeallrecords()
+        db.removeAllRecords()
     else
-        db.removerecords(currentMapId)
+        db.removeRecords(currentMapId)
     end
 
     currentRecords = {}
 end
 
 function sprees.load()
-    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
-        local map = db.getmap(game.getMap())
+    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
+        local map = db.getMap(game.getMap())
 
         if map then
             currentMapId = map["id"]
-            db.updatemap(currentMapId, os.time())
+            db.updateMap(currentMapId, os.time())
         else
-            db.addmap(game.getMap(), os.time())
-            currentMapId = db.getmap(game.getMap())["id"]
+            db.addMap(game.getMap(), os.time())
+            currentMapId = db.getMap(game.getMap())["id"]
         end
 
-        local records = db.getrecords(currentMapId)
+        local records = db.getRecords(currentMapId)
 
         for _, record in ipairs(records) do
             currentRecords[record["type"]] = {
@@ -163,13 +163,13 @@ function sprees.load()
 end
 
 function sprees.save()
-    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
+    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
         for i = 0, sprees.RECORD_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
-                if db.getrecord(currentMapId, i) then
-                    db.updaterecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
+                if db.getRecord(currentMapId, i) then
+                    db.updateRecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
                 else
-                    db.addrecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
+                    db.addRecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
                 end
             end
         end
@@ -177,10 +177,10 @@ function sprees.save()
 end
 
 function sprees.printRecords()
-    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 then
+    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
         for i = 0, sprees.RECORD_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getlastalias(currentRecords[i]["player"])["alias"].."^9.\";")
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getLastAlias(currentRecords[i]["player"])["alias"].."^9.\";")
             end
         end
     end
@@ -229,11 +229,11 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
 
     local currentSpree = playerSprees[clientId][type]
 
-    if db.isconnected() and settings.get("g_spreeRecords") ~= 0 and
+    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 and
             (settings.get("g_botRecords") == 1 or not players.isBot(clientId)) and
             (not currentRecords[type] or currentSpree > currentRecords[type]["record"]) then
         currentRecords[type] = {
-            ["player"] = db.getplayerid(clientId),
+            ["player"] = db.getPlayerId(clientId),
             ["record"] = currentSpree
         }
     end

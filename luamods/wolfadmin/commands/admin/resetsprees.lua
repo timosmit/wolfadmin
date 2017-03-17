@@ -27,7 +27,7 @@ local sprees = require (wolfa_getLuaPath()..".game.sprees")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
 function commandResetSprees(clientId, command, map)
-    if not db.isconnected() then
+    if not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
         
         return true

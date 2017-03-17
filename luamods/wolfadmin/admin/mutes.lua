@@ -39,8 +39,8 @@ function mutes.getList(start, limit)
 end
 
 function mutes.add(victimId, invokerId, type, duration, reason)
-    local victimPlayerId = db.getplayer(players.getGUID(victimId))["id"]
-    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
+    local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
 
     local reason = reason and reason or "muted by admin"
 
@@ -56,7 +56,7 @@ function mutes.removeByClient(clientId)
     players.setMuted(clientId, false)
 
     local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
-    local playerId = db.getplayer(guid)["id"]
+    local playerId = db.getPlayer(guid)["id"]
     local mute = db.getMuteByPlayer(playerId)
 
     if mute then

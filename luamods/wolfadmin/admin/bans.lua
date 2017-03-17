@@ -34,8 +34,8 @@ function bans.getList(start, limit)
 end
 
 function bans.add(victimId, invokerId, duration, reason)
-    local victimPlayerId = db.getplayer(players.getGUID(victimId))["id"]
-    local invokerPlayerId = db.getplayer(players.getGUID(invokerId))["id"]
+    local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
 
     local reason = reason and reason or "banned by admin"
 
