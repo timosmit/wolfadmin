@@ -22,21 +22,27 @@ local db = {}
 
 local con
 
+function db.isconnected()
+    return (con ~= nil)
+end
+
 -- as this module serves as a wrapper/super class, we load the selected database
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
 function db.oninit()
-    if settings.get("db_type") == "mysql" then
-        con = require (wolfa_getLuaPath()..".db.mysql")
-    elseif settings.get("db_type") == "sqlite3" then
-        con = require (wolfa_getLuaPath()..".db.sqlite3")
-    else
-        error("invalid database system (choose mysql, sqlite3)")
+    if settings.get("db_type") ~= "none" then
+        if settings.get("db_type") == "sqlite3" then
+            con = require (wolfa_getLuaPath()..".db.sqlite3")
+        elseif settings.get("db_type") == "mysql" then
+            con = require (wolfa_getLuaPath()..".db.mysql")
+        else
+            error("invalid database system (none|sqlite3|mysql)")
+        end
+
+        setmetatable(db, {__index = con})
+
+        db.start()
     end
-    
-    setmetatable(db, {__index = con})
-    
-    db.start()
 end
 events.handle("onGameInit", db.oninit)
 

@@ -68,7 +68,7 @@ function files.loadFromCFG(fileName, idExpr)
         
         table.insert(array[id], data)
     end
-    
+
     return arrayCount, array
 end
 
@@ -100,7 +100,7 @@ function files.saveToCFG(fileName, array)
     end
     
     et.trap_FS_FCloseFile(fileDescriptor)
-    
+
     return true
 end
 
