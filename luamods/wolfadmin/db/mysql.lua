@@ -17,6 +17,7 @@
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
+local constants = require (wolfa_getLuaPath()..".util.constants")
 local util = require (wolfa_getLuaPath()..".util.util")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 local tables = require (wolfa_getLuaPath()..".util.tables")
@@ -30,12 +31,12 @@ local con
 local cur
 
 -- players
-function mysql.addPlayer(guid, ip)
-    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."')"))
+function mysql.addPlayer(guid, ip, lastSeen, seen)
+    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
 end
 
-function mysql.updatePlayerIp(guid, ip)
-    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."' WHERE `guid`='"..util.escape(guid).."'"))
+function mysql.updatePlayerIp(guid, ip, lastSeen)
+    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."', `lastseen`="..lastSeen..", `seen`=`seen`+1 WHERE `guid`='"..util.escape(guid).."'"))
 end
 
 function mysql.updatePlayerLevel(id, level)
@@ -44,6 +45,34 @@ end
 
 function mysql.getPlayerId(clientId)
     return mysql.getPlayer(players.getGUID(clientId))["id"]
+end
+
+function mysql.getPlayersCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getPlayers(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `player` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local players = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(players, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return players
 end
 
 function mysql.getPlayer(guid)
@@ -64,13 +93,86 @@ function mysql.updateLevel(id, name)
     cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
-function mysql.getLevel(id)
+function mysql.removeLevel(id)
+    cur = assert(con:execute("DELETE FROM `level` WHERE `id`="..tonumber(id)..""))
+end
+
+function mysql.reLevel(id, newId)
+    cur = assert(con:execute("UPDATE `player` SET `level_id`="..tonumber(newId).." WHERE `level_id`="..tonumber(id)..""))
+end
+
+function mysql.getLevelsWithIds()
+    cur = assert(con:execute("SELECT * FROM `level`"))
+
+    local levels = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(levels, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return levels
+end
+
+function mysql.getLevels()
+    cur = assert(con:execute("SELECT `l`.*, COUNT(`p`.`id`) AS `players` FROM `level` AS `l` LEFT JOIN `player` AS `p` ON `l`.`id`=`p`.`level_id` GROUP BY `l`.`id`"))
+
+    local levels = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(levels, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return levels
+end
+
+function sqlite3.getLevel(id)
     cur = assert(con:execute("SELECT * FROM `level` WHERE `id`='"..tonumber(id).."'"))
     
     local level = cur:fetch({}, "a")
     cur:close()
     
     return level
+end
+
+-- acl
+function mysql.getLevelRoles()
+    cur = assert(con:execute("SELECT * FROM `level_role`"))
+
+    local roles = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(roles, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return roles
+end
+
+function mysql.addLevelRole(levelId, role)
+    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) VALUES ("..tonumber(levelId)..", '"..util.escape(role).."')"))
+end
+
+function mysql.removeLevelRole(levelId, role)
+    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId).." AND role='"..util.escape(role).."'"))
+end
+
+function mysql.copyLevelRoles(levelId, newLevelId)
+    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `role` FROM `level_role` WHERE `level_id`="..tonumber(levelId)))
+end
+
+function mysql.removeLevelRoles(levelId)
+    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId)..""))
 end
 
 -- aliases
@@ -138,8 +240,8 @@ function mysql.getLastAlias(playerid)
 end
 
 -- level history
-function mysql.addSetLevel(playerid, level, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+function mysql.addSetLevel(playerid, level, invokerid, datetime)
+    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level_id`, `invoker_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(invokerid)..", "..tonumber(datetime)..")"))
 end
 
 function mysql.getLevelsCount(playerid)
@@ -170,17 +272,17 @@ function mysql.getLevels(playerid, limit, offset)
     return levels
 end
 
--- warns
-function mysql.addWarn(playerid, reason, adminid, datetime)
-    cur = assert(con:execute("INSERT INTO `warn` (`player_id`, `reason`, `admin_id`, `datetime`) VALUES ("..tonumber(playerid)..", '"..util.escape(reason).."', "..tonumber(adminid)..", "..tonumber(datetime)..")"))
+-- history
+function mysql.addHistory(victimId, invokerId, type, datetime, reason)
+    cur = assert(con:execute("INSERT INTO `history` (`victim_id`, `invoker_id`, `type`, `datetime`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..util.escape(type).."', "..tonumber(datetime)..", '"..util.escape(reason).."')"))
 end
 
-function mysql.removeWarn(warnid)
-    cur = assert(con:execute("DELETE FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+function mysql.removeHistory(historyId)
+    cur = assert(con:execute("DELETE FROM `history` WHERE `id`="..tonumber(historyId)..""))
 end
 
-function mysql.getWarnsCount(playerid)
-    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `warn` WHERE `player_id`="..tonumber(playerid)..""))
+function mysql.getHistoryCount(playerId)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `history` WHERE `victim_id`="..tonumber(playerId)..""))
 
     local count = tonumber(cur:fetch({}, "a")["count"])
     cur:close()
@@ -188,11 +290,11 @@ function mysql.getWarnsCount(playerid)
     return count
 end
 
-function mysql.getWarns(playerid, limit, offset)
+function mysql.getHistory(playerId, limit, offset)
     limit = limit or 30
     offset = offset or 0
 
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+    cur = assert(con:execute("SELECT * FROM `history` WHERE `victim_id`="..tonumber(playerId).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
 
     local warns = {}
     local row = cur:fetch({}, "a")
@@ -207,13 +309,123 @@ function mysql.getWarns(playerid, limit, offset)
     return warns
 end
 
-function mysql.getWarn(warnid)
-    cur = assert(con:execute("SELECT * FROM `warn` WHERE `id`="..tonumber(warnid)..""))
+function mysql.getHistoryItem(historyId)
+    cur = assert(con:execute("SELECT * FROM `history` WHERE `id`="..tonumber(historyId)..""))
     
-    local warn = cur:fetch({}, "a")
+    local history = cur:fetch({}, "a")
     cur:close()
     
-    return warn
+    return history
+end
+
+-- mutes
+function mysql.addMute(victimId, invokerId, type, issued, duration, reason)
+    cur = assert(con:execute("INSERT INTO `mute` (`victim_id`, `invoker_id`, `type`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(type)..", "..tonumber(issued)..", "..tonumber(issued + duration)..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+end
+
+function mysql.removeMute(muteId)
+    cur = assert(con:execute("DELETE FROM `mute` WHERE `id`="..tonumber(muteId)..""))
+end
+
+function mysql.getMutesCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `mute`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getMutes(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `mute` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local mutes = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(mutes, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return mutes
+end
+
+function mysql.getMute(muteId)
+    cur = assert(con:execute("SELECT * FROM `mute` WHERE `id`="..tonumber(muteId)..""))
+
+    local mute = cur:fetch({}, "a")
+    cur:close()
+
+    return mute
+end
+
+function mysql.getMuteByPlayer(playerId)
+    cur = assert(con:execute("SELECT * FROM `mute` WHERE `victim_id`="..tonumber(playerId).." AND `expires`>"..os.time()))
+
+    local mute = cur:fetch({}, "a")
+    cur:close()
+
+    return mute
+end
+
+-- bans
+function mysql.addBan(victimId, invokerId, issued, duration, reason)
+    cur = assert(con:execute("INSERT INTO `ban` (`victim_id`, `invoker_id`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(issued)..", "..(tonumber(issued) + tonumber(duration))..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+end
+
+function mysql.removeBan(banId)
+    cur = assert(con:execute("DELETE FROM `ban` WHERE `id`="..tonumber(banId)..""))
+end
+
+function mysql.getBansCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `ban`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
+function mysql.getBans(limit, offset)
+    limit = limit or 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `ban` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local bans = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(bans, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return bans
+end
+
+function mysql.getBan(banId)
+    cur = assert(con:execute("SELECT * FROM `ban` WHERE `id`="..tonumber(banId)..""))
+
+    local ban = cur:fetch({}, "a")
+    cur:close()
+
+    return ban
+end
+
+function mysql.getBanByPlayer(playerId)
+    cur = assert(con:execute("SELECT * FROM `ban` WHERE `victim_id`="..tonumber(playerId).." AND `expires`>"..os.time()))
+
+    local ban = cur:fetch({}, "a")
+    cur:close()
+
+    return ban
 end
 
 -- maps
