@@ -31,81 +31,6 @@ CREATE TABLE `level_role` (
     CONSTRAINT `role_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
--- update player table
-CREATE TABLE IF NOT EXISTS `player_x` (
-  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `guid` TEXT NOT NULL UNIQUE,
-  `ip` TEXT NOT NULL,
-  `level_id` INTEGER NOT NULL,
-  `lastseen` INTEGER NOT NULL,
-  `seen` INTEGER NOT NULL,
-  CONSTRAINT `player_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-INSERT INTO `player_x` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) SELECT `id`, `guid`, `ip`, 0 AS `level_id`, 0 AS `lastseen`, 0 AS `seen` FROM `player`;
-
-DROP TABLE `player`;
-
-ALTER TABLE `player_x` RENAME TO `player`;
-
--- set level of console
-UPDATE `player` SET `level_id`=5 WHERE `guid`='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-
--- set last seen information
-UPDATE `player` SET `lastseen`=(SELECT MAX(`lastused`) AS `lastused` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
-UPDATE `player` SET `seen`=(SELECT SUM(`used`) AS `used` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
-
--- rename warns to history
-CREATE TABLE IF NOT EXISTS `history` (
-  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `victim_id` INTEGER NOT NULL,
-  `invoker_id` INTEGER NOT NULL,
-  `type` TEXT NOT NULL,
-  `datetime` INTEGER NOT NULL,
-  `reason` TEXT NOT NULL,
-  CONSTRAINT `history_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `history_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE INDEX IF NOT EXISTS `history_victim_idx` ON `history` (`victim_id`);
-CREATE INDEX IF NOT EXISTS `history_invoker_idx` ON `history` (`invoker_id`);
-
-INSERT INTO `history` (`id`, `victim_id`, `invoker_id`, `type`, `datetime`, `reason`) SELECT `id`, `player_id`, `admin_id`, 'warn' AS `type`, `datetime`, `reason` FROM `warn`;
-
-DROP TABLE `warn`;
-
--- create mute and ban tables
-CREATE TABLE IF NOT EXISTS `mute` (
-  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `victim_id` INTEGER NOT NULL,
-  `invoker_id` INTEGER NOT NULL,
-  `type` TEXT NOT NULL,
-  `issued` INTEGER NOT NULL,
-  `expires` INTEGER NOT NULL,
-  `duration` INTEGER NOT NULL,
-  `reason` TEXT NOT NULL,
-  CONSTRAINT `mute_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `mute_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE INDEX IF NOT EXISTS `mute_victim_idx` ON `mute` (`victim_id`);
-CREATE INDEX IF NOT EXISTS `mute_invoker_idx` ON `mute` (`invoker_id`);
-
-CREATE TABLE IF NOT EXISTS `ban` (
-  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `victim_id` INTEGER NOT NULL,
-  `invoker_id` INTEGER NOT NULL,
-  `issued` INTEGER NOT NULL,
-  `expires` INTEGER NOT NULL,
-  `duration` INTEGER NOT NULL,
-  `reason` TEXT NOT NULL,
-  CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE INDEX IF NOT EXISTS `ban_victim_idx` ON `ban` (`victim_id`);
-CREATE INDEX IF NOT EXISTS `ban_invoker_idx` ON `ban` (`invoker_id`);
-
 -- populate acl
 -- add levels
 BEGIN;
@@ -345,3 +270,78 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'silentcmds');
 
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'spy');
 COMMIT;
+
+-- update player table
+CREATE TABLE IF NOT EXISTS `player_x` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `guid` TEXT NOT NULL UNIQUE,
+  `ip` TEXT NOT NULL,
+  `level_id` INTEGER NOT NULL,
+  `lastseen` INTEGER NOT NULL,
+  `seen` INTEGER NOT NULL,
+  CONSTRAINT `player_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+INSERT INTO `player_x` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) SELECT `id`, `guid`, `ip`, 0 AS `level_id`, 0 AS `lastseen`, 0 AS `seen` FROM `player`;
+
+DROP TABLE `player`;
+
+ALTER TABLE `player_x` RENAME TO `player`;
+
+-- set level of console
+UPDATE `player` SET `level_id`=5 WHERE `guid`='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+
+-- set last seen information
+UPDATE `player` SET `lastseen`=(SELECT MAX(`lastused`) AS `lastused` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
+UPDATE `player` SET `seen`=(SELECT SUM(`used`) AS `used` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
+
+-- rename warns to history
+CREATE TABLE IF NOT EXISTS `history` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `type` TEXT NOT NULL,
+  `datetime` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `history_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `history_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `history_victim_idx` ON `history` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `history_invoker_idx` ON `history` (`invoker_id`);
+
+INSERT INTO `history` (`id`, `victim_id`, `invoker_id`, `type`, `datetime`, `reason`) SELECT `id`, `player_id`, `admin_id`, 'warn' AS `type`, `datetime`, `reason` FROM `warn`;
+
+DROP TABLE `warn`;
+
+-- create mute and ban tables
+CREATE TABLE IF NOT EXISTS `mute` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `type` TEXT NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `mute_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `mute_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `mute_victim_idx` ON `mute` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `mute_invoker_idx` ON `mute` (`invoker_id`);
+
+CREATE TABLE IF NOT EXISTS `ban` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `ban_victim_idx` ON `ban` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `ban_invoker_idx` ON `ban` (`invoker_id`);
