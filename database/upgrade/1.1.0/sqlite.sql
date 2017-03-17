@@ -1,135 +1,132 @@
-CREATE TABLE IF NOT EXISTS `level` (
-  `id` int(11) NOT NULL,
-  `name` varchar(64) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `level_role` (
-  `level_id` int(11) NOT NULL,
-  `role` varchar(32) NOT NULL,
-  PRIMARY KEY (`level_id`,`role`),
-  CONSTRAINT `level_role_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `player` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `guid` char(32) NOT NULL,
-  `ip` varchar(40) NOT NULL,
-  `level_id` int(11) NOT NULL,
-  `lastseen` int(11) NOT NULL,
-  `seen` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `guid` (`guid`),
-  KEY `player_level_idx` (`level_id`),
-  CONSTRAINT `player_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `alias` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `player_id` int(10) unsigned NOT NULL,
-  `alias` varchar(128) NOT NULL,
-  `cleanalias` varchar(128) NOT NULL,
-  `lastused` int(10) unsigned NOT NULL,
-  `used` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `player_idx` (`player_id`),
-  CONSTRAINT `alias_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+-- rename level table to player_level
+-- now we're at it, also update the columns
 CREATE TABLE IF NOT EXISTS `player_level` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `player_id` int(10) unsigned NOT NULL,
-  `invoker_id` int(10) unsigned NOT NULL,
-  `level_id` int(11) NOT NULL,
-  `datetime` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `player_level_player_idx` (`player_id`),
-  KEY `player_level_invoker_idx` (`invoker_id`),
-  KEY `player_level_level_idx` (`level_id`),
-  CONSTRAINT `player_level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `player_level_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `player_level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+    `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `player_id` INTEGER NOT NULL,
+    `invoker_id` INTEGER NOT NULL,
+    `level_id` INTEGER NOT NULL,
+    `datetime` INTEGER NOT NULL,
+    CONSTRAINT `level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    CONSTRAINT `level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `level_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
+CREATE INDEX IF NOT EXISTS `level_player_idx` ON `player_level` (`player_id`);
+CREATE INDEX IF NOT EXISTS `level_invoker_idx` ON `player_level` (`invoker_id`);
+
+INSERT INTO `player_level` (`id`, `player_id`, `invoker_id`, `level_id`, `datetime`) SELECT `id`, `player_id`, `admin_id`, `level`, `datetime` FROM `level`;
+
+DROP TABLE `level`;
+
+-- create acl tables
+CREATE TABLE IF NOT EXISTS `level` (
+    `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `name` TEXT NOT NULL
+);
+
+CREATE TABLE `level_role` (
+    `level_id` INTEGER NOT NULL,
+    `role` TEXT NOT NULL,
+    PRIMARY KEY (`level_id`, `role`),
+    CONSTRAINT `role_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+-- update player table
+CREATE TABLE IF NOT EXISTS `player_x` (
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `guid` TEXT NOT NULL UNIQUE,
+  `ip` TEXT NOT NULL,
+  `level_id` INTEGER NOT NULL,
+  `lastseen` INTEGER NOT NULL,
+  `seen` INTEGER NOT NULL,
+  CONSTRAINT `player_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+INSERT INTO `player_x` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) SELECT `id`, `guid`, `ip`, 0 AS `level_id`, 0 AS `lastseen`, 0 AS `seen` FROM `player`;
+
+DROP TABLE `player`;
+
+ALTER TABLE `player_x` RENAME TO `player`;
+
+-- set level of console
+UPDATE `player` SET `level_id`=5 WHERE `guid`='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+
+-- set last seen information
+UPDATE `player` SET `lastseen`=(SELECT MAX(`lastused`) AS `lastused` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
+UPDATE `player` SET `seen`=(SELECT SUM(`used`) AS `used` FROM `alias` AS `a` WHERE `a`.`player_id`=`player`.`id`);
+
+-- rename warns to history
 CREATE TABLE IF NOT EXISTS `history` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `victim_id` int(10) unsigned NOT NULL,
-  `invoker_id` int(10) unsigned NOT NULL,
-  `type` varchar(16) NOT NULL,
-  `datetime` int(10) unsigned NOT NULL,
-  `reason` varchar(128) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `history_victim_idx` (`victim_id`),
-  KEY `history_invoker_idx` (`invoker_id`),
-  CONSTRAINT `history_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `history_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `type` TEXT NOT NULL,
+  `datetime` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `history_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `history_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
+CREATE INDEX IF NOT EXISTS `history_victim_idx` ON `history` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `history_invoker_idx` ON `history` (`invoker_id`);
+
+INSERT INTO `history` (`id`, `victim_id`, `invoker_id`, `type`, `datetime`, `reason`) SELECT `id`, `player_id`, `admin_id`, 'warn' AS `type`, `datetime`, `reason` FROM `warn`;
+
+DROP TABLE `warn`;
+
+-- create mute and ban tables
 CREATE TABLE IF NOT EXISTS `mute` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `victim_id` int(10) unsigned NOT NULL,
-  `invoker_id` int(10) unsigned NOT NULL,
-  `type` smallint(5) unsigned NOT NULL,
-  `issued` int(10) unsigned NOT NULL,
-  `expires` int(10) unsigned NOT NULL,
-  `duration` int(10) unsigned NOT NULL,
-  `reason` varchar(128) CHARACTER SET utf8 NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mute_victim_idx` (`victim_id`),
-  KEY `mute_invoker_idx` (`invoker_id`),
-  CONSTRAINT `mute_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `mute_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `type` TEXT NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `mute_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `mute_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE INDEX IF NOT EXISTS `mute_victim_idx` ON `mute` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `mute_invoker_idx` ON `mute` (`invoker_id`);
 
 CREATE TABLE IF NOT EXISTS `ban` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `victim_id` int(10) unsigned DEFAULT NULL,
-  `invoker_id` int(10) unsigned NOT NULL,
-  `issued` int(10) unsigned NOT NULL,
-  `expires` int(10) unsigned NOT NULL,
-  `duration` int(10) unsigned NOT NULL,
-  `reason` varchar(128) CHARACTER SET utf8 NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ban_victim_idx` (`victim_id`),
-  KEY `ban_invoker_idx` (`invoker_id`),
-  CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `victim_id` INTEGER NOT NULL,
+  `invoker_id` INTEGER NOT NULL,
+  `issued` INTEGER NOT NULL,
+  `expires` INTEGER NOT NULL,
+  `duration` INTEGER NOT NULL,
+  `reason` TEXT NOT NULL,
+  CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
-CREATE TABLE IF NOT EXISTS `map` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) NOT NULL,
-  `lastplayed` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE INDEX IF NOT EXISTS `ban_victim_idx` ON `ban` (`victim_id`);
+CREATE INDEX IF NOT EXISTS `ban_invoker_idx` ON `ban` (`invoker_id`);
 
-CREATE TABLE IF NOT EXISTS `record` (
-  `map_id` int(10) unsigned NOT NULL,
-  `type` tinyint(3) unsigned NOT NULL,
-  `date` int(10) unsigned NOT NULL,
-  `record` smallint(5) unsigned NOT NULL,
-  `player_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`map_id`,`type`),
-  KEY `player_idx` (`player_id`),
-  CONSTRAINT `record_map` FOREIGN KEY (`map_id`) REFERENCES `map` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `record_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+-- populate acl
 -- add levels
+BEGIN;
 INSERT INTO `level` (`id`, `name`) VALUES (0, 'Guest');
 INSERT INTO `level` (`id`, `name`) VALUES (1, 'Regular');
 INSERT INTO `level` (`id`, `name`) VALUES (2, 'VIP');
 INSERT INTO `level` (`id`, `name`) VALUES (3, 'Admin');
 INSERT INTO `level` (`id`, `name`) VALUES (4, 'Senior Admin');
 INSERT INTO `level` (`id`, `name`) VALUES (5, 'Server Owner');
+COMMIT;
 
 -- add roles for level 0
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'time');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (0, 'greeting');
+COMMIT;
 
 -- add roles for level 1
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'time');
@@ -138,8 +135,10 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'greeting');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'listmaps');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'listsprees');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (1, 'listrules');
+COMMIT;
 
 -- add roles for level 2
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'time');
@@ -152,8 +151,10 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'listsprees');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'listrules');
 
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (2, 'spec999');
+COMMIT;
 
 -- add roles for level 3
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'time');
@@ -193,8 +194,10 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'noinactivity');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'novote');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'nocensor');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (3, 'novotelimit');
+COMMIT;
 
 -- add roles for level 4
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'time');
@@ -262,8 +265,10 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'noreason');
 
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'teamcmds');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (4, 'silentcmds');
+COMMIT;
 
 -- add roles for level 5
+BEGIN;
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'admintest');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'help');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'time');
@@ -339,7 +344,4 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'teamcmds');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'silentcmds');
 
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'spy');
-
--- add console to players table
-INSERT INTO `player` (`id`, `guid`, `ip`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1');
-INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);
+COMMIT;
