@@ -286,7 +286,6 @@ INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listhistory');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listwarns');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listbans');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listaliases');
-INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'listlevels');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'liststats');
 INSERT INTO `level_role`(`level_id`, `role`) VALUES (5, 'finger');
 

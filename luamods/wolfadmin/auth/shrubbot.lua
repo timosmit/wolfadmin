@@ -34,7 +34,6 @@ local flags = {
     [auth.PERM_LISTHISTORY] = "f",
     [auth.PERM_LISTBANS] = "B",
     [auth.PERM_LISTALIASES] = "f",
-    [auth.PERM_LISTLEVELS] = "s",
     [auth.PERM_LISTSTATS] = "I",
     [auth.PERM_FINGER] = "f",
 

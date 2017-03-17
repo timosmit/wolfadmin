@@ -239,39 +239,6 @@ function mysql.getLastAlias(playerid)
     return alias
 end
 
--- level history
-function mysql.addSetLevel(playerid, level, invokerid, datetime)
-    cur = assert(con:execute("INSERT INTO `player_level` (`player_id`, `level_id`, `invoker_id`, `datetime`) VALUES ("..tonumber(playerid)..", "..tonumber(level)..", "..tonumber(invokerid)..", "..tonumber(datetime)..")"))
-end
-
-function mysql.getLevelsCount(playerid)
-    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `player_level` WHERE `player_id`="..tonumber(playerid)..""))
-
-    local count = tonumber(cur:fetch({}, "a")["count"])
-    cur:close()
-
-    return count
-end
-
-function mysql.getLevels(playerid, limit, offset)
-    limit = limit or 30
-    offset = offset or 0
-
-    cur = assert(con:execute("SELECT * FROM `player_level` WHERE `player_id`="..tonumber(playerid).." LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
-
-    local levels = {}
-    local row = cur:fetch({}, "a")
-    
-    while row do
-        table.insert(levels, tables.copy(row))
-        row = cur:fetch(row, "a")
-    end
-    
-    cur:close()
-    
-    return levels
-end
-
 -- history
 function mysql.addHistory(victimId, invokerId, type, datetime, reason)
     cur = assert(con:execute("INSERT INTO `history` (`victim_id`, `invoker_id`, `type`, `datetime`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..util.escape(type).."', "..tonumber(datetime)..", '"..util.escape(reason).."')"))

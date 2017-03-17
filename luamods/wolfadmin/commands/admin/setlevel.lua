@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local admin = require (wolfa_getLuaPath()..".admin.admin")
+local history = require (wolfa_getLuaPath()..".admin.history")
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
@@ -50,7 +51,7 @@ function commandSetLevel(clientId, command, victim, level)
         return false
     end
 
-    admin.setPlayerLevel(cmdClient, level, clientId)
+    history.add(cmdClient, clientId, "level", level)
 
     return false
 end
@@ -96,6 +97,7 @@ function commandSetLevel(clientId, command, victim, level)
     end
 
     admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
+    history.add(cmdClient, clientId, "level", level)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
 
