@@ -128,26 +128,28 @@ function players.onClientConnect(clientId, firstTime, isBot)
 
     if firstTime then
         data[clientId]["new"] = true
+    end
 
-        if db.isConnected() then
-            local player = db.getPlayer(data[clientId]["guid"])
+    if db.isConnected() then
+        local player = db.getPlayer(data[clientId]["guid"])
 
-            if player then
+        if player then
+            if firstTime then
                 db.updatePlayer(data[clientId]["guid"], data[clientId]["ip"], os.time())
+            end
 
-                local alias = db.getAliasByName(player["id"], data[clientId]["name"])
+            local alias = db.getAliasByName(player["id"], data[clientId]["name"])
 
-                if alias then
-                    db.updateAlias(alias["id"], os.time())
-                else
-                    db.addAlias(player["id"], data[clientId]["name"], os.time())
-                end
-            else
-                db.addPlayer(data[clientId]["guid"], data[clientId]["ip"], os.time(), 1)
-
-                local player = db.getPlayer(data[clientId]["guid"])
+            if alias and firstTime then
+                db.updateAlias(alias["id"], os.time())
+            elseif not alias then
                 db.addAlias(player["id"], data[clientId]["name"], os.time())
             end
+        elseif not player then
+            db.addPlayer(data[clientId]["guid"], data[clientId]["ip"], os.time(), 1)
+
+            local player = db.getPlayer(data[clientId]["guid"])
+            db.addAlias(player["id"], data[clientId]["name"], os.time())
         end
     end
 end
