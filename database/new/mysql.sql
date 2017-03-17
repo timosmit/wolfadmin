@@ -36,21 +36,6 @@ CREATE TABLE IF NOT EXISTS `alias` (
   CONSTRAINT `alias_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `player_level` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `player_id` int(10) unsigned NOT NULL,
-  `invoker_id` int(10) unsigned NOT NULL,
-  `level_id` int(11) NOT NULL,
-  `datetime` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `player_level_player_idx` (`player_id`),
-  KEY `player_level_invoker_idx` (`invoker_id`),
-  KEY `player_level_level_idx` (`level_id`),
-  CONSTRAINT `player_level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `player_level_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `player_level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS `history` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `victim_id` int(10) unsigned NOT NULL,

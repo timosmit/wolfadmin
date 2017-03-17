@@ -32,20 +32,6 @@ CREATE TABLE IF NOT EXISTS `alias` (
 
 CREATE INDEX IF NOT EXISTS `alias_player_idx` ON `alias` (`player_id`);
 
-CREATE TABLE IF NOT EXISTS `player_level` (
-  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  `player_id` INTEGER NOT NULL,
-  `invoker_id` INTEGER NOT NULL,
-  `level_id` INTEGER NOT NULL,
-  `datetime` INTEGER NOT NULL,
-  CONSTRAINT `level_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `level_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-  CONSTRAINT `level_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE INDEX IF NOT EXISTS `level_player_idx` ON `player_level` (`player_id`);
-CREATE INDEX IF NOT EXISTS `level_invoker_idx` ON `player_level` (`invoker_id`);
-
 CREATE TABLE IF NOT EXISTS `history` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `victim_id` INTEGER NOT NULL,
