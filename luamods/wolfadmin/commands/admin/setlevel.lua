@@ -101,6 +101,6 @@ function commandSetLevel(clientId, command, victim, level)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
 
-    return false
+    return true
 end
 commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", nil, (settings.get("g_standalone") == 0))
