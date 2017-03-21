@@ -323,3 +323,16 @@ CREATE TABLE IF NOT EXISTS `ban` (
     CONSTRAINT `ban_invoker` FOREIGN KEY (`invoker_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `ban_victim` FOREIGN KEY (`victim_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- update existing tables to UTF-8
+ALTER TABLE `alias`
+    CHARACTER SET = utf8, COLLATE = utf8_unicode_ci;
+
+ALTER TABLE `player`
+    CHARACTER SET = utf8, COLLATE = utf8_unicode_ci;
+
+ALTER TABLE `map`
+    CHARACTER SET = utf8, COLLATE = utf8_unicode_ci;
+
+ALTER TABLE `record`
+    CHARACTER SET = utf8, COLLATE = utf8_unicode_ci;
