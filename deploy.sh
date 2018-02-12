@@ -23,25 +23,29 @@ install() {
 
     if [[ ! -d $fs_basepath/$fs_game ]]; then
         while true; do
-            read -p '$fs_basepath/$fs_game does not exist, continue? (y/n) ' yn
+            read -p "$fs_basepath/$fs_game does not exist, continue? (y/n) " yn
             case $yn in
                 [Yy]* ) mkdir $fs_basepath/$fs_game; echo "created $fs_basepath/$fs_game"; break;;
                 [Nn]* ) echo 'exited without making changes'; exit;;
                 * ) echo 'please answer yes or no.';;
             esac
         done
-    elif [[ ! -d $fs_homepath/$fs_homedir/$fs_game ]]; then
+    fi
+
+    if [[ ! -d $fs_homepath/$fs_homedir/$fs_game ]]; then
         while true; do
             read -p "$fs_homepath/$fs_homedir/$fs_game does not exist, continue? (y/n) " yn
             case $yn in
-                [Yy]* ) mkdir $fs_homepath/$fs_game; echo "created $fs_homepath/$fs_homedir/$fs_game"; break;;
+                [Yy]* ) mkdir $fs_homepath/$fs_homedir/$fs_game; echo "created $fs_homepath/$fs_homedir/$fs_game"; break;;
                 [Nn]* ) echo 'exited without making changes'; exit;;
                 * ) echo 'please answer yes or no.';;
             esac
         done
-    elif [[ -d $fs_basepath/$fs_game/luamods/wolfadmin ]]; then
+    fi
+
+    if [[ -d $fs_basepath/$fs_game/luamods/wolfadmin ]]; then
         while true; do
-            read -p 'luamods/wolfadmin already exists, continue? (y/n) ' yn
+            read -p "$fs_basepath/$fs_game/luamods/wolfadmin already exists, continue? (y/n) " yn
             case $yn in
                 [Yy]* ) rm -r $fs_basepath/$fs_game/luamods/wolfadmin; echo 'removed old WolfAdmin luamod'; break;;
                 [Nn]* ) echo 'exited without making changes'; exit;;
@@ -64,6 +68,21 @@ install() {
     cp -n config/* $fs_homepath/$fs_homedir/$fs_game
     echo 'done.'
 
+    if [ -e $fs_homepath/$fs_homedir/$fs_game/wolfadmin*.pk3 ]; then
+        rm $fs_homepath/$fs_homedir/$fs_game/wolfadmin*.pk3
+        echo 'removed old pk3'
+        install_pk3
+    else
+        while true; do
+            read -p 'install pk3? (y/n) ' yn
+            case $yn in
+                [Yy]* ) install_pk3; break;;
+                [Nn]* ) echo 'pk3 not installed'; break;;
+                * ) echo 'please answer yes or no.';;
+            esac
+        done
+    fi
+
     if [ ! -x "$(command -v sqlite3)" ]; then
         echo 'sqlite3 executable does not exist, cannot create database'
     elif [[ -e $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db ]]; then
@@ -84,6 +103,15 @@ install() {
     echo 'install process finished.'
 }
 
+install_pk3() {
+    echo -n 'zipping pk3...';
+    zip -r -q wolfadmin-$VERSION.pk3 pk3
+    echo 'done.'
+    echo -n 'copying pk3...';
+    cp wolfadmin-$VERSION.pk3 $fs_basepath/$fs_game
+    echo 'done.'
+}
+
 install_db() {
     echo -n 'initializing database...';
     sqlite3 $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db < database/new/sqlite3.sql;
@@ -94,13 +122,13 @@ update() {
     echo
 
     if [[ ! -d $fs_basepath/$fs_game ]]; then
-        echo 'fs_basepath/fs_game dir does not exist, cannot update'
+        echo "$fs_basepath/$fs_game dir does not exist, cannot update"
         exit
-    elif [[ ! -d $fs_homepath/$fs_game ]]; then
-        echo 'fs_homepath/fs_game dir does not exist, cannot update'
+    elif [[ ! -d $fs_homepath/$fs_homedir/$fs_game ]]; then
+        echo "$fs_homepath/$fs_game dir does not exist, cannot update"
         exit
     elif [[ -d $fs_basepath/$fs_game/luamods/wolfadmin ]]; then
-        echo 'WolfAdmin luamod does not exist, cannot update'
+        echo "$fs_basepath/$fs_game/luamods/wolfadmin does not exist, cannot update"
         exit
     fi
 
@@ -119,6 +147,21 @@ update() {
     echo -n 'copying configs...'
     cp -n config/* $fs_homepath/$fs_homedir/$fs_game
     echo 'done.'
+
+    if [ -e $fs_homepath/$fs_homedir/$fs_game/wolfadmin*.pk3 ]; then
+        rm $fs_homepath/$fs_homedir/$fs_game/wolfadmin*.pk3
+        echo 'removed old pk3'
+        install_pk3
+    else
+        while true; do
+            read -p 'install pk3? (y/n) ' yn
+            case $yn in
+                [Yy]* ) install_pk3; break;;
+                [Nn]* ) echo 'pk3 not installed'; break;;
+                * ) echo 'please answer yes or no.';;
+            esac
+        done
+    fi
 
     if [ ! -x "$(command -v sqlite3)" ]; then
         echo 'sqlite3 executable does not exist, cannot update database'
