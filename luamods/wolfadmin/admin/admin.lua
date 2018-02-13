@@ -42,7 +42,7 @@ function admin.setPlayerLevel(clientId, level)
 end
 
 function admin.onClientConnectAttempt(clientId, firstTime, isBot)
-    if firstTime then
+    if firstTime and settings.get("db_type") ~= "none" then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
 
         if guid == "" or guid == "NO_GUID" or guid == "unknown" then
