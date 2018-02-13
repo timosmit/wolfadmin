@@ -114,7 +114,7 @@ install_pk3() {
 
 install_db() {
     echo -n 'initializing database...';
-    sqlite3 $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db < database/new/sqlite3.sql;
+    sqlite3 $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db < database/new/sqlite.sql;
     echo 'done.'
 }
 
@@ -166,10 +166,10 @@ update() {
     if [ ! -x "$(command -v sqlite3)" ]; then
         echo 'sqlite3 executable does not exist, cannot update database'
     elif [[ ! -e $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db ]]; then
-        echo 'wolfadmin.db does not exist, cannot create tables'
+        echo 'wolfadmin.db does not exist, cannot update database'
     else
         echo -n 'updating database...'
-        sqlite3 $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db < database/update/$prev_version/sqlite3.sql
+        sqlite3 $fs_homepath/$fs_homedir/$fs_game/wolfadmin.db < database/update/$prev_version/sqlite.sql
         echo 'done.'
     fi
 
