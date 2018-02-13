@@ -15,9 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local util = require (wolfa_getLuaPath()..".util.util")
+
 local tables = {}
 
 function tables.copy(tbl)
+    util.typecheck("tables.contains", {tbl}, {"table"})
+
     local copy = {}
 
     for key, value in pairs(tbl) do
@@ -28,6 +32,8 @@ function tables.copy(tbl)
 end
 
 function tables.unpack(tbl)
+    util.typecheck("tables.contains", {tbl}, {"table"})
+
     if table.unpack ~= nil then
         return table.unpack(tbl)
     elseif unpack ~= nil then
@@ -36,6 +42,8 @@ function tables.unpack(tbl)
 end
 
 function tables.contains(tbl, needle)
+    util.typecheck("tables.contains", {tbl}, {"table"})
+
     for _, value in pairs(tbl) do
         if value == needle then
             return true
@@ -46,6 +54,8 @@ function tables.contains(tbl, needle)
 end
 
 function tables.find(tbl, needle)
+    util.typecheck("tables.contains", {tbl}, {"table"})
+
     for key, value in pairs(tbl) do
         if value == needle then
             return key

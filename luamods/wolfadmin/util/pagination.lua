@@ -15,9 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local util = require (wolfa_getLuaPath()..".util.util")
+
 local pagination = {}
 
 function pagination.calculate(count, limit, offset)
+    util.typecheck("pagination.calculate", {count, limit, offset}, {"number", "number", "number"})
+
     limit = limit or 30
     offset = offset or 0
 

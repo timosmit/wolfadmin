@@ -19,6 +19,14 @@ local constants = require (wolfa_getLuaPath()..".util.constants")
 
 local util = {}
 
+function util.typecheck(func, args, types)
+    for idx, arg in ipairs(args) do
+        if type(arg) ~= types[idx] then
+            error("bad argument #"..idx.." to '"..func.."' ("..types[idx].." expected, got "..type(arg)..")", 3)
+        end
+    end
+end
+
 function util.split(str, pat)
     local t = {}    -- NOTE: use {n = 0} in Lua-5.0
     local fpat = "(.-)" .. pat
@@ -41,10 +49,14 @@ function util.split(str, pat)
 end
 
 function util.escape(str)
+    util.typecheck("util.escape", {str}, {"string"})
+
     return string.gsub(str, "([\"'])", "\\%1")
 end
 
 function util.removeColors(str)
+    util.typecheck("util.removeColors", {str}, {"string"})
+
     return string.gsub(str, "(^[%a%d%p])", "")
 end
 
