@@ -56,4 +56,4 @@ function commandVoiceUnmute(clientId, command, victim)
     
     return true
 end
-commands.addadmin("vunmute", commandVoiceUnmute, auth.PERM_VOICEMUTE, "unvoicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("vunmute", commandVoiceUnmute, auth.PERM_VOICEMUTE, "unmutes a player (voice chat only)", "^9[^3name|slot#^9]")

@@ -60,4 +60,4 @@ function commandUnmute(clientId, command, victim)
     
     return true
 end
-commands.addadmin("unmute", commandUnmute, auth.PERM_MUTE, "unvoicemutes a player", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("unmute", commandUnmute, auth.PERM_MUTE, "unmutes a player (text and voice chat)", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))

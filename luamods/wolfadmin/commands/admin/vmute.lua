@@ -88,4 +88,4 @@ function commandVoiceMute(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("vmute", commandVoiceMute, auth.PERM_VOICEMUTE, "voicemutes a player", "^9[^3name|slot#^9]")
+commands.addadmin("vmute", commandVoiceMute, auth.PERM_VOICEMUTE, "mutes a player (voice chat only)", "^9[^3name|slot#^9]")

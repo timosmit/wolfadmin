@@ -89,4 +89,4 @@ function commandMute(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("mute", commandMute, auth.PERM_MUTE, "voicemutes a player", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("mute", commandMute, auth.PERM_MUTE, "mutes a player (text and voice chat)", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))
