@@ -113,6 +113,8 @@ auth.PERM_IMMUNE = "immune"
 function auth.onGameInit()
     if settings.get("g_standalone") == 1 then
         srv = require (wolfa_getLuaPath()..".auth.acl")
+
+        srv.readPermissions()
     else
         srv = require (wolfa_getLuaPath()..".auth.shrubbot")
     end

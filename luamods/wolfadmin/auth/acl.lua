@@ -19,7 +19,6 @@ local db = require (wolfa_getLuaPath()..".db.db")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
-local events = require (wolfa_getLuaPath()..".util.events")
 local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local acl = {}
@@ -42,7 +41,6 @@ function acl.readPermissions()
         table.insert(data[role["level_id"]], role["role"])
     end
 end
-events.handle("onGameInit", acl.readPermissions)
 
 function acl.clearCache()
     data = {}
