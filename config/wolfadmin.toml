@@ -4,8 +4,9 @@
 #     http://dev.timosmit.com/wolfadmin/configuration.html
 
 [main]
+# uncomment if you need to override these settings
 # os = "unix"
-standalone = 1
+# standalone = 1
 debug = 0
 
 [db]
