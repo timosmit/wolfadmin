@@ -64,15 +64,17 @@ end
 events.handle("onClientConnectAttempt", admin.onClientConnectAttempt)
 
 function admin.onClientConnect(clientId, firstTime, isBot)
-    local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
-    local player = db.getPlayer(guid)
+    if settings.get("g_standalone") ~= 0 and settings.get("db_type") ~= "none" then
+        local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
+        local player = db.getPlayer(guid)
 
-    if player then
-        local playerId = player["id"]
-        local mute = db.getMuteByPlayer(playerId)
+        if player then
+            local playerId = player["id"]
+            local mute = db.getMuteByPlayer(playerId)
 
-        if mute then
-            players.setMuted(clientId, true, mute["type"], mute["issued"], mute["expires"])
+            if mute then
+                players.setMuted(clientId, true, mute["type"], mute["issued"], mute["expires"])
+            end
         end
     end
 end
