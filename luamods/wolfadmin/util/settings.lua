@@ -126,6 +126,7 @@ function settings.set(name, value)
 end
 
 function settings.load()
+    -- compatibility for 1.1.* and lower
     for setting, default in pairs(data) do
         local cvar = et.trap_Cvar_Get(setting)
         
