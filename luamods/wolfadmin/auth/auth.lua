@@ -55,6 +55,7 @@ auth.PERM_THROW = "throw"
 auth.PERM_GLOW = "glow"
 auth.PERM_PANTS = "pants"
 auth.PERM_POP = "pop"
+auth.PERM_NADE = "nade"
 
 auth.PERM_WARN = "warn"
 auth.PERM_MUTE = "mute"
@@ -85,6 +86,9 @@ auth.PERM_NEWS = "news"
 auth.PERM_UPTIME = "uptime"
 auth.PERM_SETLEVEL = "setlevel"
 auth.PERM_READCONFIG = "readconfig"
+
+auth.PERM_CRAZYSETTINGS = "crazysettings"
+auth.PERM_WARSETTINGS = "warsettings"
 
 auth.PERM_CHEATS = "cheats"
 auth.PERM_DISGUISE = "disguise" -- legacy
@@ -117,6 +121,8 @@ function auth.onGameInit()
         srv.readPermissions()
     else
         srv = require (wolfa_getLuaPath()..".auth.shrubbot")
+
+        srv.loadFlags(et.trap_Cvar_Get("fs_game"))
     end
     
     if settings.get("g_standalone") == 1 and et.trap_Cvar_Get("g_shrubbot") ~= "" then
