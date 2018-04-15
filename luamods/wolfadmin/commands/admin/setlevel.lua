@@ -51,7 +51,7 @@ function commandSetLevel(clientId, command, victim, level)
         return false
     end
 
-    history.add(cmdClient, clientId, "level", level)
+    history.add(cmdClient, clientId, "level", tostring(level))
 
     return false
 end
@@ -96,8 +96,8 @@ function commandSetLevel(clientId, command, victim, level)
         return true
     end
 
-    admin.setPlayerLevel(cmdClient, tonumber(level), clientId)
-    history.add(cmdClient, clientId, "level", level)
+    admin.setPlayerLevel(cmdClient, level, clientId)
+    history.add(cmdClient, clientId, "level", tostring(level))
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
 
