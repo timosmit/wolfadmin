@@ -143,36 +143,68 @@ function mysql.getLevel(id)
 end
 
 -- acl
-function mysql.getLevelRoles()
-    cur = assert(con:execute("SELECT * FROM `level_role`"))
+function mysql.getLevelPermissions()
+    cur = assert(con:execute("SELECT * FROM `level_permission`"))
 
-    local roles = {}
+    local permissions = {}
     local row = cur:fetch({}, "a")
 
     while row do
-        table.insert(roles, tables.copy(row))
+        table.insert(permissions, tables.copy(row))
         row = cur:fetch(row, "a")
     end
 
     cur:close()
 
-    return roles
+    return permissions
 end
 
-function mysql.addLevelRole(levelId, role)
-    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) VALUES ("..tonumber(levelId)..", '"..util.escape(role).."')"))
+function mysql.addLevelPermission(levelId, permission)
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) VALUES ("..tonumber(levelId)..", '"..util.escape(permission).."')"))
 end
 
-function mysql.removeLevelRole(levelId, role)
-    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId).." AND role='"..util.escape(role).."'"))
+function mysql.removeLevelPermission(levelId, permission)
+    cur = assert(con:execute("DELETE FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." AND permission='"..util.escape(permission).."'"))
 end
 
-function mysql.copyLevelRoles(levelId, newLevelId)
-    cur = assert(con:execute("INSERT INTO `level_role` (`level_id`, `role`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `role` FROM `level_role` WHERE `level_id`="..tonumber(levelId)))
+function mysql.copyLevelPermissions(levelId, newLevelId)
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId)))
 end
 
-function mysql.removeLevelRoles(levelId)
-    cur = assert(con:execute("DELETE FROM `level_role` WHERE `level_id`="..tonumber(levelId)..""))
+function mysql.removeLevelPermissions(levelId)
+    cur = assert(con:execute("DELETE FROM `level_permission` WHERE `level_id`="..tonumber(levelId)..""))
+end
+
+function mysql.getPlayerPermissions()
+    cur = assert(con:execute("SELECT * FROM `player_permission`"))
+
+    local permissions = {}
+    local row = cur:fetch({}, "a")
+
+    while row do
+        table.insert(permissions, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+
+    return permissions
+end
+
+function mysql.addPlayerPermission(playerId, permission)
+    cur = assert(con:execute("INSERT INTO `player_permission` (`player_id`, `permission`) VALUES ("..tonumber(playerId)..", '"..util.escape(permission).."')"))
+end
+
+function mysql.removePlayerPermission(playerId, permission)
+    cur = assert(con:execute("DELETE FROM `player_permission` WHERE `player_id`="..tonumber(playerId).." AND permission='"..util.escape(permission).."'"))
+end
+
+function mysql.copyPlayerPermissions(playerId, newPlayerId)
+    cur = assert(con:execute("INSERT INTO `player_permission` (`player_id`, `permission`) SELECT '"..tonumber(newPlayerId).."' AS `player_id`, `permission` FROM `player_permission` WHERE `player_id`="..tonumber(playerId)))
+end
+
+function mysql.removePlayerPermissions(playerId)
+    cur = assert(con:execute("DELETE FROM `player_permission` WHERE `player_id`="..tonumber(playerId)..""))
 end
 
 -- aliases

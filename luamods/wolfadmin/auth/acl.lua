@@ -19,11 +19,32 @@ local db = require (wolfa_getLuaPath()..".db.db")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
+local events = require (wolfa_getLuaPath()..".util.events")
+local settings = require (wolfa_getLuaPath()..".util.settings")
 local tables = require (wolfa_getLuaPath()..".util.tables")
 
 local acl = {}
 
-local data = {}
+local cachedLevels = {}
+local cachedClients = {}
+
+function acl.onClientConnect(clientId, firstTime, isBot)
+    if settings.get("g_standalone") ~= 0 and settings.get("db_type") ~= "none" then
+        local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
+        local player = db.getPlayer(guid)
+
+        if player then
+            cachedClients[clientId] = {}
+
+            local permissions = db.getPlayerPermissions(player["id"])
+
+            for _, permission in ipairs(permissions) do
+                table.insert(cachedClients[clientId], permission["permission"])
+            end
+        end
+    end
+end
+events.handle("onClientConnect", acl.onClientConnect)
 
 function acl.readPermissions()
     -- read level permissions into a cache file (can be loaded at mod start)
@@ -32,24 +53,24 @@ function acl.readPermissions()
 
     local levels = db.getLevelsWithIds()
     for _, level in ipairs(levels) do
-        data[level["id"]] = {}
+        cachedLevels[level["id"]] = {}
     end
 
-    local roles = db.getLevelRoles()
+    local permissions = db.getLevelPermissions()
 
-    for _, role in ipairs(roles) do
-        table.insert(data[role["level_id"]], role["role"])
+    for _, permission in ipairs(permissions) do
+        table.insert(cachedLevels[permission["level_id"]], permission["permission"])
     end
 end
 
 function acl.clearCache()
-    data = {}
+    cachedLevels = {}
 end
 
-function acl.isPlayerAllowed(clientId, permission)
+function acl.isPlayerAllowed(clientId, permission, playerOnly)
     local level = acl.getPlayerLevel(clientId)
 
-    return data[level] ~= nil and tables.contains(data[level], permission)
+    return (not playerOnly and acl.isLevelAllowed(level, permission)) or (cachedClients[clientId] ~= nil and tables.contains(cachedClients[clientId], permission))
 end
 
 function acl.getLevels()
@@ -63,65 +84,97 @@ end
 function acl.addLevel(levelId, name)
     db.addLevel(levelId, name)
 
-    data[levelId] = {}
+    cachedLevels[levelId] = {}
 end
 
 function acl.removeLevel(levelId)
     db.removeLevel(levelId)
 
-    data[levelId] = nil
+    cachedLevels[levelId] = nil
 end
 
 function acl.reLevel(levelId, newLevelId)
     db.reLevel(levelId, newLevelId)
 end
 
-function acl.getLevelRoles(levelId)
-    return data[levelId]
+function acl.getLevelName(levelId)
+    local level = db.getLevel(levelId)
+
+    return level["name"]
 end
 
-function acl.isLevelAllowed(levelId, role)
-    return tables.contains(data[levelId], role)
+function acl.getLevelPermissions(levelId)
+    return cachedLevels[levelId]
 end
 
-function acl.addLevelRole(levelId, role)
-    db.addLevelRole(levelId, role)
+function acl.addLevelPermission(levelId, permission)
+    db.addLevelPermission(levelId, permission)
 
-    table.insert(data[levelId], role)
+    table.insert(cachedLevels[levelId], permission)
 end
 
-function acl.removeLevelRole(levelId, role)
-    db.removeLevelRole(levelId, role)
+function acl.removeLevelPermission(levelId, permission)
+    db.removeLevelPermission(levelId, permission)
 
-    for i, levelRole in ipairs(data[levelId]) do
-        if levelRole == role then
-            table.remove(data[levelId], i)
+    for i, levelPermission in ipairs(cachedLevels[levelId]) do
+        if levelPermission == permission then
+            table.remove(cachedLevels[levelId], i)
         end
     end
 end
 
-function acl.copyLevelRoles(levelId, newLevelId)
-    db.copyLevelRoles(levelId, newLevelId)
+function acl.copyLevelPermissions(levelId, newLevelId)
+    db.copyLevelPermissions(levelId, newLevelId)
 
-    data[newLevelId] = tables.copy(data[levelId])
+    cachedLevels[newLevelId] = tables.copy(cachedLevels[levelId])
 end
 
-function acl.removeLevelRoles(levelId)
-    db.removeLevelRoles(levelId)
+function acl.removeLevelPermissions(levelId)
+    db.removeLevelPermissions(levelId)
 
-    data[levelId] = {}
+    cachedLevels[levelId] = {}
+end
+
+function acl.isLevelAllowed(levelId, permission)
+    return cachedLevels[levelId] ~= nil and tables.contains(cachedLevels[levelId], permission)
+end
+
+function acl.getPlayerPermissions(clientId)
+    return cachedClients[clientId]
+end
+
+function acl.addPlayerPermission(clientId, permission)
+    db.addPlayerPermission(db.getPlayerId(clientId), permission)
+
+    table.insert(cachedClients[clientId], permission)
+end
+
+function acl.removePlayerPermission(clientId, permission)
+    db.removePlayerPermission(db.getPlayerId(clientId), permission)
+
+    for i, levelPermission in ipairs(cachedClients[clientId]) do
+        if levelPermission == permission then
+            table.remove(cachedClients[clientId], i)
+        end
+    end
+end
+
+function acl.copyPlayerPermissions(clientId, newClientId)
+    db.copyPlayerPermissions(db.getPlayerId(clientId), db.getPlayerId(newClientId))
+
+    cachedClients[newClientId] = tables.copy(cachedClients[clientId])
+end
+
+function acl.removePlayerPermissions(clientId)
+    db.removePlayerPermissions(db.getPlayerId(clientId))
+
+    cachedClients[clientId] = {}
 end
 
 function acl.getPlayerLevel(clientId)
     local player = db.getPlayer(players.getGUID(clientId))
 
     return player["level_id"]
-end
-
-function acl.getLevelName(levelId)
-    local level = db.getLevel(levelId)
-
-    return level["name"]
 end
 
 return acl

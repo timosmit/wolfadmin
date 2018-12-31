@@ -54,7 +54,7 @@ function commandAclRemoveLevel(levelId)
         return true
     end
 
-    acl.removeLevelRoles(levelId)
+    acl.removeLevelPermissions(levelId)
     acl.removeLevel(levelId)
 
     et.G_Print("removed level "..levelId.."\n")
@@ -75,99 +75,99 @@ function commandAclReLevel(levelId, newLevelId)
     et.G_Print("releveled all players with "..levelId.." to "..newLevelId.."\n")
 end
 
-function commandAclListLevelRoles(levelId)
+function commandAclListLevelPermissions(levelId)
     local levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
-        et.G_Print("usage: acl listroles [id]\n")
+        et.G_Print("usage: acl listpermissions [id]\n")
 
         return true
     end
 
-    et.G_Print("roles for level "..levelId..":\n")
+    et.G_Print("permissions for level "..levelId..":\n")
 
-    for _, role in ipairs(acl.getLevelRoles(levelId)) do
-        et.G_Print(role.."\n")
+    for _, permission in ipairs(acl.getLevelPermissions(levelId)) do
+        et.G_Print(permission.."\n")
     end
 end
 
-function commandAclIsAllowed(levelId, role)
+function commandAclIsAllowed(levelId, permission)
     local levelId = tonumber(levelId)
 
-    if not levelId or not acl.isLevel(levelId) or not role then
-        et.G_Print("usage: acl isallowed [id] [role]\n")
+    if not levelId or not acl.isLevel(levelId) or not permission then
+        et.G_Print("usage: acl isallowed [id] [permission]\n")
 
         return true
     end
 
-    local isAllowed = acl.isLevelAllowed(levelId, role)
+    local isAllowed = acl.isLevelAllowed(levelId, permission)
 
-    et.G_Print("level "..levelId.." "..(isAllowed and "HAS" or "HAS NOT").." "..role.."\n")
+    et.G_Print("level "..levelId.." "..(isAllowed and "HAS" or "HAS NOT").." "..permission.."\n")
 end
 
-function commandAclAddLevelRole(levelId, role)
+function commandAclAddLevelPermission(levelId, permission)
     local levelId = tonumber(levelId)
 
-    if not levelId or not acl.isLevel(levelId) or not role then
-        et.G_Print("usage: acl addrole [id] [role]\n")
+    if not levelId or not acl.isLevel(levelId) or not permission then
+        et.G_Print("usage: acl addpermission [id] [permission]\n")
 
         return true
     end
 
-    local isAllowed = acl.isLevelAllowed(levelId, role)
+    local isAllowed = acl.isLevelAllowed(levelId, permission)
 
     if isAllowed then
-        et.G_Print("error: level "..levelId.." already has '"..role.."'\n")
+        et.G_Print("error: level "..levelId.." already has '"..permission.."'\n")
 
         return true
     end
 
-    acl.addLevelRole(levelId, role)
+    acl.addLevelPermission(levelId, permission)
 
-    et.G_Print("added role "..role.." to level "..levelId.."\n")
+    et.G_Print("added permission "..permission.." to level "..levelId.."\n")
 end
 
-function commandAclRemoveLevelRole(levelId, role)
+function commandAclRemoveLevelPermission(levelId, permission)
     local levelId = tonumber(levelId)
 
-    if not levelId or not acl.isLevel(levelId) or not role then
-        et.G_Print("usage: acl removerole [id] [role]\n")
+    if not levelId or not acl.isLevel(levelId) or not permission then
+        et.G_Print("usage: acl removepermission [id] [permission]\n")
 
         return true
     end
 
-    local isAllowed = acl.isLevelAllowed(levelId, role)
+    local isAllowed = acl.isLevelAllowed(levelId, permission)
 
     if not isAllowed then
-        et.G_Print("error: level "..levelId.." does not have '"..role.."'\n")
+        et.G_Print("error: level "..levelId.." does not have '"..permission.."'\n")
 
         return true
     end
 
-    acl.removeLevelRole(levelId, role)
+    acl.removeLevelPermission(levelId, permission)
 
-    et.G_Print("removed role "..role.." from level "..levelId.."\n")
+    et.G_Print("removed permission "..permission.." from level "..levelId.."\n")
 end
 
-function commandAclCopyLevelRoles(levelId, newLevelId)
+function commandAclCopyLevelPermissions(levelId, newLevelId)
     local levelId = tonumber(levelId)
     local newLevelId = tonumber(newLevelId)
 
     if not levelId or not acl.isLevel(levelId) or not newLevelId or not acl.isLevel(newLevelId) then
-        et.G_Print("usage: acl copyroles [id] [newid]\n")
+        et.G_Print("usage: acl copypermissions [id] [newid]\n")
 
         return true
     end
 
-    if #acl.getLevelRoles(newLevelId) ~= 0 then
-        et.G_Print("error: level "..newLevelId.." already has roles\n")
+    if #acl.getLevelPermissions(newLevelId) ~= 0 then
+        et.G_Print("error: level "..newLevelId.." already has permissions\n")
 
         return true
     end
 
-    acl.copyLevelRoles(levelId, newLevelId)
+    acl.copyLevelPermissions(levelId, newLevelId)
 
-    et.G_Print("copied roles from "..levelId.." to "..newLevelId.."\n")
+    et.G_Print("copied permissions from "..levelId.." to "..newLevelId.."\n")
 end
 
 function commandAcl(command, action, ...)
@@ -179,18 +179,18 @@ function commandAcl(command, action, ...)
         return commandAclRemoveLevel(...)
     elseif action == "relevel" then
         return commandAclReLevel(...)
-    elseif action == "listroles" then
-        return commandAclListLevelRoles(...)
+    elseif action == "listpermissions" then
+        return commandAclListLevelPermissions(...)
     elseif action == "isallowed" then
         return commandAclIsAllowed(...)
-    elseif action == "addrole" then
-        return commandAclAddLevelRole(...)
-    elseif action == "removerole" then
-        return commandAclRemoveLevelRole(...)
-    elseif action == "copyroles" then
-        return commandAclCopyLevelRoles(...)
+    elseif action == "addpermission" then
+        return commandAclAddLevelPermission(...)
+    elseif action == "removepermission" then
+        return commandAclRemoveLevelPermission(...)
+    elseif action == "copypermissions" then
+        return commandAclCopyLevelPermissions(...)
     else
-        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listroles|isallowed|addrole|removerole|copyroles]")
+        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listpermissions|isallowed|addpermission|removepermission|copypermissions]")
     end
     
     return true
