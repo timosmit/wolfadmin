@@ -22,15 +22,21 @@ local commands = require (wolfa_getLuaPath()..".commands.commands")
 local game = require (wolfa_getLuaPath()..".game.game")
 
 function commandListMaps(clientId, command)
-    local output = ""
-    
     local maps = game.getMaps()
-    
+
+    if #maps == 0 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistmaps: ^9no map information available.\";")
+
+        return true
+    end
+
+    local output = ""
+
     for _, map in ipairs(maps) do
         local prefix = "^9"
         if map == game.getMap() then prefix = "^7" end
-        
-        output = (output ~= "") and output.." "..prefix..map or map
+
+        output = (output ~= "") and output.." "..prefix..map or prefix..map
     end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlistmaps: ^9"..output.. "\";")
