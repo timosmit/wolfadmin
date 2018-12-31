@@ -19,61 +19,19 @@ local auth = require (wolfa_getLuaPath()..".auth.auth")
 
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
-
 function commandIncognito(clientId, command)
-    local fileName = et.trap_Cvar_Get("g_shrubbot")
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
-    
-    if fileLength == -1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dincognito: ^9an error happened (shrubbot file could not be opened)\";")
-        
-        error("failed to open "..fileName.."\n")
+    local isIncognito = auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO, true)
+
+    if not isIncognito then
+        auth.addPlayerPermission(clientId, auth.PERM_INCOGNITO)
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
+    else
+        auth.removePlayerPermission(clientId, auth.PERM_INCOGNITO)
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you stopped playing incognito.\";")
     end
-    
-    local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
-    
-    et.trap_FS_FCloseFile(fileDescriptor)
-    
-    for _, adminName, adminGUID, adminLevel, adminFlags in string.gmatch(fileString, "(%[admin%]\nname%s+=%s+([%a%d%p]+)\nguid%s+=%s+([%u%d]+)\nlevel%s+=%s+([%d]+)\nflags%s+=%s+([%a%d%p]*)\n\n)") do
-        -- et.G_Print(string.format("%s %s %d %s\n", adminName, adminGUID, adminLevel, adminFlags))
-        
-        if players.getGUID(clientId) == adminGUID then
-            if not auth.isPlayerAllowed(clientId, "@") then
-                adminFlags = adminFlags.."+@"
-                
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
-            else
-                if string.find(adminFlags, "+@") then
-                    adminFlags = string.gsub(adminFlags, "+@", "")
-                elseif string.find(adminFlags, "@") then
-                    adminFlags = string.gsub(adminFlags, "@", "")
-                else
-                    adminFlags = adminFlags.."-@"
-                end
-                
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you stopped playing incognito.\";")
-            end
-            
-            local adminNameEscaped = string.gsub(adminName, "([%*%+%-%?%^%$%%%[%]%(%)%.])", "%%%1") -- fix for special captures
-            fileString = string.gsub(fileString, "%[admin%]\nname%s+=%s+"..adminNameEscaped.."\nguid%s+=%s+"..adminGUID.."\nlevel%s+=%s+"..adminLevel.."\nflags%s+=%s+([%a%d%p]*)\n\n", "[admin]\nname    = "..adminName.."\nguid    = "..adminGUID.."\nlevel   = "..adminLevel.."\nflags   = "..adminFlags.."\n\n")            
-            
-            break
-        end
-    end
-    
-    local fileDescriptor, _ = et.trap_FS_FOpenFile(fileName, et.FS_WRITE)
-    
-    local writeCount = et.trap_FS_Write(fileString, string.len(fileString), fileDescriptor)
-    
-    if not writeCount or writeCount < 1 then
-        error("failed to write "..fileName.."\n")
-    end
-    
-    et.trap_FS_FCloseFile(fileDescriptor)
-    
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "readconfig;")
-    
+
     return true
 end
-commands.addadmin("incognito", commandIncognito, auth.PERM_INCOGNITO, "fakes your level to guest (no aka)")
+commands.addadmin("incognito", commandIncognito, auth.PERM_SETLEVEL, "fakes your level to guest (no aka)")
