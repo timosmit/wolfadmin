@@ -514,11 +514,18 @@ function mysql.start()
     con = env:connect(settings.get("db_database"), settings.get("db_username"), settings.get("db_password"), settings.get("db_hostname"), settings.get("db_port"))
 
     if not con then
-        error("could not connect to database")
+        outputDebug("Could not connect to database.", 3)
+
+        return false
     elseif not mysql.isSchemaExistent() then
         mysql.close()
-        error("schema does not exist")
+
+        outputDebug("Database schema does not exist.", 3)
+
+        return false
     end
+
+    return true
 end
 
 function mysql.close(doSave)

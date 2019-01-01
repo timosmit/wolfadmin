@@ -522,15 +522,22 @@ function sqlite3.start()
     con = env:connect(uri)
 
     if not con then
-        error("could not connect to database")
+        outputDebug("Could not connect to database.", 3)
+
+        return false
     elseif not sqlite3.isSchemaExistent() then
         sqlite3.close()
-        error("schema does not exist")
+
+        outputDebug("Database schema does not exist.", 3)
+
+        return false
     end
 
     -- enable foreign key enforcement
     assert(con:execute("PRAGMA foreign_keys=1"))
     assert(con:execute("PRAGMA synchronous=0"))
+
+    return true
 end
 
 function sqlite3.close(doSave)

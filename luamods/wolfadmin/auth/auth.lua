@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local db = require (wolfa_getLuaPath()..".db.db")
+
 local events = require (wolfa_getLuaPath()..".util.events")
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
@@ -116,6 +118,13 @@ auth.PERM_IMMUNE = "immune"
 -- this, but it will suffice.
 function auth.onGameInit()
     if settings.get("g_standalone") == 1 then
+        if not db.isConnected() then
+            -- FIXME simple workaround to deny any commands
+            function auth.isPlayerAllowed() return false end
+
+            return
+        end
+
         srv = require (wolfa_getLuaPath()..".auth.acl")
 
         srv.readPermissions()

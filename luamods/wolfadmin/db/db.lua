@@ -36,12 +36,16 @@ function db.oninit()
         elseif settings.get("db_type") == "mysql" then
             con = require (wolfa_getLuaPath()..".db.mysql")
         else
-            error("invalid database system (none|sqlite3|mysql)")
+            outputDebug("Invalid database system (none|sqlite3|mysql), defaulting to 'none'.")
+
+            return
         end
 
         setmetatable(db, {__index = con})
 
-        db.start()
+        if not db.start() then
+            outputDebug("Database could not be loaded, only limited functionality is available.", 3)
+        end
     end
 end
 events.handle("onGameInit", db.oninit)

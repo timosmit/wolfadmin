@@ -17,6 +17,8 @@
 
 local acl = require (wolfa_getLuaPath()..".auth.acl")
 
+local db = require (wolfa_getLuaPath()..".db.db")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
@@ -195,4 +197,4 @@ function commandAcl(command, action, ...)
     
     return true
 end
-commands.addserver("acl", commandAcl, (settings.get("g_standalone") == 0))
+commands.addserver("acl", commandAcl, (settings.get("g_standalone") == 0 or not db.isConnected()))
