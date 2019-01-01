@@ -30,6 +30,16 @@ local env = assert(luasql.mysql())
 local con
 local cur
 
+-- config
+function mysql.isSchemaExistent()
+    cur = assert(con:execute("SELECT * FROM `information_schema`.`tables` WHERE `table_schema`='"..util.escape(settings.get("db_database")).."' AND `table_name`='config' LIMIT 1"))
+
+    local tbl = cur:fetch({}, "a")
+    cur:close()
+
+    return tbl and true or false
+end
+
 -- players
 function mysql.addPlayer(guid, ip, lastSeen, seen)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
@@ -505,12 +515,24 @@ function mysql.start()
 
     if not con then
         error("could not connect to database")
+    elseif not mysql.isSchemaExistent() then
+        mysql.close()
+        error("schema does not exist")
     end
 end
 
 function mysql.close(doSave)
-    con:close()
-    env:close()
+    if con:close() then
+        con = nil
+
+        if env:close() then
+            env = nil
+
+            return true
+        end
+    end
+
+    return false
 end
 
 return mysql

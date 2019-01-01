@@ -1,3 +1,8 @@
+CREATE TABLE IF NOT EXISTS `config` (
+  `id` varchar(64) NOT NULL PRIMARY KEY,
+  `value` longtext NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS `level` (
   `id` int(11) NOT NULL,
   `name` varchar(64) DEFAULT NULL,
@@ -106,6 +111,9 @@ CREATE TABLE IF NOT EXISTS `record` (
   CONSTRAINT `record_map` FOREIGN KEY (`map_id`) REFERENCES `map` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `record_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- insert database version in config
+INSERT INTO `config` (`id`, `value`) VALUES ('schema_version', '1.2.0');
 
 -- add levels
 INSERT INTO `level` (`id`, `name`) VALUES (0, 'Guest');

@@ -1,3 +1,8 @@
+CREATE TABLE IF NOT EXISTS `config` (
+  `id` TEXT NOT NULL PRIMARY KEY,
+  `value` TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS `level` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `name` TEXT NOT NULL
@@ -102,6 +107,9 @@ CREATE TABLE IF NOT EXISTS `record` (
 );
 
 CREATE INDEX IF NOT EXISTS `record_player_idx` ON `record` (`player_id`);
+
+-- insert database version in config
+INSERT INTO `config` (`id`, `value`) VALUES ('schema_version', '1.2.0');
 
 -- add levels
 BEGIN;

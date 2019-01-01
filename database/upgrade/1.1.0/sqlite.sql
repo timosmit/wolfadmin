@@ -1,3 +1,9 @@
+-- create config table
+CREATE TABLE IF NOT EXISTS `config` (
+  `id` TEXT NOT NULL PRIMARY KEY,
+  `value` TEXT NOT NULL
+);
+
 -- rename warns to history
 CREATE TABLE IF NOT EXISTS `history` (
     `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +46,9 @@ CREATE TABLE `player_permission` (
   PRIMARY KEY (`player_id`, `permission`),
   CONSTRAINT `player_permission_player` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
+
+-- insert database version in config
+INSERT INTO `config` (`id`, `value`) VALUES ('schema_version', '1.2.0');
 
 -- populate acl
 -- add levels

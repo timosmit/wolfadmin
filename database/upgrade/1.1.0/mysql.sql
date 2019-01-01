@@ -1,3 +1,9 @@
+-- create config table
+CREATE TABLE IF NOT EXISTS `config` (
+  `id` varchar(64) NOT NULL PRIMARY KEY,
+  `value` longtext NOT NULL
+);
+
 -- rename warns to history
 ALTER TABLE `warn`
     DROP FOREIGN KEY `warn_player`,
@@ -53,6 +59,9 @@ CREATE TABLE IF NOT EXISTS `player_permission` (
   PRIMARY KEY (`player_id`,`permission`),
   CONSTRAINT `player_permission_level` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- insert database version in config
+INSERT INTO `config` (`id`, `value`) VALUES ('schema_version', '1.2.0');
 
 -- populate acl
 -- add levels

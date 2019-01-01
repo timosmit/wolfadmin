@@ -30,6 +30,16 @@ local env = assert(luasql.sqlite3())
 local con
 local cur
 
+-- config
+function sqlite3.isSchemaExistent()
+    cur = assert(con:execute("SELECT `name` FROM `sqlite_master` WHERE type='table' AND name='config'"))
+
+    local tbl = cur:fetch({}, "a")
+    cur:close()
+
+    return tbl and true or false
+end
+
 -- players
 function sqlite3.addPlayer(guid, ip, lastSeen, seen)
     cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
@@ -513,6 +523,9 @@ function sqlite3.start()
 
     if not con then
         error("could not connect to database")
+    elseif not sqlite3.isSchemaExistent() then
+        sqlite3.close()
+        error("schema does not exist")
     end
 
     -- enable foreign key enforcement
@@ -521,8 +534,17 @@ function sqlite3.start()
 end
 
 function sqlite3.close(doSave)
-    con:close()
-    env:close()
+    if con:close() then
+        con = nil
+
+        if env:close() then
+            env = nil
+
+            return true
+        end
+    end
+
+    return false
 end
 
 return sqlite3
