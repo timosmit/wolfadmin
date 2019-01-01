@@ -42,19 +42,21 @@ function admin.setPlayerLevel(clientId, level)
 end
 
 function admin.onClientConnectAttempt(clientId, firstTime, isBot)
-    if firstTime and settings.get("db_type") ~= "none" then
+    if firstTime and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
 
         if guid == "" or guid == "NO_GUID" or guid == "unknown" then
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
-        local player = db.getPlayer(guid)
-        if player then
-            local playerId = player["id"]
-            local ban = db.getBanByPlayer(playerId)
-            if ban then
-                return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
+        if settings.get("g_standalone") ~= 0 then
+            local player = db.getPlayer(guid)
+            if player then
+                local playerId = player["id"]
+                local ban = db.getBanByPlayer(playerId)
+                if ban then
+                    return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
+                end
             end
         end
     end
@@ -64,7 +66,7 @@ end
 events.handle("onClientConnectAttempt", admin.onClientConnectAttempt)
 
 function admin.onClientConnect(clientId, firstTime, isBot)
-    if settings.get("g_standalone") ~= 0 and settings.get("db_type") ~= "none" then
+    if settings.get("g_standalone") ~= 0 and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
         local player = db.getPlayer(guid)
 

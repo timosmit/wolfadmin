@@ -29,7 +29,7 @@ local cachedLevels = {}
 local cachedClients = {}
 
 function acl.onClientConnect(clientId, firstTime, isBot)
-    if settings.get("g_standalone") ~= 0 and settings.get("db_type") ~= "none" then
+    if settings.get("g_standalone") ~= 0 and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
         local player = db.getPlayer(guid)
 

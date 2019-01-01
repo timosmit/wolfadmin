@@ -22,8 +22,8 @@ local db = {}
 
 local con
 
-function db.isconnected()
-    return (con ~= nil)
+function db.isConnected()
+    return (con ~= nil and con.isConnected())
 end
 
 -- as this module serves as a wrapper/super class, we load the selected database
