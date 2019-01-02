@@ -33,14 +33,14 @@ CREATE TABLE IF NOT EXISTS `level` (
     `name` TEXT NOT NULL
 );
 
-CREATE TABLE `level_permission` (
+CREATE TABLE IF NOT EXISTS `level_permission` (
     `level_id` INTEGER NOT NULL,
     `permission` TEXT NOT NULL,
     PRIMARY KEY (`level_id`, `permission`),
     CONSTRAINT `level_permission_level` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE `player_permission` (
+CREATE TABLE IF NOT EXISTS `player_permission` (
   `player_id` INTEGER NOT NULL,
   `permission` TEXT NOT NULL,
   PRIMARY KEY (`player_id`, `permission`),
