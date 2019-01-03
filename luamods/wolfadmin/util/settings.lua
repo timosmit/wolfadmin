@@ -42,7 +42,6 @@ local data = {
     ["g_voteNextMapTimeout"] = 0,
     ["g_restrictedVotes"] = "",
     ["g_renameLimit"] = 80,
-    ["g_standalone"] = 1,
     ["g_debugWolfAdmin"] = 0,
     ["omnibot_maxbots"] = 10,
     ["db_type"] = "sqlite3",
@@ -51,8 +50,7 @@ local data = {
     ["db_port"] = 3306,
     ["db_database"] = "wolfadmin",
     ["db_username"] = "",
-    ["db_password"] = "",
-    ["sv_os"] = "unix"
+    ["db_password"] = ""
 }
 
 local cfgStructure = {
@@ -171,9 +169,50 @@ function settings.load()
         end
     end
 
-    local platform = string.lower(data["sv_os"])
-    if not (platform == "unix" or platform == "windows") then
-        settings.set("sv_os", settings.determineOS())
+    settings.determineOS()
+    settings.determineMode()
+
+    outputDebug("WolfAdmin running in "..(settings.get("g_standalone") == 1 and "standalone" or "add-on").." mode on "..settings.get("sv_os")..".")
+end
+
+function settings.determineOS()
+    -- OS has been manually specified
+    local os = settings.get("sv_os") and string.lower(settings.get("sv_os")) or nil
+
+    if os == "unix" or os == "windows" then
+        return
+    end
+
+    -- unknown os specified
+    if os then
+        outputDebug("Invalid operating system specified, determining automatically.", 3)
+    end
+
+    -- 'uname' is available on Unix systems
+    local uname = io.popen("uname -s 2>nul"):read("*l")
+    if uname then
+        settings.set("sv_os", "unix")
+
+        return
+    end
+
+    -- 'ver' is available on Windows systems
+    local ver = io.popen("ver 2>nul"):read("*l")
+    if ver then
+        settings.set("sv_os", "windows")
+
+        return
+    end
+
+    outputDebug("Operating system could not be determined, falling back to 'unix'.", 3)
+
+    settings.set("sv_os", "unix")
+end
+
+function settings.determineMode()
+    -- mode has been manually specified
+    if settings.get("g_standalone") then
+        return
     end
 
     local mod = et.trap_Cvar_Get("fs_game")
@@ -186,21 +225,6 @@ function settings.load()
     else
         settings.set("g_standalone", 0)
     end
-
-    outputDebug("WolfAdmin running in "..(settings.get("g_standalone") == 1 and "standalone" or "add-on").." mode.")
-end
-
-function settings.determineOS()
-    local system = io.popen("uname -s"):read("*l")
-    local platform
-
-    if system then
-        platform = "unix"
-    else
-        platform = "windows"
-    end
-
-    return platform
 end
 
 function settings.oninit(levelTime, randomSeed, restartMap)
