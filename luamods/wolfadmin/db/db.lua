@@ -51,7 +51,9 @@ end
 events.handle("onGameInit", db.oninit)
 
 function db.onshutdown(restartMap)
-    db.close(not restartMap)
+    if db.isConnected() then
+        db.close(not restartMap)
+    end
 end
 events.handle("onGameShutdown", db.onshutdown)
 
