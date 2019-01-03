@@ -42,7 +42,7 @@ function commandLock(clientId, command, team)
 
     return false
 end
-commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") == 1))
+commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") ~= 0))
 
 function commandLock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then

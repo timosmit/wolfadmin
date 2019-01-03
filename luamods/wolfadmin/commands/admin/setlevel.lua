@@ -55,7 +55,7 @@ function commandSetLevel(clientId, command, victim, level)
 
     return false
 end
-commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true, (settings.get("g_standalone") == 1))
+commands.addadmin("setlevel", commandSetLevel, auth.PERM_SETLEVEL, "sets the admin level of a player", "^9[^3name|slot#^9] ^9[^3level^9]", true, (settings.get("g_standalone") ~= 0))
 
 function commandSetLevel(clientId, command, victim, level)
     local cmdClient

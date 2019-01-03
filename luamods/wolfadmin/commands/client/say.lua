@@ -53,7 +53,7 @@ function commandVoiceSay(clientId, command, ...)
         return true
     end
 
-    if settings.get("g_standalone") == 1 then
+    if settings.get("g_standalone") ~= 0 then
         logs.writeChat(clientId, types[command], ...)
     end
 end

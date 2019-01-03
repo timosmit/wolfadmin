@@ -37,7 +37,7 @@ function commandReadconfig(clientId, command)
 
     return false
 end
-commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true, (settings.get("g_standalone") == 1))
+commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true, (settings.get("g_standalone") ~= 0))
 
 function commandReadconfig(clientId, command)
     settings.load()

@@ -42,7 +42,7 @@ function commandUnlock(clientId, command, team)
     
     return false
 end
-commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") == 1))
+commands.addadmin("unlock", commandUnlock, auth.PERM_LOCKTEAM, "unlock one or all locked teams", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") ~= 0))
 
 function commandUnlock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then

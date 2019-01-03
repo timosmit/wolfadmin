@@ -117,7 +117,11 @@ auth.PERM_IMMUNE = "immune"
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
 function auth.onGameInit()
-    if settings.get("g_standalone") == 1 then
+    if settings.get("g_standalone") ~= 0 then
+        if et.trap_Cvar_Get("g_shrubbot") ~= "" then
+            outputDebug("Running in standalone mode while g_shrubbot is set", 3)
+        end
+
         if not db.isConnected() then
             -- FIXME simple workaround to deny any commands
             function auth.isPlayerAllowed() return false end
@@ -132,10 +136,6 @@ function auth.onGameInit()
         srv = require (wolfa_getLuaPath()..".auth.shrubbot")
 
         srv.loadFlags(et.trap_Cvar_Get("fs_game"))
-    end
-    
-    if settings.get("g_standalone") == 1 and et.trap_Cvar_Get("g_shrubbot") ~= "" then
-        outputDebug("Running in standalone mode while g_shrubbot is set", 3)
     end
     
     setmetatable(auth, {__index = srv})

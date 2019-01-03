@@ -172,7 +172,7 @@ function settings.load()
     settings.determineOS()
     settings.determineMode()
 
-    outputDebug("WolfAdmin running in "..(settings.get("g_standalone") == 1 and "standalone" or "add-on").." mode on "..settings.get("sv_os")..".")
+    outputDebug("WolfAdmin running in "..(settings.get("g_standalone") ~= 0 and "standalone" or "add-on").." mode on "..settings.get("sv_os")..".")
 end
 
 function settings.determineOS()

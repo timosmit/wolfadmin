@@ -31,7 +31,7 @@ function commandHelp(clientId, command, cmd)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") == 1) and "available" or "additional").." commands (open console for the full list)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") ~= 0) and "available" or "additional").." commands (open console for the full list)\";")
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         

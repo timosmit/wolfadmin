@@ -61,7 +61,7 @@ function logs.writeAdmin(clientId, command, victimId, ...)
     local clientFlags = ""
     local args = table.concat({...}, " ")
 
-    if settings.get("g_standalone") == 1 then
+    if settings.get("g_standalone") ~= 0 then
         if victimId then
             local victimName = players.getName(victimId)
             logLine = string.format("[%s] %s: %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, victimName, args)

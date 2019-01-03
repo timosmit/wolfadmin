@@ -36,7 +36,7 @@ function commandTeam(clientId, command)
     end
 
     local team = util.getTeamFromCode(et.trap_Argv(1))
-    if settings.get("g_standalone") == 1 and teams.isLocked(team) then
+    if settings.get("g_standalone") ~= 0 and teams.isLocked(team) then
         local teamName = util.getTeamName(team)
         local teamColor = util.getTeamColor(team)
 
