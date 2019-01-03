@@ -42,21 +42,26 @@ function rules.load()
 
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
-        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-        et.trap_FS_FCloseFile(fileDescriptor)
+        if fileLength ~= -1 then
+            local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-        local fileTable = toml.parse(fileString)
+            et.trap_FS_FCloseFile(fileDescriptor)
 
-        local amount
+            local fileTable = toml.parse(fileString)
 
-        for _, rule in ipairs(fileTable["rule"]) do
-            if rule["shortcut"] and rule["rule"] then
-                data[rule["shortcut"]] = rule["rule"]
+            local amount
+
+            for _, rule in ipairs(fileTable["rule"]) do
+                if rule["shortcut"] and rule["rule"] then
+                    data[rule["shortcut"]] = rule["rule"]
+                end
             end
+
+            return amount
         end
 
-        return amount
+        return 0
     else
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
