@@ -1,18 +1,21 @@
 # WolfAdmin
-WolfAdmin is a Lua module for Wolfenstein: Enemy Territory servers.
+[WolfAdmin](https://dev.timosmit.com/wolfadmin) is a Lua module for Wolfenstein: Enemy Territory servers .
 
-* Website [http://dev.timosmit.com/wolfadmin](http://dev.timosmit.com/wolfadmin)
-* Download [http://dev.timosmit.com/wolfadmin/download.html](http://dev.timosmit.com/wolfadmin/download.html)
-* Installation instructions [http://dev.timosmit.com/wolfadmin/setup.html](http://dev.timosmit.com/wolfadmin/setup.html)
-* Configuration documentation [http://dev.timosmit.com/wolfadmin/configuration.html](http://dev.timosmit.com/wolfadmin/configuration.html)
-* Issues [http://dev.timosmit.com/bugtracker/?project_id=1](http://dev.timosmit.com/bugtracker/?project_id=1)
-* Repository [https://github.com/timosmit/wolfadmin](https://github.com/timosmit/wolfadmin)
+## Installation
+* Download WolfAdmin from the [https://dev.timosmit.com/wolfadmin/download.html](website).
+* Follow the [installation instructions](https://dev.timosmit.com/wolfadmin/setup.html).
 
-DEPENDENCIES
-============
+### Dependencies
+Make sure the following dependencies are installed:
+
 * **luasql.sqlite3** and/or **luasql.mysql**
 * **lua-toml**
 
-LICENSE
-============
-[GNU General Public License 3](http://www.gnu.org/licenses/gpl-3.0.html)
+## Documentation
+Read the [configuration documentation](https://dev.timosmit.com/wolfadmin/configuration.html) and learn about the vast amount of options.
+
+## Contributing
+You can report any issues or feature requests to [Mantis](https://dev.timosmit.com/bugtracker/). Alternatively, you can fix or implement it yourself and send a pull request to the [repository on GitHub](https://github.com/timosmit/wolfadmin).
+
+## License
+Source code is released under [GNU General Public License 3](http://www.gnu.org/licenses/gpl-3.0.html) license.
