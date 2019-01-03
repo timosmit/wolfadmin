@@ -223,7 +223,7 @@ function sqlite3.addAlias(playerid, alias, lastused)
 end
 
 function sqlite3.updateAlias(aliasid, lastused)
-    cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..util.escape(aliasid).."'"))
+    cur = assert(con:execute("UPDATE `alias` SET `lastused`="..tonumber(lastused)..", `used`=`used`+1 WHERE `id`='"..tonumber(aliasid).."'"))
 end
 
 function sqlite3.getAliasesCount(playerid)
