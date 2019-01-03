@@ -17,6 +17,8 @@
 
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 
+local db = require (wolfa_getLuaPath()..".db.db")
+
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local constants = require (wolfa_getLuaPath()..".util.constants")
@@ -33,9 +35,9 @@ local userGreetings = {}
 local levelGreetings = {}
 
 function greetings.get(clientId)
-    local lvl = auth.getPlayerLevel(clientId)
-    
-    if not auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO) then
+    if db.isConnected() and not auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO) then
+        local lvl = auth.getPlayerLevel(clientId)
+
         if userGreetings[players.getGUID(clientId)] ~= nil then
             return userGreetings[players.getGUID(clientId)]
         elseif levelGreetings[lvl] ~= nil then
