@@ -21,7 +21,7 @@ function commandWolfAdmin(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3This server is running ^7Wolf^1Admin ^7"..wolfa_getVersion().." ^3("..wolfa_getRelease().."^3)\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Created by ^7Timo '^aTimo^qthy^7' ^7Smit^3. More info on\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"    ^7http://dev.timosmit.com/wolfadmin/\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"    ^7https://dev.timosmit.com/wolfadmin/\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Thanks for using!\";")
     

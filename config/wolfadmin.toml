@@ -1,7 +1,7 @@
 # Sample config file for WolfAdmin. Adjust to your needs.
 
-# See http://dev.timosmit.com/wolfadmin/
-#     http://dev.timosmit.com/wolfadmin/configuration.html
+# See https://dev.timosmit.com/wolfadmin/
+#     https://dev.timosmit.com/wolfadmin/configuration.html
 
 [main]
 # uncomment if you need to override these settings
