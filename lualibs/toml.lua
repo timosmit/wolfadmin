@@ -1,38 +1,27 @@
 -- TOML in Lua by Jonathan Stoler
 -- https://github.com/jonstoler/lua-toml
 
--- SUMMARY (IN PLAIN-ENGLISH)
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
 
--- Congratulations, you've got something with the best licence ever.
+-- The above copyright notice and this permission notice shall be included in 
+-- all copies or substantial portions of the Software.
 
--- Basically, you're free to do what you want with it; as long as you do something 
--- good (help someone out, smile; just be nice), you can use this on anything you 
--- fancy.
-
--- Of course, if it all breaks, it’s totally not the author's fault.
--- Enjoy!
-
--- THE FULL LICENSE AGREEMENT
-
--- By attaching this document to the given files (the "work"), you, the licensee, 
--- are hereby granted free usage in both personal and commercial environments, 
--- without any obligation of attribution or payment (monetary or otherwise). The 
--- licensee is free to use, copy, modify, publish, distribute, sublicence, and/or 
--- merchandise the work, subject to the licensee inflecting a positive message 
--- unto someone. This includes (but is not limited to): smiling, being nice, 
--- saying "thank you", assisting other persons, or any similar actions percolating 
--- the given concept.
-
--- The above copyright notice serves as a permissions notice also, and may 
--- optionally be included in copies or portions of the work.
-
--- The work is provided "as is", without warranty or support, express or implied. 
--- The author(s) are not liable for any damages, misuse, or other claim, whether 
--- from or as a consequence of usage of the given work.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-- SOFTWARE.
 
 local TOML = {
 	-- denotes the current supported TOML version
-	version = 0.31,
+	version = 0.40,
 
 	-- sets whether the parser should follow the TOML spec strictly
 	-- currently, no errors are thrown for the following rules if strictness is turned off:
@@ -53,8 +42,8 @@ TOML.parse = function(toml, options)
 	-- the official TOML definition of newline
 	local nl = "[\10"
 	do
-		local crlf = {string.char(224), string.char(180), string.char(138)}
-		nl = nl .. table.concat(crlf)
+		local crlf = "\13\10"
+		nl = nl .. crlf
 	end
 	nl = nl .. "]"
 	
@@ -651,7 +640,7 @@ TOML.encode = function(tbl)
 					else
 						-- plain ol boring array
 						toml = toml .. k .. " = [\n"
-						for kk, vv in pairs(v) do
+						for kk, vv in pairs(first) do
 							toml = toml .. tostring(vv) .. ",\n"
 						end
 						toml = toml .. "]\n"
@@ -674,4 +663,3 @@ TOML.encode = function(tbl)
 end
 
 return TOML
-
