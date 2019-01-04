@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `level_permission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `player_permission` (
-  `player_id` int(11) NOT NULL,
+  `player_id` int(10) unsigned NOT NULL,
   `permission` varchar(32) NOT NULL,
   PRIMARY KEY (`player_id`,`permission`),
   CONSTRAINT `player_permission_level` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
