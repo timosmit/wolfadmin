@@ -1,3 +1,34 @@
+-- convert databases to UTF-8
+ALTER TABLE `wolfadmin`.`aliases`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
+ALTER TABLE `wolfadmin`.`levels`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
+ALTER TABLE `wolfadmin`.`maps`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
+ALTER TABLE `wolfadmin`.`players`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
+ALTER TABLE `wolfadmin`.`records`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
+ALTER TABLE `wolfadmin`.`warns`
+    CONVERT TO
+    CHARACTER SET 'utf8'
+    COLLATE 'utf8_unicode_ci';
+
 -- create config table
 CREATE TABLE IF NOT EXISTS `config` (
   `id` varchar(64) NOT NULL PRIMARY KEY,
