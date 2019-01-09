@@ -340,5 +340,5 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'silentcmds'
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'spy');
 
 -- add console to players table
-INSERT INTO `player` (`id`, `guid`, `ip`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1');
+INSERT INTO `player` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5, 0, 0);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);
