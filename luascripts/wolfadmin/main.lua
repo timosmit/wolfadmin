@@ -50,7 +50,7 @@ local tables
 local timers
 local util
 
-local version = "1.2.0"
+local version = "1.2.1-dev"
 local release = "4 January 2019"
 
 local basepath
