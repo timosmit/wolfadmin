@@ -15,17 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local history = require (wolfa_getLuaPath()..".admin.history")
-local mutes = require (wolfa_getLuaPath()..".admin.mutes")
+local history = wolfa_requireModule("admin.history")
+local mutes = wolfa_requireModule("admin.mutes")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local util = require (wolfa_getLuaPath()..".util.util")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
 
 function commandMute(clientId, command, victim, ...)
     local cmdClient

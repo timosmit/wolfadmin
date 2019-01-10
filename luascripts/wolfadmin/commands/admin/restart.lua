@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local game = require (wolfa_getLuaPath()..".game.game")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local auth = wolfa_requireModule("auth.auth")
+local commands = wolfa_requireModule("commands.commands")
+local game = wolfa_requireModule("game.game")
+local settings = wolfa_requireModule("util.settings")
 
 function commandRestart(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drestart: ^9map restarted.\";")

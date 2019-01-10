@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local bans = require (wolfa_getLuaPath()..".admin.bans")
-local history = require (wolfa_getLuaPath()..".admin.history")
+local bans = wolfa_requireModule("admin.bans")
+local history = wolfa_requireModule("admin.history")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local util = require (wolfa_getLuaPath()..".util.util")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
 
 function commandBan(clientId, command, victim, ...)
     local cmdClient

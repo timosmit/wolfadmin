@@ -15,16 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local admin = require (wolfa_getLuaPath()..".admin.admin")
-local history = require (wolfa_getLuaPath()..".admin.history")
+local admin = wolfa_requireModule("admin.admin")
+local history = wolfa_requireModule("admin.history")
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
 function commandSetLevel(clientId, command, victim, level)
     local cmdClient

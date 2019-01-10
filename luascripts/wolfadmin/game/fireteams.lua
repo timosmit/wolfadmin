@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local bits = require (wolfa_getLuaPath()..".util.bits")
+local bits = wolfa_requireModule("util.bits")
 
 local fireteams = {}
 

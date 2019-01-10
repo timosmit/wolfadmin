@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local teams = require (wolfa_getLuaPath()..".game.teams")
+local teams = wolfa_requireModule("game.teams")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local bits = require (wolfa_getLuaPath()..".util.bits")
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local tables = require (wolfa_getLuaPath()..".util.tables")
-local timers = require (wolfa_getLuaPath()..".util.timers")
-local util = require (wolfa_getLuaPath()..".util.util")
+local constants = wolfa_requireModule("util.constants")
+local bits = wolfa_requireModule("util.bits")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local tables = wolfa_requireModule("util.tables")
+local timers = wolfa_requireModule("util.timers")
+local util = wolfa_requireModule("util.util")
 
 local balancer = {}
 

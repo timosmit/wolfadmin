@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local events = wolfa_requireModule("util.events")
+local files = wolfa_requireModule("util.files")
+local settings = wolfa_requireModule("util.settings")
 
-local toml = require "toml"
+local toml = wolfa_requireLib("toml")
 
 local rules = {}
 

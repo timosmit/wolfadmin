@@ -15,19 +15,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local util = require (wolfa_getLuaPath()..".util.util")
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local files = require (wolfa_getLuaPath()..".util.files")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local files = wolfa_requireModule("util.files")
 
-local toml = require "toml"
+local toml = wolfa_requireLib("toml")
 
 local greetings = {}
 

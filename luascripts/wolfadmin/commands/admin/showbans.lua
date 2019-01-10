@@ -15,17 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local bans = require (wolfa_getLuaPath()..".admin.bans")
+local bans = wolfa_requireModule("admin.bans")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local pagination = require (wolfa_getLuaPath()..".util.pagination")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
+local pagination = wolfa_requireModule("util.pagination")
+local settings = wolfa_requireModule("util.settings")
+local util = wolfa_requireModule("util.util")
 
 function commandShowBans(clientId, offset)
     if not db.isConnected() then

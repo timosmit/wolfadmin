@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local toml = require "toml"
-local events = require (wolfa_getLuaPath()..".util.events")
+local toml = wolfa_requireLib("toml")
+local events = wolfa_requireModule("util.events")
 
 local settings = {}
 
@@ -159,7 +159,7 @@ function settings.load()
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
 
-        local files = require (wolfa_getLuaPath()..".util.files")
+        local files = wolfa_requireModule("util.files")
         local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
 
         for blocksname, settings in pairs(array) do

@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local game = require (wolfa_getLuaPath()..".game.game")
+local game = wolfa_requireModule("game.game")
 
 function commandListMaps(clientId, command)
     local maps = game.getMaps()

@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local tables = require (wolfa_getLuaPath()..".util.tables")
+local events = wolfa_requireModule("util.events")
+local tables = wolfa_requireModule("util.tables")
 
 local timers = {}
 
