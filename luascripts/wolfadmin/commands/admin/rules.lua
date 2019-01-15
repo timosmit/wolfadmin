@@ -34,10 +34,10 @@ function commandRules(clientId, command, rule)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^drules: ^9"..amountOfRules.." rules (open console for the full list)\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!rules ^d[rule] ^9to announce a specific rule.\";")
     else
-        local rule = rules.get(string.lower(rule))
+        local ruleText = rules.get(string.lower(rule))
         
-        if rule then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")
+        if ruleText then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..ruleText.."\";")
         end
     end
     
