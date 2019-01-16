@@ -39,7 +39,9 @@ function commandSay(clientId, command, ...)
         return true
     end
 
-    logs.writeChat(clientId, types[command], ...)
+    if settings.get("fs_game") == "legacy" then
+        logs.writeChat(clientId, types[command], ...)
+    end
 end
 commands.addclient("say", commandSay, "", "", false, (settings.get("g_standalone") == 0))
 commands.addclient("say_team", commandSay, "", "", false, (settings.get("g_standalone") == 0))
