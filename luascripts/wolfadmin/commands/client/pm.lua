@@ -91,5 +91,5 @@ function commandPersonalMessage(clientId, command, target, ...)
 
     return true
 end
-commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
-commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
+commands.addclient("pm", commandPersonalMessage, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") == "legacy"))
+commands.addclient("m", commandPersonalMessage, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") == "legacy"))
