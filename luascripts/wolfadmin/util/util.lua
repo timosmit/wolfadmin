@@ -139,12 +139,14 @@ function util.getAreaName(areaId)
 end
 
 function util.getTimeFromString(str)
+    if tonumber(str) then return tonumber(str) end
+
     local amount, unit = string.match(str, "^([0-9]+)([smhdwy])$")
-    
+
     if not (amount and unit) then return nil end
 
     amount = math.floor(amount)
-    
+
     local multiplier = {
         ["s"] = function(a) return a end,
         ["m"] = function(a) return a * 60 end,
@@ -153,7 +155,7 @@ function util.getTimeFromString(str)
         ["w"] = function(a) return a * 60 * 60 * 24 * 7 end,
         ["y"] = function(a) return a * 60 * 60 * 24 * 365 end
     }
-    
+
     return multiplier[unit](amount)
 end
 
