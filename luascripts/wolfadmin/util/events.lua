@@ -15,9 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local constants = wolfa_requireModule("util.constants")
-local util = wolfa_requireModule("util.util")
-
 local events = {}
 
 local data = {}
@@ -28,51 +25,59 @@ end
 
 function events.add(name)
     if events.get(name) then
-        error("event is already added: "..name)
+        error("event is already added: "..name, 2)
     end
-    
+
     data[name] = {}
 end
 
-function events.ishandled(name, func)
+function events.getHandlers(name)
     if not events.get(name) then
-        error("event not added: "..name)
+        error("event not added: "..name, 2)
     end
-    
+
+    return events.get(name)
+end
+
+function events.isHandled(name, func)
+    if not events.get(name) then
+        error("event not added: "..name, 2)
+    end
+
     local handlers = events.get(name)
-    
+
     for i = 0, #handlers do
         if handlers[i] == func then
             return true
         end
     end
-    
+
     return false
 end
 
 function events.handle(name, func)
     if not events.get(name) then
-        error("event not added: "..name)
+        error("event not added: "..name, 2)
     end
-    
-    if events.ishandled(name, func) then
-        error("event "..name.." is already handled by this function")
+
+    if events.isHandled(name, func) then
+        error("event "..name.." is already handled by this function", 2)
     end
-    
+
     table.insert(data[name], func)
 end
 
 function events.unhandle(name, func)
     if not events.get(name) then
-        error("event not added: "..name)
+        error("event not added: "..name, 2)
     end
-    
-    if not events.ishandled(name, func) then
-        error("event "..name.." is not handled by this function")
+
+    if not events.isHandled(name, func) then
+        error("event "..name.." is not handled by this function", 2)
     end
-    
+
     local handlers = events.get(name)
-    
+
     for i = 0, #handlers do
         if handlers[i] == func then
             table.remove(handlers, i)
@@ -82,21 +87,21 @@ end
 
 function events.trigger(name, ...)
     local handlers = events.get(name)
-    
+
     if not handlers then
-        error("event not added: "..name)
+        error("event not added: "..name, 2)
     end
-    
+
     local returnValue
 
     for _, handler in pairs(handlers) do
         local handlerReturn = handler(...)
-        
+
         if not returnValue and returnValue ~= 0 and handlerReturn ~= nil then
             returnValue = handlerReturn
         end
     end
-    
+
     return returnValue
 end
 
