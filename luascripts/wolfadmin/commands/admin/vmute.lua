@@ -62,7 +62,10 @@ function commandVoiceMute(clientId, command, victim, ...)
     elseif args[1] then
         duration = 600
         reason = table.concat(args, " ")
-    elseif not auth.isPlayerAllowed(clientId, "8") then
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) then
+        duration = -1
+        reason = "muted by admin"
+    else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
         
         return true
@@ -72,7 +75,7 @@ function commandVoiceMute(clientId, command, victim, ...)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
         
         return true
-    elseif auth.isPlayerAllowed(cmdClient, "!") then
+    elseif auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true

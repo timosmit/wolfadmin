@@ -60,13 +60,16 @@ function commandBan(clientId, command, victim, ...)
     elseif args[1] then
         duration = 600
         reason = table.concat(args, " ")
-    elseif not auth.isPlayerAllowed(clientId, "8") then
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) then
+        duration = -1
+        reason = "banned by admin"
+    else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
         
         return true
     end
 
-    if auth.isPlayerAllowed(cmdClient, "!") then
+    if auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
