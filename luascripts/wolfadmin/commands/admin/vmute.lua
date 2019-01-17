@@ -25,6 +25,7 @@ local commands = wolfa_requireModule("commands.commands")
 local players = wolfa_requireModule("players.players")
 
 local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
 
 function commandVoiceMute(clientId, command, victim, ...)
     local cmdClient
@@ -82,7 +83,10 @@ function commandVoiceMute(clientId, command, victim, ...)
     end
 
     mutes.add(cmdClient, clientId, players.MUTE_VOICE, duration, reason)
-    history.add(cmdClient, clientId, "vmute", reason)
+
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "vmute", reason)
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..duration.." seconds\";")
 
