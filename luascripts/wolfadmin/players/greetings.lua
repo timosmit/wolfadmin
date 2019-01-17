@@ -93,35 +93,35 @@ function greetings.load()
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
-        if fileLength ~= -1 then
-            local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
-
-            et.trap_FS_FCloseFile(fileDescriptor)
-
-            local fileTable = toml.parse(fileString)
-
-            for _, greeting in ipairs(fileTable["level"]) do
-                if greeting["greeting"] then
-                    levelGreetings[greeting["level"]] = {
-                        ["text"] = greeting["greeting"],
-                        ["sound"] = greeting["sound"]
-                    }
-                end
-            end
-
-            for _, greeting in ipairs(fileTable["user"]) do
-                if greeting["greeting"] then
-                    userGreetings[greeting["guid"]] = {
-                        ["text"] = greeting["greeting"],
-                        ["sound"] = greeting["sound"]
-                    }
-                end
-            end
-
-            return #fileTable["level"] + #fileTable["user"]
+        if fileLength == -1 then
+            return 0
         end
 
-        return 0
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
+
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        local fileTable = toml.parse(fileString)
+
+        for _, greeting in ipairs(fileTable["level"]) do
+            if greeting["greeting"] then
+                levelGreetings[greeting["level"]] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
+        end
+
+        for _, greeting in ipairs(fileTable["user"]) do
+            if greeting["greeting"] then
+                userGreetings[greeting["guid"]] = {
+                    ["text"] = greeting["greeting"],
+                    ["sound"] = greeting["sound"]
+                }
+            end
+        end
+
+        return #fileTable["level"] + #fileTable["user"]
     else
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
