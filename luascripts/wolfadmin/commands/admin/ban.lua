@@ -54,14 +54,13 @@ function commandBan(clientId, command, victim, ...)
     if args[1] and util.getTimeFromString(args[1]) and args[2] then
         duration = util.getTimeFromString(args[1])
         reason = table.concat(args, " ", 2)
-    elseif args[1] and util.getTimeFromString(args[1]) then
+    elseif args[1] and util.getTimeFromString(args[1]) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         duration = util.getTimeFromString(args[1])
         reason = "banned by admin"
-    elseif args[1] then
+    elseif args[1] and not util.getTimeFromString(args[1]) then
         duration = 600
         reason = table.concat(args, " ")
-    elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) then
-        duration = -1
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         reason = "banned by admin"
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
@@ -85,7 +84,11 @@ function commandBan(clientId, command, victim, ...)
         history.add(cmdClient, clientId, "ban", reason)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
+    if duration then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned permanently\";")
+    end
 
     return true
 end

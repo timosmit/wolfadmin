@@ -32,7 +32,7 @@ function admin.putPlayer(clientId, teamId)
 end
 
 function admin.kickPlayer(victimId, invokerId, reason)
-    et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
+    et.trap_DropClient(victimId, "You have been kicked, Reason: "..reason, 0)
 end
 
 function admin.setPlayerLevel(clientId, level)

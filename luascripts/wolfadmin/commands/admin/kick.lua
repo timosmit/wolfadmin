@@ -57,7 +57,18 @@ function commandKick(clientId, command, victim, ...)
         return true
     end
 
-    local reason = table.concat({...}, " ")
+    local args = {...}
+    local reason
+
+    if args[1] then
+        reason = table.concat(args, " ")
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
+        reason = "kicked by admin"
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick usage: "..commands.getadmin("kick")["syntax"].."\";")
+
+        return true
+    end
 
     admin.kickPlayer(cmdClient, clientId, reason)
 
