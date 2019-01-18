@@ -15,16 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local game = require (wolfa_getLuaPath()..".game.game")
-local sprees = require (wolfa_getLuaPath()..".game.sprees")
+local game = wolfa_requireModule("game.game")
+local sprees = wolfa_requireModule("game.sprees")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
 function commandResetSprees(clientId, command, map)
     if not db.isConnected() then

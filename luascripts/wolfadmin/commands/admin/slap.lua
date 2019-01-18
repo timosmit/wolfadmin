@@ -15,14 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local constants = wolfa_requireModule("util.constants")
+local settings = wolfa_requireModule("util.settings")
 
 function commandSlap(clientId, command, victim)
     local cmdClient

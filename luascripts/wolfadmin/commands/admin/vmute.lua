@@ -15,16 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local history = require (wolfa_getLuaPath()..".admin.history")
-local mutes = require (wolfa_getLuaPath()..".admin.mutes")
+local history = wolfa_requireModule("admin.history")
+local mutes = wolfa_requireModule("admin.mutes")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local util = require (wolfa_getLuaPath()..".util.util")
+local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
 
 function commandVoiceMute(clientId, command, victim, ...)
     local cmdClient
@@ -51,19 +52,22 @@ function commandVoiceMute(clientId, command, victim, ...)
 
     local args = {...}
     local duration, reason
-    
+
     if args[1] and util.getTimeFromString(args[1]) and args[2] then
         duration = util.getTimeFromString(args[1])
         reason = table.concat(args, " ", 2)
-    elseif args[1] and util.getTimeFromString(args[1]) then
+    elseif args[1] and util.getTimeFromString(args[1]) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         duration = util.getTimeFromString(args[1])
         reason = "muted by admin"
-    elseif args[1] then
+    elseif args[1] and not util.getTimeFromString(args[1]) then
         duration = 600
         reason = table.concat(args, " ")
-    elseif not auth.isPlayerAllowed(clientId, "8") then
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
+        duration = 600
+        reason = "muted by admin"
+    else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute usage: "..commands.getadmin("vmute")["syntax"].."\";")
-        
+
         return true
     end
     
@@ -71,7 +75,7 @@ function commandVoiceMute(clientId, command, victim, ...)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
         
         return true
-    elseif auth.isPlayerAllowed(cmdClient, "!") then
+    elseif auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
         
         return true
@@ -82,7 +86,10 @@ function commandVoiceMute(clientId, command, victim, ...)
     end
 
     mutes.add(cmdClient, clientId, players.MUTE_VOICE, duration, reason)
-    history.add(cmdClient, clientId, "vmute", reason)
+
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "vmute", reason)
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been voicemuted for "..duration.." seconds\";")
 

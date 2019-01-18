@@ -15,16 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local fireteams = require (wolfa_getLuaPath()..".game.fireteams")
+local fireteams = wolfa_requireModule("game.fireteams")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
+local settings = wolfa_requireModule("util.settings")
+local util = wolfa_requireModule("util.util")
 
 function commandListPlayers(clientId, command)
     local playersOnline = {}

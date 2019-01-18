@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local timers = require (wolfa_getLuaPath()..".util.timers")
-local util = require (wolfa_getLuaPath()..".util.util")
+local constants = wolfa_requireModule("util.constants")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local timers = wolfa_requireModule("util.timers")
+local util = wolfa_requireModule("util.util")
 
 local voting = {}
 

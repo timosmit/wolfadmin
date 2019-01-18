@@ -15,19 +15,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local game = require (wolfa_getLuaPath()..".game.game")
+local game = wolfa_requireModule("game.game")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local bits = require (wolfa_getLuaPath()..".util.bits")
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local bits = wolfa_requireModule("util.bits")
+local constants = wolfa_requireModule("util.constants")
+local events = wolfa_requireModule("util.events")
+local files = wolfa_requireModule("util.files")
+local settings = wolfa_requireModule("util.settings")
 
-local toml = require "toml"
+local toml = wolfa_requireLib("toml")
 
 local sprees = {}
 
@@ -116,13 +116,18 @@ function sprees.load()
 
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+
+        if fileLength == -1 then
+            return 0
+        end
+
         local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
         et.trap_FS_FCloseFile(fileDescriptor)
 
         local fileTable = toml.parse(fileString)
 
-        local amount
+        local amount = 0
 
         for name, block in pairs(fileTable) do
             for _, spree in ipairs(block) do
@@ -130,6 +135,8 @@ function sprees.load()
                     table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
 
                     spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
+
+                    amount = amount + 1
                 end
             end
         end

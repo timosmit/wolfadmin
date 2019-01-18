@@ -15,14 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local admin = require (wolfa_getLuaPath()..".admin.admin")
-local history = require (wolfa_getLuaPath()..".admin.history")
+local admin = wolfa_requireModule("admin.admin")
+local history = wolfa_requireModule("admin.history")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
 function commandKick(clientId, command, victim, ...)
     local cmdClient
@@ -47,7 +47,7 @@ function commandKick(clientId, command, victim, ...)
         return true
     end
 
-    if auth.isPlayerAllowed(cmdClient, "!") then
+    if auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
@@ -57,7 +57,18 @@ function commandKick(clientId, command, victim, ...)
         return true
     end
 
-    local reason = table.concat({...}, " ")
+    local args = {...}
+    local reason
+
+    if args[1] then
+        reason = table.concat(args, " ")
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
+        reason = "kicked by admin"
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick usage: "..commands.getadmin("kick")["syntax"].."\";")
+
+        return true
+    end
 
     admin.kickPlayer(cmdClient, clientId, reason)
 

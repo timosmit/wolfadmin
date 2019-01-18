@@ -15,35 +15,33 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local bans = require (wolfa_getLuaPath()..".admin.bans")
+local bans = wolfa_requireModule("admin.bans")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
-function commandRemoveBan(clientId, command, ban)
+function commandRemoveBan(clientId, command, banId)
     if settings.get("g_standalone") == 0 or not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9bans are disabled.\";")
 
         return true
-    elseif not ban or tonumber(ban) == nil then
+    elseif not banId or tonumber(banId) == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban usage: "..commands.getadmin("unban")["syntax"].."\";")
 
         return true
     end
 
-    local ban = bans.get(tonumber(ban))
-
-    if not ban then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..ban.." does not exist.\";")
+    if not bans.get(tonumber(banId)) then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..banId.." does not exist.\";")
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..ban.." removed.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..banId.." removed.\";")
 
-        bans.remove(tonumber(ban))
+        bans.remove(tonumber(banId))
     end
 
     return true

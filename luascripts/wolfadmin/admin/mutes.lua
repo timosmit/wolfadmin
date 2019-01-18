@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local timers = require (wolfa_getLuaPath()..".util.timers")
+local events = wolfa_requireModule("util.events")
+local timers = wolfa_requireModule("util.timers")
 
 local mutes = {}
 

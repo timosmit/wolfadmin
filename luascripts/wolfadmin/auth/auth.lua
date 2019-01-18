@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
 
 local auth = {}
 
@@ -129,11 +129,11 @@ function auth.onGameInit()
             return
         end
 
-        srv = require (wolfa_getLuaPath()..".auth.acl")
+        srv = wolfa_requireModule("auth.acl")
 
         srv.readPermissions()
     else
-        srv = require (wolfa_getLuaPath()..".auth.shrubbot")
+        srv = wolfa_requireModule("auth.shrubbot")
 
         srv.loadFlags(et.trap_Cvar_Get("fs_game"))
     end

@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local events = require (wolfa_getLuaPath()..".util.events")
+local events = wolfa_requireModule("util.events")
 
 function commandCallVote(clientId, command)
     local voteArguments = {}

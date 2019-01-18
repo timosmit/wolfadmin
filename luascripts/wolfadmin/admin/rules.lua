@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local files = require (wolfa_getLuaPath()..".util.files")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local events = wolfa_requireModule("util.events")
+local files = wolfa_requireModule("util.files")
+local settings = wolfa_requireModule("util.settings")
 
-local toml = require "toml"
+local toml = wolfa_requireLib("toml")
 
 local rules = {}
 
@@ -43,25 +43,27 @@ function rules.load()
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
-        if fileLength ~= -1 then
-            local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
-
-            et.trap_FS_FCloseFile(fileDescriptor)
-
-            local fileTable = toml.parse(fileString)
-
-            local amount
-
-            for _, rule in ipairs(fileTable["rule"]) do
-                if rule["shortcut"] and rule["rule"] then
-                    data[rule["shortcut"]] = rule["rule"]
-                end
-            end
-
-            return amount
+        if fileLength == -1 then
+            return 0
         end
 
-        return 0
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
+
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        local fileTable = toml.parse(fileString)
+
+        local amount = 0
+
+        for _, rule in ipairs(fileTable["rule"]) do
+            if rule["shortcut"] and rule["rule"] then
+                data[rule["shortcut"]] = rule["rule"]
+
+                amount = amount + 1
+            end
+        end
+
+        return amount
     else
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)

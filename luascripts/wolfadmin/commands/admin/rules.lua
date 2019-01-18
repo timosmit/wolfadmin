@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local rules = require (wolfa_getLuaPath()..".admin.rules")
+local auth = wolfa_requireModule("auth.auth")
+local commands = wolfa_requireModule("commands.commands")
+local rules = wolfa_requireModule("admin.rules")
 
 function commandRules(clientId, command, rule)
     if not rule then
@@ -34,10 +34,10 @@ function commandRules(clientId, command, rule)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^drules: ^9"..amountOfRules.." rules (open console for the full list)\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!rules ^d[rule] ^9to announce a specific rule.\";")
     else
-        local rule = rules.get(string.lower(rule))
+        local ruleText = rules.get(string.lower(rule))
         
-        if rule then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")
+        if ruleText then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..ruleText.."\";")
         end
     end
     

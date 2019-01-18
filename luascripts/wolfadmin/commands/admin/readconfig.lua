@@ -15,18 +15,18 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local censor = require (wolfa_getLuaPath()..".admin.censor")
-local rules = require (wolfa_getLuaPath()..".admin.rules")
+local censor = wolfa_requireModule("admin.censor")
+local rules = wolfa_requireModule("admin.rules")
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local sprees = require (wolfa_getLuaPath()..".game.sprees")
+local sprees = wolfa_requireModule("game.sprees")
 
-local greetings = require (wolfa_getLuaPath()..".players.greetings")
+local greetings = wolfa_requireModule("players.greetings")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
 function commandReadconfig(clientId, command)
     settings.load()

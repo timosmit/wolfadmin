@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local util = require (wolfa_getLuaPath()..".util.util")
-local balancer = require (wolfa_getLuaPath()..".admin.balancer")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local bots = require (wolfa_getLuaPath()..".game.bots")
+local auth = wolfa_requireModule("auth.auth")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
+local balancer = wolfa_requireModule("admin.balancer")
+local commands = wolfa_requireModule("commands.commands")
+local bots = wolfa_requireModule("game.bots")
 
 function commandPutBots(clientId, command, team)
     if team == nil and team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC then

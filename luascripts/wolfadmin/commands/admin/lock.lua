@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local teams = require (wolfa_getLuaPath()..".game.teams")
+local teams = wolfa_requireModule("game.teams")
 
-local util = require (wolfa_getLuaPath()..".util.util")
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = wolfa_requireModule("util.util")
+local constants = wolfa_requireModule("util.constants")
+local settings = wolfa_requireModule("util.settings")
 
 function commandLock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then

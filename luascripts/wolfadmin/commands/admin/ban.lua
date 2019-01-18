@@ -15,15 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local bans = require (wolfa_getLuaPath()..".admin.bans")
-local history = require (wolfa_getLuaPath()..".admin.history")
+local bans = wolfa_requireModule("admin.bans")
+local history = wolfa_requireModule("admin.history")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local util = require (wolfa_getLuaPath()..".util.util")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
 
 function commandBan(clientId, command, victim, ...)
     local cmdClient
@@ -54,19 +54,21 @@ function commandBan(clientId, command, victim, ...)
     if args[1] and util.getTimeFromString(args[1]) and args[2] then
         duration = util.getTimeFromString(args[1])
         reason = table.concat(args, " ", 2)
-    elseif args[1] and util.getTimeFromString(args[1]) then
+    elseif args[1] and util.getTimeFromString(args[1]) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         duration = util.getTimeFromString(args[1])
         reason = "banned by admin"
-    elseif args[1] then
+    elseif args[1] and not util.getTimeFromString(args[1]) then
         duration = 600
         reason = table.concat(args, " ")
-    elseif not auth.isPlayerAllowed(clientId, "8") then
+    elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
+        reason = "banned by admin"
+    else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
         
         return true
     end
 
-    if auth.isPlayerAllowed(cmdClient, "!") then
+    if auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
 
         return true
@@ -82,7 +84,11 @@ function commandBan(clientId, command, victim, ...)
         history.add(cmdClient, clientId, "ban", reason)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
+    if duration then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned for "..duration.." seconds\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned permanently\";")
+    end
 
     return true
 end

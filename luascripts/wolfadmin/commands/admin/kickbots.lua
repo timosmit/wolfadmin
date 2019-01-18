@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local bots = require (wolfa_getLuaPath()..".game.bots")
+local auth = wolfa_requireModule("auth.auth")
+local commands = wolfa_requireModule("commands.commands")
+local bots = wolfa_requireModule("game.bots")
 
 function commandBotsOff(clientId, command)
     bots.enable(false)

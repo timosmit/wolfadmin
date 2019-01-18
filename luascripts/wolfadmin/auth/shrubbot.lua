@@ -17,12 +17,12 @@
 
 local shrubbot = {}
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
 local flags
 
 function shrubbot.loadFlags(mod)
-    flags = require (wolfa_getLuaPath()..".auth.shrubbot."..mod)
+    flags = wolfa_requireModule("auth.shrubbot."..mod)
 end
 
 function shrubbot.isPlayerAllowed(clientId, permission)

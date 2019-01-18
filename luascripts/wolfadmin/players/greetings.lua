@@ -15,19 +15,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local util = require (wolfa_getLuaPath()..".util.util")
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local files = require (wolfa_getLuaPath()..".util.files")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local files = wolfa_requireModule("util.files")
 
-local toml = require "toml"
+local toml = wolfa_requireLib("toml")
 
 local greetings = {}
 
@@ -93,35 +93,45 @@ function greetings.load()
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
-        if fileLength ~= -1 then
-            local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
+        if fileLength == -1 then
+            return 0
+        end
 
-            et.trap_FS_FCloseFile(fileDescriptor)
+        local fileString = et.trap_FS_Read(fileDescriptor, fileLength)
 
-            local fileTable = toml.parse(fileString)
+        et.trap_FS_FCloseFile(fileDescriptor)
 
+        local fileTable = toml.parse(fileString)
+
+        local amount = 0
+
+        if fileTable["level"] then
             for _, greeting in ipairs(fileTable["level"]) do
                 if greeting["greeting"] then
                     levelGreetings[greeting["level"]] = {
                         ["text"] = greeting["greeting"],
                         ["sound"] = greeting["sound"]
                     }
+
+                    amount = amount + 1
                 end
             end
+        end
 
+        if fileTable["user"] then
             for _, greeting in ipairs(fileTable["user"]) do
                 if greeting["greeting"] then
                     userGreetings[greeting["guid"]] = {
                         ["text"] = greeting["greeting"],
                         ["sound"] = greeting["sound"]
                     }
+
+                    amount = amount + 1
                 end
             end
-
-            return #fileTable["level"] + #fileTable["user"]
         end
 
-        return 0
+        return amount
     else
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)

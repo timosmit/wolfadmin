@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local balancer = require (wolfa_getLuaPath()..".admin.balancer")
+local commands = wolfa_requireModule("commands.commands")
+local auth = wolfa_requireModule("auth.auth")
+local balancer = wolfa_requireModule("admin.balancer")
 
 function commandBalance(clientId, command, action)
     if action == "enable" then

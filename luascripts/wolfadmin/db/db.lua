@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
 
 local db = {}
 
@@ -32,9 +32,9 @@ end
 function db.oninit()
     if settings.get("db_type") ~= "none" then
         if settings.get("db_type") == "sqlite3" then
-            con = require (wolfa_getLuaPath()..".db.sqlite3")
+            con = wolfa_requireModule("db.sqlite3")
         elseif settings.get("db_type") == "mysql" then
-            con = require (wolfa_getLuaPath()..".db.mysql")
+            con = wolfa_requireModule("db.mysql")
         else
             outputDebug("Invalid database system (none|sqlite3|mysql), defaulting to 'none'.")
 
