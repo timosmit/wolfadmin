@@ -43,7 +43,7 @@ function rules.load()
     if string.find(fileName, ".toml") == string.len(fileName) - 4 then
         local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
-        if fileLength ~= -1 then
+        if fileLength == -1 then
             return 0
         end
 
