@@ -103,25 +103,35 @@ function greetings.load()
 
         local fileTable = toml.parse(fileString)
 
-        for _, greeting in ipairs(fileTable["level"]) do
-            if greeting["greeting"] then
-                levelGreetings[greeting["level"]] = {
-                    ["text"] = greeting["greeting"],
-                    ["sound"] = greeting["sound"]
-                }
+        local amount = 0
+
+        if fileTable["level"] then
+            for _, greeting in ipairs(fileTable["level"]) do
+                if greeting["greeting"] then
+                    levelGreetings[greeting["level"]] = {
+                        ["text"] = greeting["greeting"],
+                        ["sound"] = greeting["sound"]
+                    }
+
+                    amount = amount + 1
+                end
             end
         end
 
-        for _, greeting in ipairs(fileTable["user"]) do
-            if greeting["greeting"] then
-                userGreetings[greeting["guid"]] = {
-                    ["text"] = greeting["greeting"],
-                    ["sound"] = greeting["sound"]
-                }
+        if fileTable["user"] then
+            for _, greeting in ipairs(fileTable["user"]) do
+                if greeting["greeting"] then
+                    userGreetings[greeting["guid"]] = {
+                        ["text"] = greeting["greeting"],
+                        ["sound"] = greeting["sound"]
+                    }
+
+                    amount = amount + 1
+                end
             end
         end
 
-        return #fileTable["level"] + #fileTable["user"]
+        return amount
     else
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)

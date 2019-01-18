@@ -127,7 +127,7 @@ function sprees.load()
 
         local fileTable = toml.parse(fileString)
 
-        local amount
+        local amount = 0
 
         for name, block in pairs(fileTable) do
             for _, spree in ipairs(block) do
@@ -135,6 +135,8 @@ function sprees.load()
                     table.insert(spreeMessagesByType[sprees.getRecordTypeByName(name)], spree)
 
                     spreeMessages[sprees.getRecordTypeByName(name)][spree["amount"]] = spree
+
+                    amount = amount + 1
                 end
             end
         end

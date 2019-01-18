@@ -53,11 +53,13 @@ function rules.load()
 
         local fileTable = toml.parse(fileString)
 
-        local amount
+        local amount = 0
 
         for _, rule in ipairs(fileTable["rule"]) do
             if rule["shortcut"] and rule["rule"] then
                 data[rule["shortcut"]] = rule["rule"]
+
+                amount = amount + 1
             end
         end
 
