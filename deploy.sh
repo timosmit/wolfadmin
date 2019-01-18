@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-curr_version="1.2.0"
+curr_version="1.3.0-dev"
 
 read_config() {
     db_type=$(grep -oP '(?<=type = ")(sqlite3|mysql)(?=")' $fs_homepath/$fs_homedir/$fs_game/wolfadmin.toml)
