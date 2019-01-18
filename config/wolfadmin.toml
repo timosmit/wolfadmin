@@ -37,6 +37,12 @@ maxdif = 5
 selection = 0
 interval = 30
 
+[censor]
+file = "censor.toml"
+mode = 1
+mute = 60
+kick = 1
+
 [game]
 announcerevives = 1
 

@@ -46,6 +46,11 @@ constants.TEAM_SPECTATORS_COLOR = "^2"
 constants.TEAM_AXIS_COLOR_NAME = "red"
 constants.TEAM_ALLIES_COLOR_NAME = "blue"
 
+constants.SAY_ALL_CMD = "say"
+constants.SAY_TEAM_CMD = "say_team"
+constants.SAY_BUDDY_CMD = "say_buddy"
+constants.SAY_TEAMNL_CMD = "say_teamnl"
+
 constants.CLASS_SOLDIER = 0
 constants.CLASS_MEDIC = 1
 constants.CLASS_ENGINEER = 2

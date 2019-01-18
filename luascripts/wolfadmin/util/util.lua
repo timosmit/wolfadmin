@@ -84,6 +84,20 @@ function util.getTeamFromCode(teamCode)
     end
 end
 
+function util.getChatFromCommand(chatCommand)
+    if chatCommand == constants.SAY_ALL_CMD then
+        return et.SAY_ALL
+    elseif chatCommand == constants.SAY_TEAM_CMD then
+        return et.SAY_TEAM
+    elseif chatCommand == constants.SAY_BUDDY_CMD then
+        return et.SAY_BUDDY
+    elseif chatCommand == constants.SAY_TEAMNL_CMD then
+        return et.SAY_TEAMNL
+    else
+        return et.SAY_ALL
+    end
+end
+
 function util.getTeamColor(teamId)
     if teamId == constants.TEAM_AXIS then
         return constants.TEAM_AXIS_COLOR

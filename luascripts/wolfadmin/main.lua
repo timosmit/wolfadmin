@@ -18,6 +18,7 @@
 local admin
 local balancer
 local bans
+local censor
 local history
 local mutes
 local rules
@@ -90,6 +91,7 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     admin = require (wolfa_getLuaPath()..".admin.admin")
     balancer = require (wolfa_getLuaPath()..".admin.balancer")
     bans = require (wolfa_getLuaPath()..".admin.bans")
+    censor = require (wolfa_getLuaPath()..".admin.censor")
     history = require (wolfa_getLuaPath()..".admin.history")
     mutes = require (wolfa_getLuaPath()..".admin.mutes")
     rules = require (wolfa_getLuaPath()..".admin.rules")

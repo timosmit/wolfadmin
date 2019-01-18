@@ -23,10 +23,14 @@ local settings = {}
 local data = {
     ["g_logChat"] = "chat.log",
     ["g_logAdmin"] = "admin.log",
+    ["g_fileCensor"] = "censor.toml",
     ["g_fileGreetings"] = "greetings.toml",
     ["g_fileRules"] = "rules.toml",
     ["g_fileSprees"] = "sprees.toml",
     ["g_playerHistory"] = 1,
+    ["g_censorMode"] = 1,
+    ["g_censorMute"] = 60,
+    ["g_censorKick"] = 1,
     ["g_spreeMessages"] = 7,
     ["g_spreeRecords"] = 1,
     ["g_botRecords"] = 1,
@@ -85,6 +89,12 @@ local cfgStructure = {
         ["maxdif"] = "g_evenerMaxDifference",
         ["selection"] = "g_evenerPlayerSelection",
         ["interval"] = "g_evenerInterval"
+    },
+    ["censor"] = {
+        ["file"] = "g_fileCensor",
+        ["mode"] = "g_censorMode",
+        ["mute"] = "g_censorMute",
+        ["kick"] = "g_censorKick"
     },
     ["game"] = {
         ["announcerevives"] = "g_announceRevives"

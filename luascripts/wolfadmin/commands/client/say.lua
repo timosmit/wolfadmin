@@ -15,12 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local censor = require (wolfa_getLuaPath()..".admin.censor")
+
 local commands = require (wolfa_getLuaPath()..".commands.commands")
 
 local players = require (wolfa_getLuaPath()..".players.players")
 
 local logs = require (wolfa_getLuaPath()..".util.logs")
 local settings = require (wolfa_getLuaPath()..".util.settings")
+local util = require (wolfa_getLuaPath()..".util.util")
 
 local types = {
     ["say"] = "chat",
@@ -35,6 +38,16 @@ local types = {
 function commandSay(clientId, command, ...)
     if players.isMuted(clientId, players.MUTE_CHAT) then
         et.trap_SendServerCommand(clientId, "cp \"^1You are muted\"")
+
+        return true
+    end
+
+    local censored, message = censor.filterMessage(...)
+
+    if censored and settings.get("g_censorMode") ~= 0 then
+        censor.punishClient(clientId)
+
+        et.G_Say(clientId, util.getChatFromCommand(command), message)
 
         return true
     end
