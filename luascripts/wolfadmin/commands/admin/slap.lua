@@ -74,6 +74,7 @@ function commandSlap(clientId, command, victim)
     et.gentity_set(cmdClient, "health", newHealth)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(cmdClient).." ^9was slapped.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..cmdClient.." \"sound/player/land_hurt.wav\";")
 
     return true
 end
