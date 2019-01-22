@@ -49,6 +49,7 @@ local pagination
 local settings
 local tables
 local timers
+local vectors
 local util
 
 local version = "1.3.0-dev"
@@ -140,6 +141,7 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     settings = wolfa_requireModule("util.settings")
     tables = wolfa_requireModule("util.tables")
     timers = wolfa_requireModule("util.timers")
+    vectors = wolfa_requireModule("util.vectors")
     util = wolfa_requireModule("util.util")
 
     -- register the module
