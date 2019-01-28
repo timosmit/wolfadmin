@@ -82,7 +82,9 @@ install_db_mysql() {
 
 install_pk3() {
     echo -n 'zipping pk3...';
-    zip -r -q wolfadmin-$curr_version.pk3 pk3
+    pushd pk3
+    zip -r -q ../wolfadmin-$curr_version.pk3 .
+    popd
     echo 'done.'
     echo -n 'copying pk3...';
     cp wolfadmin-$curr_version.pk3 $fs_basepath/$fs_game
