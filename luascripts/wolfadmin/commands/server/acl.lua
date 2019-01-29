@@ -161,12 +161,6 @@ function commandAclCopyLevelPermissions(levelId, newLevelId)
         return true
     end
 
-    if #acl.getLevelPermissions(newLevelId) ~= 0 then
-        et.G_Print("error: level "..newLevelId.." already has permissions\n")
-
-        return true
-    end
-
     acl.copyLevelPermissions(levelId, newLevelId)
 
     et.G_Print("copied permissions from "..levelId.." to "..newLevelId.."\n")

@@ -178,7 +178,7 @@ function mysql.removeLevelPermission(levelId, permission)
 end
 
 function mysql.copyLevelPermissions(levelId, newLevelId)
-    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId)))
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT "..tonumber(newLevelId).." AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." EXCEPT SELECT `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(newLevelId)))
 end
 
 function mysql.removeLevelPermissions(levelId)

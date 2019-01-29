@@ -178,7 +178,7 @@ function sqlite3.removeLevelPermission(levelId, permission)
 end
 
 function sqlite3.copyLevelPermissions(levelId, newLevelId)
-    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId)))
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT "..tonumber(newLevelId).." AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." EXCEPT SELECT `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(newLevelId)))
 end
 
 function sqlite3.removeLevelPermissions(levelId)
