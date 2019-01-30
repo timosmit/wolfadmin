@@ -23,6 +23,25 @@ function tables.merge(tbl1, tbl2)
     util.typecheck("tables.merge", {tbl1}, {"table"})
     util.typecheck("tables.merge", {tbl2}, {"table"})
 
+    local exists = {}
+
+    for _, value in ipairs(tbl1) do
+        exists[value] = true
+    end
+
+    for _, value in ipairs(tbl2) do
+        if not exists[value] then
+            table.insert(tbl1, value)
+        end
+    end
+
+    return tbl1
+end
+
+function tables.mergeKeys(tbl1, tbl2)
+    util.typecheck("tables.mergeKeys", {tbl1}, {"table"})
+    util.typecheck("tables.mergeKeys", {tbl2}, {"table"})
+
     for key, value in pairs(tbl2) do
         tbl1[key] = value
     end
