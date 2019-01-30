@@ -126,7 +126,7 @@ end
 function acl.copyLevelPermissions(levelId, newLevelId)
     db.copyLevelPermissions(levelId, newLevelId)
 
-    cachedLevels[newLevelId] = tables.copy(cachedLevels[levelId])
+    cachedLevels[newLevelId] = tables.merge(cachedLevels[newLevelId], cachedLevels[levelId])
 end
 
 function acl.removeLevelPermissions(levelId)

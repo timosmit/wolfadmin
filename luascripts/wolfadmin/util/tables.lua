@@ -19,8 +19,19 @@ local util = wolfa_requireModule("util.util")
 
 local tables = {}
 
+function tables.merge(tbl1, tbl2)
+    util.typecheck("tables.merge", {tbl1}, {"table"})
+    util.typecheck("tables.merge", {tbl2}, {"table"})
+
+    for key, value in pairs(tbl2) do
+        tbl1[key] = value
+    end
+
+    return tbl1
+end
+
 function tables.copy(tbl)
-    util.typecheck("tables.contains", {tbl}, {"table"})
+    util.typecheck("tables.copy", {tbl}, {"table"})
 
     local copy = {}
 
