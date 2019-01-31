@@ -210,15 +210,16 @@ function settings.determineOS()
 end
 
 function settings.determineMode()
+    settings.set("fs_game", et.trap_Cvar_Get("fs_game"))
+
     -- mode has been manually specified
     if settings.get("g_standalone") then
         return
     end
 
-    local mod = et.trap_Cvar_Get("fs_game")
     local shrubbot = et.trap_Cvar_Get("g_shrubbot") -- etpub, nq
     local dbDir = et.trap_Cvar_Get("g_dbDirectory") -- silent
-    if mod == "legacy" or mod == "etpro" then
+    if settings.get("fs_game") == "legacy" or settings.get("fs_game") == "etpro" then
         settings.set("g_standalone", 1)
     elseif (not shrubbot or shrubbot == "") and (not dbDir or dbDir == "") then
         settings.set("g_standalone", 1)
