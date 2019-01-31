@@ -26,4 +26,4 @@ function commandShuffleSR(clientId, command)
 
     return true
 end
-commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", nil, nil, (settings.get("fs_game") == "legacy"))
+commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", nil, nil, (settings.get("fs_game") ~= "legacy"))
