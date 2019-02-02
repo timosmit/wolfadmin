@@ -36,6 +36,9 @@ sprees.RECORD_DEATH = 1
 sprees.RECORD_REVIVE = 2
 sprees.RECORD_NUM = 3
 
+sprees.SOUND_PLAY_SELF = 0
+sprees.SOUND_PLAY_PUBLIC = 1
+
 sprees.RECORD_KILL_NAME = "kill"
 sprees.RECORD_DEATH_NAME = "death"
 sprees.RECORD_REVIVE_NAME = "revive"
@@ -257,8 +260,12 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
                 currentSpree,
                 spreeNames[type])
 
-            if spreeMessage["sound"] and spreeMessage["sound"] ~= "" then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
+            if settings.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" then
+                if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
+                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
+                else
+                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..spreeMessage["sound"].."\";")
+                end
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
@@ -270,8 +277,12 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
                 currentSpree,
                 spreeNames[type])
 
-            if maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
+            if settings.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" then
+                if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
+                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
+                else
+                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..maxSpreeMessage["sound"].."\";")
+                end
             end
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")

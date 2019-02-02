@@ -62,4 +62,5 @@ bots = 1
 [sprees]
 file = "sprees.toml"
 messages = 7
+sounds = 3
 records = 1
