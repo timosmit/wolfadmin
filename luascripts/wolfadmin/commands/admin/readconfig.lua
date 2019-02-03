@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local banners = wolfa_requireModule("admin.banners")
 local rules = wolfa_requireModule("admin.rules")
 
 local auth = wolfa_requireModule("auth.auth")
@@ -29,11 +30,12 @@ local settings = wolfa_requireModule("util.settings")
 
 function commandReadconfig(clientId, command)
     settings.load()
+    local bannersCount = banners.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
     local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules, "..spreesCount.." sprees\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..spreesCount.." sprees\";")
 
     return false
 end
@@ -41,11 +43,12 @@ commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reload
 
 function commandReadconfig(clientId, command)
     settings.load()
+    local bannersCount = banners.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
     local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..greetingsCount.." greetings, "..rulesCount.." rules, "..spreesCount.." sprees\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..spreesCount.." sprees\";")
 
     return false
 end

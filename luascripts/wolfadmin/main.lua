@@ -17,6 +17,7 @@
 
 local admin
 local balancer
+local banners
 local bans
 local history
 local mutes
@@ -107,6 +108,7 @@ function et_InitGame(levelTime, randomSeed, restartMap)
 
     admin = wolfa_requireModule("admin.admin")
     balancer = wolfa_requireModule("admin.balancer")
+    banners = wolfa_requireModule("admin.banners")
     bans = wolfa_requireModule("admin.bans")
     history = wolfa_requireModule("admin.history")
     mutes = wolfa_requireModule("admin.mutes")

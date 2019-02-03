@@ -45,7 +45,9 @@ timeout = 0
 restricted = []
 
 [banners]
-welcome = "^dwolfadmin: ^9This server is running WolfAdmin, type ^7/wolfadmin ^9for more information."
+file = "banners.toml"
+interval = 120
+random = 1
 area = 3
 
 [rules]

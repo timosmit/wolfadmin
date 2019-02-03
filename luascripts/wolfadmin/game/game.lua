@@ -108,11 +108,4 @@ function game.onrevive(clientMedic, clientVictim)
 end
 events.handle("onPlayerRevive", game.onrevive)
 
-function game.onready(clientId, firstTime)
-    if firstTime and settings.get("g_welcomeMessage") ~= "" then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \""..settings.get("g_welcomeMessage").."\";")
-    end
-end
-events.handle("onPlayerReady", game.onready)
-
 return game
