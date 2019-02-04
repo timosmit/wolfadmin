@@ -22,7 +22,7 @@ local commands = wolfa_requireModule("commands.commands")
 local players = wolfa_requireModule("players.players")
 
 function commandCoinToss(clientId, command)
-    math.randomseed(os.time())
+    math.randomseed(et.trap_Milliseconds())
 
     local number = math.random(0, 99)
     local result
