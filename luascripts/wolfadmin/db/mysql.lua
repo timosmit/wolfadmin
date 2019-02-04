@@ -336,6 +336,10 @@ function mysql.removeMute(muteId)
     cur = assert(con:execute("DELETE FROM `mute` WHERE `id`="..tonumber(muteId)..""))
 end
 
+function mysql.removeExpiredMutes()
+    cur = assert(con:execute("DELETE FROM `mute` WHERE `expires`<="..os.time()))
+end
+
 function mysql.getMutesCount()
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `mute`"))
 
@@ -389,6 +393,10 @@ end
 
 function mysql.removeBan(banId)
     cur = assert(con:execute("DELETE FROM `ban` WHERE `id`="..tonumber(banId)..""))
+end
+
+function mysql.removeExpiredBans()
+    cur = assert(con:execute("DELETE FROM `ban` WHERE `expires`<="..os.time()))
 end
 
 function mysql.getBansCount()

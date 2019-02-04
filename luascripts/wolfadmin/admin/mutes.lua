@@ -24,7 +24,8 @@ local timers = wolfa_requireModule("util.timers")
 
 local mutes = {}
 
-local muteTimer
+local storedMuteTimer
+local liveMuteTimer
 
 function mutes.get(muteId)
     return db.getMute(muteId)
@@ -64,7 +65,11 @@ function mutes.removeByClient(clientId)
     end
 end
 
-function mutes.checkUnmutes()
+function mutes.checkStoredMutes()
+    db.removeExpiredMutes()
+end
+
+function mutes.checkLiveMutes()
     for clientId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
         if players.isMuted(clientId) and players.getMuteExpiresAt(clientId) < os.time() then
             mutes.removeByClient(clientId)
@@ -75,7 +80,8 @@ function mutes.checkUnmutes()
 end
 
 function mutes.onInit()
-    muteTimer = timers.add(mutes.checkUnmutes, 1000, 0, false, false)
+    storedMuteTimer = timers.add(mutes.checkStoredMutes, 60000, 0, false, false)
+    liveMuteTimer = timers.add(mutes.checkLiveMutes, 1000, 0, false, false)
 end
 events.handle("onGameInit", mutes.onInit)
 
