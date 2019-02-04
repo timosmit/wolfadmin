@@ -39,16 +39,24 @@ function banners.print(clientId, banner)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..target.." \"^dbanner: ^9"..banner["text"].."\";")
 end
 
-function banners.autoprint()
-    if bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_ALL) then
+function banners.nextBanner(random)
+    if #infoBanners == 0 then
+        nextBannerId = 0
+    elseif random then
         nextBannerId = math.random(#infoBanners)
     elseif nextBannerId ~= #infoBanners then
         nextBannerId = nextBannerId + 1
     else
-        nextBannerId = 0
+        nextBannerId = 1
+    end
+end
+
+function banners.autoprint()
+    if nextBannerId ~= 0 and infoBanners[nextBannerId] then
+        banners.print(nil, infoBanners[nextBannerId])
     end
 
-    banners.print(nil, infoBanners[nextBannerId])
+    banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_ALL))
 end
 
 function banners.load()
@@ -105,9 +113,7 @@ events.handle("onPlayerReady", banners.onPlayerReady)
 function banners.onGameInit(levelTime, randomSeed, restartMap)
     banners.load()
 
-    if bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_START) then
-        nextBannerId = math.random(#infoBanners)
-    end
+    banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_START))
 
     bannerTimer = timers.add(banners.autoprint, settings.get("g_bannerInterval") * 1000, 0)
 end
