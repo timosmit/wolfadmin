@@ -131,6 +131,7 @@ events.add("onPlayerRevive")
 
 events.add("onPlayerSkillUpdate")
 
+events.add("onPlayerCombi")
 events.add("onPlayerSpree")
 events.add("onPlayerSpreeEnd")
 

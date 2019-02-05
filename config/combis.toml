@@ -1,0 +1,24 @@
+[[kill]]
+amount = 3
+msg    = "^7!!!! ^1MULTI KILL ^7> ^7[N] ^7< ^1MULTI KILL ^7!!!!"
+sound  = "multikill.wav"
+
+[[kill]]
+amount = 4
+msg    = "^7!!!! ^1ULTRA KILL ^7> ^7[N] ^7< ^ULTRA KILL ^7!!!!"
+sound  = "ultrakill.wav"
+
+[[kill]]
+amount = 5
+msg    = "^7!!!! ^1MONSTER KILL ^7> ^7[N] ^7< ^1MONSTER KILL ^7!!!!"
+sound  = "monsterkill.wav"
+
+[[kill]]
+amount = 6
+msg    = "^7!!!! ^1MEGA KILL ^7> ^7[N] ^7< ^1MEGA KILL ^7!!!!"
+sound  = "megakill.wav"
+
+[[kill]]
+amount = 7
+msg    = "^7!!!! ^1LUDICROUS KILL ^7> ^7[N] ^7< ^1LUDICROUS KILL ^7!!!!"
+sound  = "ludicrouskill.wav"

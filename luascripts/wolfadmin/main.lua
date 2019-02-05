@@ -31,6 +31,7 @@ local db
 local commands
 
 local bots
+local combis
 local fireteams
 local game
 local sprees
@@ -124,6 +125,7 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     commands = wolfa_requireModule("commands.commands")
 
     bots = wolfa_requireModule("game.bots")
+    combis = wolfa_requireModule("game.combis")
     game = wolfa_requireModule("game.game")
     fireteams = wolfa_requireModule("game.fireteams")
     sprees = wolfa_requireModule("game.sprees")

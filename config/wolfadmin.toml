@@ -68,6 +68,12 @@ bots = 1
 [records]
 bots = 1
 
+[combis]
+file = "combis.toml"
+messages = 3
+sounds = 3
+time = 1000
+
 [sprees]
 file = "sprees.toml"
 messages = 7

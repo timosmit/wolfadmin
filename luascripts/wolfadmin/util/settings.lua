@@ -27,11 +27,15 @@ local data = {
     ["g_fileCensor"] = "censor.toml",
     ["g_fileGreetings"] = "greetings.toml",
     ["g_fileRules"] = "rules.toml",
+    ["g_fileCombis"] = "combis.toml",
     ["g_fileSprees"] = "sprees.toml",
     ["g_playerHistory"] = 1,
     ["g_censorMode"] = 1,
     ["g_censorMute"] = 60,
     ["g_censorKick"] = 1,
+    ["g_combiMessages"] = 3,
+    ["g_combiSounds"] = 3,
+    ["g_combiTime"] = 1000,
     ["g_spreeMessages"] = 7,
     ["g_spreeSounds"] = 3,
     ["g_spreeRecords"] = 1,
@@ -124,6 +128,12 @@ local cfgStructure = {
     },
     ["records"] = {
         ["bots"] = "g_botRecords"
+    },
+    ["combis"] = {
+        ["file"] = "g_fileCombis",
+        ["messages"] = "g_combiMessages",
+        ["sounds"] = "g_combiSounds",
+        ["time"] = "g_combiTime"
     },
     ["sprees"] = {
         ["file"] = "g_fileSprees",
