@@ -30,8 +30,10 @@ local censor = {}
 local words = {}
 local names = {}
 
-function censor.filterMessage(message)
+function censor.filterMessage(...)
     local censored = false
+
+    local message = table.concat({...}, " ")
 
     for _, word in ipairs(words) do
         local occurrences
