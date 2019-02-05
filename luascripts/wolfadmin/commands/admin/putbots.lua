@@ -24,7 +24,7 @@ local bots = wolfa_requireModule("game.bots")
 
 function commandPutBots(clientId, command, team)
     if team == nil and team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.getadmin("vmute")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.getadmin("putbots")["syntax"].."\";")
         
         return true
     end

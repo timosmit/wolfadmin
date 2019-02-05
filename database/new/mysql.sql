@@ -258,7 +258,6 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'novote');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'nocensor');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'nobalance');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'novotelimit');
-INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'noreason');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'teamcmds');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'silentcmds');
@@ -278,6 +277,7 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listhistory
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listwarns');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listbans');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listaliases');
+INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listusers');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'liststats');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'finger');
 

@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2017 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,14 +16,26 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
+
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
 
-function commandShuffleSR(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
+local game = wolfa_requireModule("game.game")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
+function commandNews(clientId, command, map)
+    map = map and map or game.getMap()
+
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile("sound/vo/"..map.."/news_"..map..".wav", et.FS_READ)
+
+    if fileLength == -1 then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dnews: ^9file news_"..map.." does not exist.\";")
+
+        return 0
+    end
+
+    et.trap_FS_FCloseFile(fileDescriptor)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/vo/"..map.."/news_"..map..".wav\";")
 
     return true
 end
-commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", nil, nil, (settings.get("fs_game") ~= "legacy"))
+commands.addadmin("news", commandNews, auth.PERM_NEWS, "play the map's news reel or another map's news reel if specified", "^9(^hmapname^9)")

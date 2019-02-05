@@ -35,7 +35,7 @@ function commandListHistory(clientId, command, victim, offset)
 
         return true
     elseif victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory usage: "..commands.getadmin("showwarns")["syntax"].."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory usage: "..commands.getadmin("showhistory")["syntax"].."\";")
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then

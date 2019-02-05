@@ -178,7 +178,7 @@ function mysql.removeLevelPermission(levelId, permission)
 end
 
 function mysql.copyLevelPermissions(levelId, newLevelId)
-    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId)))
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT "..tonumber(newLevelId).." AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." EXCEPT SELECT `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(newLevelId)))
 end
 
 function mysql.removeLevelPermissions(levelId)
@@ -336,6 +336,10 @@ function mysql.removeMute(muteId)
     cur = assert(con:execute("DELETE FROM `mute` WHERE `id`="..tonumber(muteId)..""))
 end
 
+function mysql.removeExpiredMutes()
+    cur = assert(con:execute("DELETE FROM `mute` WHERE `expires`<="..os.time()))
+end
+
 function mysql.getMutesCount()
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `mute`"))
 
@@ -389,6 +393,10 @@ end
 
 function mysql.removeBan(banId)
     cur = assert(con:execute("DELETE FROM `ban` WHERE `id`="..tonumber(banId)..""))
+end
+
+function mysql.removeExpiredBans()
+    cur = assert(con:execute("DELETE FROM `ban` WHERE `expires`<="..os.time()))
 end
 
 function mysql.getBansCount()

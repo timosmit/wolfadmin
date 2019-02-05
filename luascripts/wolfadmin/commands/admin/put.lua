@@ -25,7 +25,7 @@ local util = wolfa_requireModule("util.util")
 local constants = wolfa_requireModule("util.constants")
 local settings = wolfa_requireModule("util.settings")
 
-function commandPlayerLock(clientId, command, victim, team)
+function commandPlayerPut(clientId, command, victim, team)
     local cmdClient
 
     if victim == nil or team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC) then
@@ -68,4 +68,4 @@ function commandPlayerLock(clientId, command, victim, team)
 
     return true
 end
-commands.addadmin("put", commandPlayerLock, auth.PERM_PUT, "locks a player to a specific team", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("put", commandPlayerPut, auth.PERM_PUT, "move a player to a specified team", "^9[^3name|slot#^9] [^3r|b|s^9]", nil, (settings.get("g_standalone") == 0))

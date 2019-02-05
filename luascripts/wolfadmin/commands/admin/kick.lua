@@ -70,11 +70,13 @@ function commandKick(clientId, command, victim, ...)
         return true
     end
 
-    admin.kickPlayer(cmdClient, clientId, reason)
-
     if settings.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "kick", reason)
     end
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been kicked\";")
+
+    admin.kickPlayer(cmdClient, clientId, reason)
 
     return true
 end

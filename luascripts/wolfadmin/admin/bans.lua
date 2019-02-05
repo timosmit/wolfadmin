@@ -19,7 +19,12 @@ local db = wolfa_requireModule("db.db")
 
 local players = wolfa_requireModule("players.players")
 
+local events = wolfa_requireModule("util.events")
+local timers = wolfa_requireModule("util.timers")
+
 local bans = {}
+
+local storedBanTimer
 
 function bans.get(banId)
     return db.getBan(banId)
@@ -47,5 +52,14 @@ end
 function bans.remove(banId)
     db.removeBan(banId)
 end
+
+function bans.checkStoredBans()
+    db.removeExpiredBans()
+end
+
+function bans.onInit()
+    storedBanTimer = timers.add(bans.checkStoredBans, 60000, 0, false, false)
+end
+events.handle("onGameInit", bans.onInit)
 
 return bans
