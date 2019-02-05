@@ -1,0 +1,28 @@
+# words
+[[word]]
+pattern = "f[%a%p]-ck" # fuck and similar
+
+[[word]]
+pattern = "homo"
+
+[[word]]
+pattern = "gay"
+
+[[word]]
+pattern = "fag"
+
+[[word]]
+pattern = "shit"
+
+[[word]]
+pattern = "bitch"
+
+[[word]]
+pattern = "asshole"
+
+# names
+[[name]]
+pattern = "hitler"
+
+[[name]]
+pattern = "osama"
