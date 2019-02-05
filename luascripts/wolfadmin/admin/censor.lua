@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local admin = wolfa_requireModule("admin.admin")
 local mutes = wolfa_requireModule("admin.mutes")
 local history = wolfa_requireModule("admin.history")
 
@@ -104,8 +105,33 @@ function censor.clear()
     names = {}
 end
 
+function censor.onClientConnectAttempt(clientId, firstTime, isBot)
+    if settings.get("g_standalone") ~= 0 then
+        local clientInfo = et.trap_GetUserinfo(clientId)
+
+        for _, name in ipairs(names) do
+            if string.find(et.Info_ValueForKey(clientInfo, "name"), name["pattern"]) then
+                return "\n\nYou have been kicked, Reason: Name not allowed."
+            end
+        end
+    end
+end
+
+function censor.onClientNameChange(clientId, oldName, newName)
+    for _, name in ipairs(names) do
+        if string.find(newName, name["pattern"]) then
+            admin.kickPlayer(clientId, -1337, "Name not allowed.")
+        end
+    end
+end
+
 function censor.oninit(levelTime, randomSeed, restartMap)
-    censor.load()
+    if settings.get("g_standalone") ~= 0 then
+        censor.load()
+
+        events.handle("onClientConnectAttempt", censor.onClientConnectAttempt)
+        events.handle("onClientNameChange", censor.onClientNameChange)
+    end
 end
 events.handle("onGameInit", censor.oninit)
 
