@@ -30,6 +30,7 @@ maxbots = 10
 [admin]
 history = 1
 maxrenames = 80
+maxteamdamage = 0.8
 
 [balancer]
 mindif = 2

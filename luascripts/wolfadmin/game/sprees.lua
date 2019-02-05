@@ -345,31 +345,31 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     end
 end
 
-function sprees.onPlayerDeath(victimId, killerId, mod)
-    if killerId == 1022 then -- killed by map
+function sprees.onPlayerDeath(victimId, attackerId, meansOfDeath)
+    if attackerId == 1022 then -- killed by map
         events.trigger("onPlayerSpreeEnd", victimId)
         events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
-    elseif victimId == killerId then -- suicides
+    elseif victimId == attackerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
         if not players.isConnected(victimId) then return end
 
-        events.trigger("onPlayerSpreeEnd", victimId, killerId)
+        events.trigger("onPlayerSpreeEnd", victimId, attackerId)
         events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
     else -- regular kills
-        if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(killerId, "sess.sessionTeam") then
+        if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(attackerId, "sess.sessionTeam") then
             -- teamkill handling
-            events.trigger("onPlayerSpreeEnd", victimId, killerId)
+            events.trigger("onPlayerSpreeEnd", victimId, attackerId)
             events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
         else
-            events.trigger("onPlayerSpreeEnd", killerId, victimId, sprees.RECORD_DEATH)
-            events.trigger("onPlayerSpree", killerId, sprees.RECORD_KILL)
+            events.trigger("onPlayerSpreeEnd", attackerId, victimId, sprees.RECORD_DEATH)
+            events.trigger("onPlayerSpree", attackerId, sprees.RECORD_KILL)
 
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
             if not players.isConnected(victimId) then return end
 
-            events.trigger("onPlayerSpreeEnd", victimId, killerId)
+            events.trigger("onPlayerSpreeEnd", victimId, attackerId)
             events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
         end
     end

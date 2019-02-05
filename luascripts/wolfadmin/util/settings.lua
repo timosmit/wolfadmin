@@ -49,6 +49,7 @@ local data = {
     ["g_voteNextMapTimeout"] = 0,
     ["g_restrictedVotes"] = "",
     ["g_renameLimit"] = 80,
+    ["g_maxTeamDamage"] = 80,
     ["g_debugWolfAdmin"] = 0,
     ["omnibot_maxbots"] = 10,
     ["db_type"] = "sqlite3",
@@ -85,7 +86,8 @@ local cfgStructure = {
     },
     ["admin"] = {
         ["history"] = "g_playerHistory",
-        ["maxrenames"] = "g_renameLimit"
+        ["maxrenames"] = "g_renameLimit",
+        ["maxteamdamage"] = "g_maxTeamDamage"
     },
     ["balancer"] = {
         ["mindif"] = "g_evenerMinDifference",

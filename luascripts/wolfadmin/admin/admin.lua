@@ -27,6 +27,16 @@ local admin = {}
 
 local playerRenames = {}
 
+function admin.checkDamage(clientId)
+    local teamDamage = et.gentity_get(clientId, "sess.team_damage_given")
+    local totalDamage = teamDamage + et.gentity_get(clientId, "sess.damage_given")
+    local teamDamagePercentage = teamDamage / totalDamage
+
+    if teamDamage > 250 and totalDamage > 500 and teamDamagePercentage > settings.get("g_maxTeamDamage") then
+        admin.kickPlayer(clientId, -1337, "Too much team damage.")
+    end
+end
+
 function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
@@ -88,6 +98,26 @@ function admin.onClientDisconnect(clientId)
     end
 end
 events.handle("onClientDisconnect", admin.onClientDisconnect)
+
+function admin.onPlayerDamage(victimId, attackerId, damage, damageFlags, meansOfDeath)
+    local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
+    local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+
+    if attackerId and attackerId ~= victimId and attackerTeam == victimTeam then
+        admin.checkDamage(attackerId)
+    end
+end
+events.handle("onPlayerDamage", admin.onPlayerDamage)
+
+function admin.onPlayerDeath(victimId, attackerId, meansOfDeath)
+    local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
+    local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+
+    if attackerId and attackerId ~= victimId and attackerTeam == victimTeam then
+        admin.checkDamage(attackerId)
+    end
+end
+events.handle("onPlayerDeath", admin.onPlayerDeath)
 
 function admin.onClientNameChange(clientId, oldName, newName)
     -- rename filter

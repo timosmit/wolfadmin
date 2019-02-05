@@ -216,8 +216,13 @@ function et_Print(consoleText)
     end
 end
 
-function et_Obituary(victimId, killerId, mod)
-    events.trigger("onPlayerDeath", victimId, killerId, mod)
+-- legacy only
+function et_Damage(victimId, attackerId, damage, damageFlags, meansOfDeath)
+    events.trigger("onPlayerDamage", victimId, attackerId, damage, damageFlags, meansOfDeath)
+end
+
+function et_Obituary(victimId, attackerId, meansOfDeath)
+    events.trigger("onPlayerDeath", victimId, attackerId, meansOfDeath)
 end
 
 function et_ClientSpawn(clientId, revived)
