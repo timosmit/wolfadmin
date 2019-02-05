@@ -100,21 +100,33 @@ end
 events.handle("onClientDisconnect", admin.onClientDisconnect)
 
 function admin.onPlayerDamage(victimId, attackerId, damage, damageFlags, meansOfDeath)
-    local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
-    local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+    local attackerType = tonumber(et.gentity_get(attackerId, "s.eType"))
+    local victimType = tonumber(et.gentity_get(victimId, "s.eType"))
 
-    if attackerId and attackerId ~= victimId and attackerTeam == victimTeam then
-        admin.checkDamage(attackerId)
+    -- FIXME: use constant ET_PLAYER
+    if attackerId and victimId and attackerType == 1 and victimType == 1 and attackerId ~= victimId then
+        local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
+        local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+
+        if attackerTeam == victimTeam then
+            admin.checkDamage(attackerId)
+        end
     end
 end
 events.handle("onPlayerDamage", admin.onPlayerDamage)
 
 function admin.onPlayerDeath(victimId, attackerId, meansOfDeath)
-    local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
-    local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+    local attackerType = tonumber(et.gentity_get(attackerId, "s.eType"))
+    local victimType = tonumber(et.gentity_get(victimId, "s.eType"))
 
-    if attackerId and attackerId ~= victimId and attackerTeam == victimTeam then
-        admin.checkDamage(attackerId)
+    -- FIXME: use constant ET_PLAYER
+    if attackerId and victimId and attackerType == 1 and victimType == 1 and attackerId ~= victimId then
+        local victimTeam = tonumber(et.gentity_get(victimId, "sess.sessionTeam"))
+        local attackerTeam = tonumber(et.gentity_get(attackerId, "sess.sessionTeam"))
+
+        if attackerTeam == victimTeam then
+            admin.checkDamage(attackerId)
+        end
     end
 end
 events.handle("onPlayerDeath", admin.onPlayerDeath)
