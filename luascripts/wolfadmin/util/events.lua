@@ -125,6 +125,7 @@ events.add("onGameShutdown")
 
 events.add("onPlayerReady")
 events.add("onPlayerSpawn")
+events.add("onPlayerDamage")
 events.add("onPlayerDeath")
 events.add("onPlayerRevive")
 
