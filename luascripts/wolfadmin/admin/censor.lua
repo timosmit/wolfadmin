@@ -112,6 +112,10 @@ function censor.clear()
 end
 
 function censor.onClientConnectAttempt(clientId, firstTime, isBot)
+    if auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+        return
+    end
+
     local clientInfo = et.trap_GetUserinfo(clientId)
 
     local censored, censoredName = censor.filterName(et.Info_ValueForKey(clientInfo, "name"))
@@ -130,6 +134,10 @@ function censor.onClientConnectAttempt(clientId, firstTime, isBot)
 end
 
 function censor.onClientNameChange(clientId, oldName, newName)
+    if auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+        return
+    end
+
     local censored, censoredName = censor.filterName(newName)
 
     if censored then

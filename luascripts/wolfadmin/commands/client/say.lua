@@ -17,6 +17,8 @@
 
 local censor = wolfa_requireModule("admin.censor")
 
+local auth = wolfa_requireModule("auth.auth")
+
 local commands = wolfa_requireModule("commands.commands")
 
 local players = wolfa_requireModule("players.players")
@@ -42,14 +44,16 @@ function commandSay(clientId, command, ...)
         return true
     end
 
-    local censored, message = censor.filterMessage(...)
+    if not auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+        local censored, message = censor.filterMessage(...)
 
-    if censored and settings.get("g_censorMode") ~= 0 then
-        censor.punishClient(clientId)
+        if censored and settings.get("g_censorMode") ~= 0 then
+            censor.punishClient(clientId)
 
-        et.G_Say(clientId, util.getChatFromCommand(command), message)
+            et.G_Say(clientId, util.getChatFromCommand(command), message)
 
-        return true
+            return true
+        end
     end
 
     if settings.get("fs_game") == "legacy" then
