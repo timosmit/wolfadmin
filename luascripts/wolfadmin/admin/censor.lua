@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local auth = wolfa_requireModule("auth.auth")
+
 local admin = wolfa_requireModule("admin.admin")
 local mutes = wolfa_requireModule("admin.mutes")
 local history = wolfa_requireModule("admin.history")
