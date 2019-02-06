@@ -31,20 +31,26 @@ local censor = {}
 local words = {}
 local names = {}
 
-function censor.filterMessage(...)
+function censor.filter(dictionary, subject)
     local censored = false
 
-    local message = table.concat({...}, " ")
-
-    for _, word in ipairs(words) do
+    for _, item in ipairs(dictionary) do
         local occurrences
 
-        message, occurrences = string.gsub(message, word["pattern"], "*censor*")
+        subject, occurrences = string.gsub(subject, item["pattern"], "*censor*")
 
         censored = (censored or occurrences > 0) and true or false
     end
 
-    return censored, message
+    return censored, subject
+end
+
+function censor.filterName(name)
+    return censor.filter(names, name)
+end
+
+function censor.filterMessage(...)
+    return censor.filter(words, table.concat({...}, " "))
 end
 
 function censor.punishClient(clientId)
@@ -106,21 +112,34 @@ function censor.clear()
 end
 
 function censor.onClientConnectAttempt(clientId, firstTime, isBot)
-    if settings.get("g_standalone") ~= 0 then
-        local clientInfo = et.trap_GetUserinfo(clientId)
+    local clientInfo = et.trap_GetUserinfo(clientId)
 
-        for _, name in ipairs(names) do
-            if string.find(et.Info_ValueForKey(clientInfo, "name"), name["pattern"]) then
-                return "\n\nYou have been kicked, Reason: Name not allowed."
-            end
+    local censored, censoredName = censor.filterName(et.Info_ValueForKey(clientInfo, "name"))
+
+    if censored then
+        if settings.get("g_censorKick") ~= 0 then
+            return "\n\nYou have been kicked, Reason: Name not allowed."
+        else
+            clientInfo = et.Info_SetValueForKey(clientInfo, "name", censoredName)
+            et.trap_SetUserinfo(clientId, clientInfo)
+            et.ClientUserinfoChanged(clientId)
+
+            return
         end
     end
 end
 
 function censor.onClientNameChange(clientId, oldName, newName)
-    for _, name in ipairs(names) do
-        if string.find(newName, name["pattern"]) then
+    local censored, censoredName = censor.filterName(newName)
+
+    if censored then
+        if settings.get("g_censorKick") ~= 0 then
             admin.kickPlayer(clientId, -1337, "Name not allowed.")
+        else
+            local clientInfo = et.trap_GetUserinfo(clientId)
+            clientInfo = et.Info_SetValueForKey(clientInfo, "name", censoredName)
+            et.trap_SetUserinfo(clientId, clientInfo)
+            et.ClientUserinfoChanged(clientId)
         end
     end
 end
