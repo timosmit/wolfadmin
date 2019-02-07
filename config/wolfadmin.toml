@@ -40,8 +40,12 @@ interval = 30
 
 [censor]
 file = "censor.toml"
-mode = 1
+enabled = 1
 mute = 60
+burn = 1
+slap = 0
+kill = 0
+gib = 0
 kick = 1
 
 [game]

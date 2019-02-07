@@ -44,10 +44,10 @@ function commandSay(clientId, command, ...)
         return true
     end
 
-    if not auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+    if settings.get("g_censor") ~= 0 and not auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
         local censored, message = censor.filterMessage(...)
 
-        if censored and settings.get("g_censorMode") ~= 0 then
+        if censored then
             censor.punishClient(clientId)
 
             et.G_Say(clientId, util.getChatFromCommand(command), message)

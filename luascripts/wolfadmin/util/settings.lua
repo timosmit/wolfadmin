@@ -30,8 +30,12 @@ local data = {
     ["g_fileCombis"] = "combis.toml",
     ["g_fileSprees"] = "sprees.toml",
     ["g_playerHistory"] = 1,
-    ["g_censorMode"] = 1,
+    ["g_censor"] = 1,
     ["g_censorMute"] = 60,
+    ["g_censorBurn"] = 1,
+    ["g_censorSlap"] = 0,
+    ["g_censorKill"] = 0,
+    ["g_censorGib"] = 0,
     ["g_censorKick"] = 1,
     ["g_combiMessages"] = 3,
     ["g_combiSounds"] = 3,
@@ -101,8 +105,12 @@ local cfgStructure = {
     },
     ["censor"] = {
         ["file"] = "g_fileCensor",
-        ["mode"] = "g_censorMode",
+        ["enabled"] = "g_censor",
         ["mute"] = "g_censorMute",
+        ["burn"] = "g_censorBurn",
+        ["slap"] = "g_censorSlap",
+        ["kill"] = "g_censorKill",
+        ["gib"] = "g_censorGib",
         ["kick"] = "g_censorKick"
     },
     ["game"] = {
