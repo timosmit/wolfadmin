@@ -19,6 +19,7 @@ local db = wolfa_requireModule("db.db")
 
 local players = wolfa_requireModule("players.players")
 
+local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
 local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
@@ -42,6 +43,10 @@ function admin.putPlayer(clientId, teamId)
 end
 
 function admin.burnPlayer(clientId)
+    if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or et.gentity_get(clientId, "health") <= 0 then
+        return
+    end
+
     local levelTime = et.trap_Milliseconds()
 
     et.G_Damage(clientId, clientId, clientId, 5, 0, 17)
@@ -53,6 +58,10 @@ function admin.burnPlayer(clientId)
 end
 
 function admin.slapPlayer(clientId, damage)
+    if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or et.gentity_get(clientId, "health") <= 0 then
+        return
+    end
+
     local newHealth = et.gentity_get(clientId, "health") - damage
 
     if newHealth < 1 then
@@ -65,10 +74,18 @@ function admin.slapPlayer(clientId, damage)
 end
 
 function admin.killPlayer(clientId)
+    if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or et.gentity_get(clientId, "health") <= 0 then
+        return
+    end
+
     et.gentity_set(clientId, "health", 0)
 end
 
 function admin.gibPlayer(clientId)
+    if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or et.gentity_get(clientId, "health") <= 0 then
+        return
+    end
+
     -- GENTITYNUM_BITS    10                      10
     -- MAX_GENTITIES      1 << GENTITYNUM_BITS    1024
     -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
