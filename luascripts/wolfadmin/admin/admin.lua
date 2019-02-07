@@ -41,6 +41,40 @@ function admin.putPlayer(clientId, teamId)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam "..clientId.." "..util.getTeamCode(teamId)..";")
 end
 
+function admin.burnPlayer(clientId)
+    local levelTime = et.trap_Milliseconds()
+
+    et.G_Damage(clientId, clientId, clientId, 5, 0, 17)
+
+    et.gentity_set(clientId, "s.onFireStart", levelTime)
+    et.gentity_set(clientId, "s.onFireEnd", levelTime + 323000)
+    outputDebug(levelTime)
+    outputDebug(et.gentity_get(clientId, "s.onFireEnd"))
+end
+
+function admin.slapPlayer(clientId, damage)
+    local newHealth = et.gentity_get(clientId, "health") - damage
+
+    if newHealth < 1 then
+        newHealth = 1
+    end
+
+    et.gentity_set(clientId, "health", newHealth)
+
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/player/land_hurt.wav\";")
+end
+
+function admin.killPlayer(clientId)
+    et.gentity_set(clientId, "health", 0)
+end
+
+function admin.gibPlayer(clientId)
+    -- GENTITYNUM_BITS    10                      10
+    -- MAX_GENTITIES      1 << GENTITYNUM_BITS    1024
+    -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
+    et.G_Damage(clientId, 0, 1024, 500, 0, 0) -- MOD_UNKNOWN = 0
+end
+
 function admin.kickPlayer(victimId, invokerId, reason)
     et.trap_DropClient(victimId, "You have been kicked, Reason: "..reason, 0)
 end

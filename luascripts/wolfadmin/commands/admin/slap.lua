@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local admin = wolfa_requireModule("admin.admin")
+
 local auth = wolfa_requireModule("auth.auth")
 
 local commands = wolfa_requireModule("commands.commands")
@@ -65,16 +67,9 @@ function commandSlap(clientId, command, victim)
         return true
     end
 
-    local newHealth = et.gentity_get(cmdClient, "health") - 20
-
-    if newHealth < 1 then
-        newHealth = 1
-    end
-
-    et.gentity_set(cmdClient, "health", newHealth)
+    admin.slap(cmdClient, 20)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(cmdClient).." ^9was slapped.\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..cmdClient.." \"sound/player/land_hurt.wav\";")
 
     return true
 end

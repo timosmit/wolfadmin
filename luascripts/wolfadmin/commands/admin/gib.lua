@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local admin = wolfa_requireModule("admin.admin")
+
 local auth = wolfa_requireModule("auth.auth")
 
 local commands = wolfa_requireModule("commands.commands")
@@ -65,10 +67,7 @@ function commandGib(clientId, command, victim)
         return true
     end
 
-    -- GENTITYNUM_BITS    10                      10
-    -- MAX_GENTITIES      1 << GENTITYNUM_BITS    1024
-    -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
-    et.G_Damage(cmdClient, 0, 1024, 500, 0, 0) -- MOD_UNKNOWN = 0
+    admin.gibPlayer(cmdClient)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.\";")
 
