@@ -59,7 +59,7 @@ area = 3
 bots = 1
 
 [records]
-bots = 1
+bots = 0
 
 [sprees]
 file = "sprees.toml"

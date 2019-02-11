@@ -31,8 +31,8 @@ local toml = wolfa_requireLib("toml")
 
 local sprees = {}
 
-sprees.RECORD_BOTS = 1
-sprees.RECORD_PLAYER_BOTSON = 2
+sprees.RECORD_BOTS_PLAYING = 1
+sprees.RECORD_BOTS = 2
 
 sprees.SOUND_PLAY_SELF = 0
 sprees.SOUND_PLAY_PUBLIC = 1
@@ -237,14 +237,15 @@ function sprees.onGameStateChange(gameState)
     end
 end
 
-function sprees.onPlayerSpree(clientId, type, sourceId)
+function sprees.onPlayerSpree(clientId, causeId, type)
     playerSprees[clientId][type] = playerSprees[clientId][type] + 1
 
     local currentSpree = playerSprees[clientId][type]
 
     if db.isConnected() and settings.get("g_spreeRecords") ~= 0 and
-            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_PLAYER_BOTSON) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
+            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS_PLAYING) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
             (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(clientId)) and
+            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(causeId)) and
             (not currentRecords[type] or currentSpree > currentRecords[type]["record"]) then
         currentRecords[type] = {
             ["player"] = db.getPlayerId(clientId),
@@ -352,35 +353,35 @@ end
 function sprees.onPlayerDeath(victimId, killerId, mod)
     if killerId == 1022 then -- killed by map
         events.trigger("onPlayerSpreeEnd", victimId)
-        events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
+        events.trigger("onPlayerSpree", victimId, nil, sprees.TYPE_DEATH)
     elseif victimId == killerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
         if not players.isConnected(victimId) then return end
 
         events.trigger("onPlayerSpreeEnd", victimId, killerId)
-        events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
+        events.trigger("onPlayerSpree", victimId, killerId, sprees.TYPE_DEATH)
     else -- regular kills
         if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(killerId, "sess.sessionTeam") then
             -- teamkill handling
             events.trigger("onPlayerSpreeEnd", victimId, killerId)
-            events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
+            events.trigger("onPlayerSpree", victimId, killerId, sprees.TYPE_DEATH)
         else
             events.trigger("onPlayerSpreeEnd", killerId, victimId, sprees.TYPE_DEATH)
-            events.trigger("onPlayerSpree", killerId, sprees.TYPE_KILL)
+            events.trigger("onPlayerSpree", killerId, victimId, sprees.TYPE_KILL)
 
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
             if not players.isConnected(victimId) then return end
 
             events.trigger("onPlayerSpreeEnd", victimId, killerId)
-            events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
+            events.trigger("onPlayerSpree", victimId, killerId, sprees.TYPE_DEATH)
         end
     end
 end
 
 function sprees.onPlayerRevive(clientMedic, clientVictim)
-    events.trigger("onPlayerSpree", clientMedic, sprees.TYPE_REVIVE)
+    events.trigger("onPlayerSpree", clientMedic, clientVictim, sprees.TYPE_REVIVE)
 end
 
 return sprees
