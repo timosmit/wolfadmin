@@ -31,28 +31,31 @@ local toml = wolfa_requireLib("toml")
 
 local sprees = {}
 
-sprees.RECORD_KILL = 0
-sprees.RECORD_DEATH = 1
-sprees.RECORD_REVIVE = 2
-sprees.RECORD_NUM = 3
+sprees.RECORD_BOTS = 1
+sprees.RECORD_PLAYER_BOTSON = 2
 
 sprees.SOUND_PLAY_SELF = 0
 sprees.SOUND_PLAY_PUBLIC = 1
 
-sprees.RECORD_KILL_NAME = "kill"
-sprees.RECORD_DEATH_NAME = "death"
-sprees.RECORD_REVIVE_NAME = "revive"
+sprees.TYPE_KILL = 0
+sprees.TYPE_DEATH = 1
+sprees.TYPE_REVIVE = 2
+sprees.TYPE_NUM = 3
+
+sprees.TYPE_KILL_NAME = "kill"
+sprees.TYPE_DEATH_NAME = "death"
+sprees.TYPE_REVIVE_NAME = "revive"
 
 local spreeNames = {
-    [sprees.RECORD_KILL] = sprees.RECORD_KILL_NAME,
-    [sprees.RECORD_DEATH] = sprees.RECORD_DEATH_NAME,
-    [sprees.RECORD_REVIVE] = sprees.RECORD_REVIVE_NAME
+    [sprees.TYPE_KILL] = sprees.TYPE_KILL_NAME,
+    [sprees.TYPE_DEATH] = sprees.TYPE_DEATH_NAME,
+    [sprees.TYPE_REVIVE] = sprees.TYPE_REVIVE_NAME
 }
 
 local spreeTypes = {
-    [sprees.RECORD_KILL_NAME] = sprees.RECORD_KILL,
-    [sprees.RECORD_DEATH_NAME] = sprees.RECORD_DEATH,
-    [sprees.RECORD_REVIVE_NAME] = sprees.RECORD_REVIVE
+    [sprees.TYPE_KILL_NAME] = sprees.TYPE_KILL,
+    [sprees.TYPE_DEATH_NAME] = sprees.TYPE_DEATH,
+    [sprees.TYPE_REVIVE_NAME] = sprees.TYPE_REVIVE
 }
 
 local spreeMessages = {}
@@ -106,7 +109,7 @@ function sprees.load()
         end
     end
 
-    for i = 0, sprees.RECORD_NUM - 1 do
+    for i = 0, sprees.TYPE_NUM - 1 do
         spreeMessages[i] = {}
         spreeMessagesByType[i] = {}
     end
@@ -174,7 +177,7 @@ end
 
 function sprees.save()
     if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
-        for i = 0, sprees.RECORD_NUM - 1 do
+        for i = 0, sprees.TYPE_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
                 if db.getRecord(currentMapId, i) then
                     db.updateRecord(currentMapId, os.time(), i, currentRecords[i]["record"], currentRecords[i]["player"])
@@ -188,7 +191,7 @@ end
 
 function sprees.printRecords()
     if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
-        for i = 0, sprees.RECORD_NUM - 1 do
+        for i = 0, sprees.TYPE_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getLastAlias(currentRecords[i]["player"])["alias"].."^9.\";")
             end
@@ -206,7 +209,7 @@ events.handle("onGameInit", sprees.onGameInit)
 function sprees.onClientConnect(clientId, firstTime, isBot)
     playerSprees[clientId] = {}
 
-    for i = 0, sprees.RECORD_NUM - 1 do
+    for i = 0, sprees.TYPE_NUM - 1 do
         playerSprees[clientId][i] = 0
     end
 end
@@ -240,7 +243,8 @@ function sprees.onPlayerSpree(clientId, type, sourceId)
     local currentSpree = playerSprees[clientId][type]
 
     if db.isConnected() and settings.get("g_spreeRecords") ~= 0 and
-            (settings.get("g_botRecords") == 1 or not players.isBot(clientId)) and
+            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_PLAYER_BOTSON) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
+            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(clientId)) and
             (not currentRecords[type] or currentSpree > currentRecords[type]["record"]) then
         currentRecords[type] = {
             ["player"] = db.getPlayerId(clientId),
@@ -293,21 +297,21 @@ end
 function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     local settingSpreeMessages = settings.get("g_spreeMessages")
 
-    if type == sprees.RECORD_DEATH then
-        if bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.RECORD_DEATH] >= spreeMessagesByType[sprees.RECORD_DEATH][1]["amount"] then
+    if type == sprees.TYPE_DEATH then
+        if bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.TYPE_DEATH] >= spreeMessagesByType[sprees.TYPE_DEATH][1]["amount"] then
             local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
                 players.getName(causeId),
                 players.getName(clientId),
-                playerSprees[clientId][sprees.RECORD_DEATH],
-                spreeNames[sprees.RECORD_DEATH])
+                playerSprees[clientId][sprees.TYPE_DEATH],
+                spreeNames[sprees.TYPE_DEATH])
 
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
         end
 
-        playerSprees[clientId][sprees.RECORD_DEATH] = 0
+        playerSprees[clientId][sprees.TYPE_DEATH] = 0
     elseif type == nil then
-        for i = 0, sprees.RECORD_NUM - 1 do
-            if i ~= sprees.RECORD_DEATH then
+        for i = 0, sprees.TYPE_NUM - 1 do
+            if i ~= sprees.TYPE_DEATH then
                 if bits.hasbit(settingSpreeMessages, 2^i) and playerSprees[clientId][i] >= spreeMessagesByType[i][1]["amount"] then
                     local msg = ""
 
@@ -348,35 +352,35 @@ end
 function sprees.onPlayerDeath(victimId, killerId, mod)
     if killerId == 1022 then -- killed by map
         events.trigger("onPlayerSpreeEnd", victimId)
-        events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
+        events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
     elseif victimId == killerId then -- suicides
         -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
         -- player data table, resulting in errors. I'm sorry for your spree records, bots.
         if not players.isConnected(victimId) then return end
 
         events.trigger("onPlayerSpreeEnd", victimId, killerId)
-        events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
+        events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
     else -- regular kills
         if et.gentity_get(victimId, "sess.sessionTeam") == et.gentity_get(killerId, "sess.sessionTeam") then
             -- teamkill handling
             events.trigger("onPlayerSpreeEnd", victimId, killerId)
-            events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
+            events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
         else
-            events.trigger("onPlayerSpreeEnd", killerId, victimId, sprees.RECORD_DEATH)
-            events.trigger("onPlayerSpree", killerId, sprees.RECORD_KILL)
+            events.trigger("onPlayerSpreeEnd", killerId, victimId, sprees.TYPE_DEATH)
+            events.trigger("onPlayerSpree", killerId, sprees.TYPE_KILL)
 
             -- happens when a bot disconnects, it selfkills before leaving, thus emptying the
             -- player data table, resulting in errors. I'm sorry for your spree records, bots.
             if not players.isConnected(victimId) then return end
 
             events.trigger("onPlayerSpreeEnd", victimId, killerId)
-            events.trigger("onPlayerSpree", victimId, sprees.RECORD_DEATH)
+            events.trigger("onPlayerSpree", victimId, sprees.TYPE_DEATH)
         end
     end
 end
 
 function sprees.onPlayerRevive(clientMedic, clientVictim)
-    events.trigger("onPlayerSpree", clientMedic, sprees.RECORD_REVIVE)
+    events.trigger("onPlayerSpree", clientMedic, sprees.TYPE_REVIVE)
 end
 
 return sprees
