@@ -37,11 +37,15 @@ function censor.filter(dictionary, subject)
     local censored = false
 
     for _, item in ipairs(dictionary) do
-        local occurrences
+        local pos1, pos2 = string.find(string.lower(subject), item["pattern"])
 
-        subject, occurrences = string.gsub(subject, item["pattern"], "*censor*")
+        while pos1 and pos2 do
+            subject = string.sub(subject, 1, pos1 - 1).."*censor*"..string.sub(subject, pos2 + 1)
 
-        censored = (censored or occurrences > 0) and true or false
+            pos1, pos2 = string.find(string.lower(subject), item["pattern"])
+
+            censored = true
+        end
     end
 
     return censored, subject

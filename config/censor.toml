@@ -1,24 +1,24 @@
 # words
 [[word]]
-pattern = "f[%a%p]-ck" # fuck and similar
+pattern = "f[u*]-ck" # 'fuck' and similar
 
 [[word]]
 pattern = "homo"
 
 [[word]]
-pattern = "gay"
+pattern = "g[a4]y" # 'gay' and similar
 
 [[word]]
-pattern = "fag"
+pattern = "f[a4]g" # 'fag' and similar
 
 [[word]]
-pattern = "shit"
+pattern = "sh[i1*]t" # 'shit' and similar
 
 [[word]]
-pattern = "bitch"
+pattern = "b[i1*]tch" # 'bitch' and similar
 
 [[word]]
-pattern = "asshole"
+pattern = "asshole" # 'asshole' and similar
 
 # names
 [[name]]
