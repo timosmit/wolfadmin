@@ -64,8 +64,9 @@ function commandListPlayers(clientId, command)
             fireteamName = fireteams.getName(fireteamId):sub(1, 1)
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s%s^7%s", 
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s%s^7%s",
             player, -- slot
+            teamColor, -- team
             teamCode, -- team
             level, -- level
             levelName, -- levelname

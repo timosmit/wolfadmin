@@ -51,10 +51,6 @@ function players.getProtocol(clientId)
     return data[clientId]["protocol"]
 end
 
-function players.getVersion(clientId)
-    return data[clientId]["version"]
-end
-
 function players.isBot(clientId)
     return data[clientId]["bot"]
 end
@@ -162,8 +158,6 @@ function players.onClientBegin(clientId)
 
     -- this is now available
     local clientInfo = et.trap_GetUserinfo(clientId)
-
-    data[clientId]["version"] = et.Info_ValueForKey(clientInfo, "cg_etVersion")
 end
 events.handle("onClientBegin", players.onClientBegin)
 

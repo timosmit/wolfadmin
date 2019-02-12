@@ -181,7 +181,7 @@ function settings.load()
         local fileTable = toml.parse(fileString)
         for module, settings in pairs(fileTable) do
             for setting, value in pairs(settings) do
-                if cfgStructure[module][setting] then
+                if cfgStructure[module] and cfgStructure[module][setting] then
                     data[cfgStructure[module][setting]] = value
                 end
             end
