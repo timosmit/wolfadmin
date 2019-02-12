@@ -20,18 +20,18 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 
 function commandIncognito(clientId, command)
-    local isIncognito = auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO, true)
+    local isIncognito = auth.isPlayerAllowed(clientId, auth.PERM_NOAKA, true)
 
     if not isIncognito then
-        auth.addPlayerPermission(clientId, auth.PERM_INCOGNITO)
+        auth.addPlayerPermission(clientId, auth.PERM_NOAKA)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
     else
-        auth.removePlayerPermission(clientId, auth.PERM_INCOGNITO)
+        auth.removePlayerPermission(clientId, auth.PERM_NOAKA)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you stopped playing incognito.\";")
     end
 
     return true
 end
-commands.addadmin("incognito", commandIncognito, auth.PERM_SETLEVEL, "fakes your level to guest (no aka)")
+commands.addadmin("incognito", commandIncognito, auth.PERM_INCOGNITO, "fakes your level to guest (no aka)")

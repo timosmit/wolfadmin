@@ -324,6 +324,7 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'news');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'uptime');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'setlevel');
+INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'incognito');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'readconfig');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'noinactivity');

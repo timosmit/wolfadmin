@@ -81,6 +81,7 @@ local flags = {
 
     [auth.PERM_UPTIME] = "u",
     [auth.PERM_SETLEVEL] = "s",
+    [auth.PERM_INCOGNITO] = "s",
     [auth.PERM_READCONFIG] = "G",
 
     [auth.PERM_WARSETTINGS] = "q",
@@ -91,13 +92,13 @@ local flags = {
     [auth.PERM_NOBALANCE] = "5",
     [auth.PERM_NOVOTELIMIT] = "7",
     [auth.PERM_NOREASON] = "6",
+    [auth.PERM_NOAKA] = "@",
     [auth.PERM_PERMA] = "8",
 
     [auth.PERM_TEAMCMDS] = "9",
     [auth.PERM_SILENTCMDS] = "3",
 
     [auth.PERM_SPY] = "4",
-    [auth.PERM_INCOGNITO] = "@",
     [auth.PERM_IMMUNE] = "!",
 }
 
