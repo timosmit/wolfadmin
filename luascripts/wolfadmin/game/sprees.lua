@@ -265,7 +265,7 @@ function sprees.onPlayerSpree(clientId, causeId, type)
                 currentSpree,
                 spreeNames[type])
 
-            if settings.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" then
+            if settings.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" and files.exists("sound/spree/"..spreeMessage["sound"]) then
                 if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
                 else
@@ -282,7 +282,7 @@ function sprees.onPlayerSpree(clientId, causeId, type)
                 currentSpree,
                 spreeNames[type])
 
-            if settings.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" then
+            if settings.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" and files.exists("sound/spree/"..spreeMessage["sound"]) then
                 if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
                 else
