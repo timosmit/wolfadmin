@@ -272,6 +272,15 @@ function mysql.getAliasByName(playerid, aliasname)
     return alias
 end
 
+function mysql.getMostUsedAlias(playerid)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC LIMIT 1"))
+
+    local alias = cur:fetch({}, "a")
+    cur:close()
+
+    return alias
+end
+
 function mysql.getLastAlias(playerid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     

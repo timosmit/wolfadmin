@@ -46,6 +46,10 @@ constants.TEAM_SPECTATORS_COLOR = "^2"
 constants.TEAM_AXIS_COLOR_NAME = "red"
 constants.TEAM_ALLIES_COLOR_NAME = "blue"
 
+constants.CON_DISCONNECTED = 0
+constants.CON_CONNECTING = 1
+constants.CON_CONNECTED = 2
+
 constants.CLASS_SOLDIER = 0
 constants.CLASS_MEDIC = 1
 constants.CLASS_ENGINEER = 2
