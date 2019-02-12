@@ -45,8 +45,8 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
     if firstTime and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
 
-        if guid == "" or guid == "NO_GUID" or guid == "unknown" then
-            return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
+        if string.len(guid) < 32 then
+            return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
         if settings.get("g_standalone") ~= 0 then
