@@ -36,6 +36,18 @@ function files.ls(directory)
     return entries
 end
 
+function files.exists(fileName)
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+
+    if fileLength ~= -1 then
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        return true
+    end
+
+    return false
+end
+
 function files.loadFromCFG(fileName, idExpr)
     local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
