@@ -19,11 +19,29 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local settings = wolfa_requireModule("util.settings")
 
-function commandShuffle(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+function commandShuffle(clientId, command, type)
+    if type == "xp" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
+    elseif type == "sr" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by SR.\";")
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
+    elseif type == nil then
+        if settings.get("fs_game") == "legacy" then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by SR.\";")
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
+        else
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
+        end
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshuffle usage: "..commands.getadmin("shuffle")["syntax"].."\";")
+    end
 
     return true
 end
-commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams by XP to try and even them", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams to try and even them", "^2!shuffle ^9(^hxp|sr^9)", nil, (settings.get("g_standalone") == 0))
