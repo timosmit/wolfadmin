@@ -46,8 +46,6 @@ function commandBalance(clientId, command, action)
         balancer.balance(true, false)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalance usage: "..commands.getadmin("balance")["syntax"].."\";")
-
-        return true
     end
 
     return true
