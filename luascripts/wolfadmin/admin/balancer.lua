@@ -40,7 +40,7 @@ local evenerCount = 0
 function balancer.balance(byAdmin, forceBalance)
     local teamsDifference = teams.difference()
 
-    if teamsDifference == 0 then
+    if teamsDifference <= 1 then
         evenerCount = 0
 
         if byAdmin then
