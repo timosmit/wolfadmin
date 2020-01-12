@@ -17,6 +17,7 @@
 
 local players = wolfa_requireModule("players.players")
 
+local files = wolfa_requireModule("util.files")
 local settings = wolfa_requireModule("util.settings")
 
 local logs = {}
@@ -24,6 +25,12 @@ local logs = {}
 function logs.writeChat(clientId, type, ...)
     if settings.get("g_logChat") == "" then
         return
+    end
+
+    if not files.exists(settings.get("g_logChat")) then
+        local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_WRITE)
+
+        et.trap_FS_FCloseFile(fileDescriptor)
     end
 
     local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_APPEND)
@@ -50,6 +57,12 @@ end
 function logs.writeAdmin(clientId, command, victimId, ...)
     if settings.get("g_logAdmin") == "" then
         return
+    end
+
+    if not files.exists(settings.get("g_logAdmin")) then
+        local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_WRITE)
+
+        et.trap_FS_FCloseFile(fileDescriptor)
     end
 
     local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_APPEND)
