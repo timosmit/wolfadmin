@@ -19,6 +19,8 @@ local bits = wolfa_requireModule("util.bits")
 local events = wolfa_requireModule("util.events")
 local settings = wolfa_requireModule("util.settings")
 local timers = wolfa_requireModule("util.timers")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
 
 local toml = wolfa_requireLib("toml")
 
@@ -34,9 +36,10 @@ local welcomeBanners = {}
 local infoBanners = {}
 
 function banners.print(clientId, banner)
+    local prefix = (settings.get("g_bannerArea") ~= constants.AREA_CHAT) and "^7" or "^dbanner: ^9"
     local target = clientId and clientId or -1
-
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..target.." \"^dbanner: ^9"..banner["text"].."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, 
+        string.format("%s %i \"%s%s\";", util.getCommandForArea(settings.get("g_bannerArea")), target, prefix, banner["text"]))
 end
 
 function banners.nextBanner(random)
@@ -114,8 +117,8 @@ function banners.onGameInit(levelTime, randomSeed, restartMap)
     banners.load()
 
     banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_START))
-
     bannerTimer = timers.add(banners.autoprint, settings.get("g_bannerInterval") * 1000, 0)
+
 end
 events.handle("onGameInit", banners.onGameInit)
 

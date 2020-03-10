@@ -37,7 +37,7 @@ local data = {
     ["g_botGreetings"] = 1,
     ["g_bannerInterval"] = 120,
     ["g_bannerRandomize"] = 1,
-    ["g_welcomeArea"] = 3,
+    ["g_bannerArea"] = 4,
     ["g_evenerMinDifference"] = 2,
     ["g_evenerMaxDifference"] = 5,
     ["g_evenerPlayerSelection"] = 0,
@@ -100,7 +100,7 @@ local cfgStructure = {
         ["file"] = "g_fileBanners",
         ["interval"] = "g_bannerInterval",
         ["random"] = "g_bannerRandomize",
-        ["area"] = "g_welcomeArea"
+        ["area"] = "g_bannerArea"
     },
     ["rules"] = {
         ["file"] = "g_fileRules"

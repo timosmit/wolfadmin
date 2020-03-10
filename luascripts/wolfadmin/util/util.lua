@@ -133,8 +133,26 @@ function util.getAreaName(areaId)
         return "cchat -1"
     elseif areaId == constants.AREA_CP then
         return "cp"
+    elseif areaId == constants.AREA_BP then
+        return "bp"
     else
         return "cp"
+    end
+end
+
+function util.getCommandForArea(areaId)
+    if areaId == constants.AREA_CONSOLE then
+        return "csay"
+    elseif areaId == constants.AREA_POPUPS then
+        return "ccpm"
+    elseif areaId == constants.AREA_CHAT then
+        return "cchat"
+    elseif areaId == constants.AREA_CP then
+        return "ccp"
+    elseif areaId == constants.AREA_BP then
+        return "cbp"
+    else
+        return "ccp"
     end
 end
 

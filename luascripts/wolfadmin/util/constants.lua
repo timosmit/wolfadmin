@@ -68,6 +68,7 @@ constants.AREA_CONSOLE = 0
 constants.AREA_POPUPS = 1
 constants.AREA_CHAT = 2
 constants.AREA_CP = 3
+constants.AREA_BP = 4
 
 constants.VOTE_TYPES = { "antilag", "balancedteams", "comp", "friendlyfire", "gamconstantsype", "kick", 
     "map", "maprestart", "matchresconstants", "mutespecs", "muting", "nextcampaign", "nextmap", 
