@@ -80,8 +80,10 @@ function mutes.checkLiveMutes()
 end
 
 function mutes.onInit()
-    storedMuteTimer = timers.add(mutes.checkStoredMutes, 60000, 0, false, false)
-    liveMuteTimer = timers.add(mutes.checkLiveMutes, 1000, 0, false, false)
+    if db.isConnected() then
+        storedMuteTimer = timers.add(mutes.checkStoredMutes, 60000, 0, false, false)
+        liveMuteTimer = timers.add(mutes.checkLiveMutes, 1000, 0, false, false)
+    end
 end
 events.handle("onGameInit", mutes.onInit)
 
