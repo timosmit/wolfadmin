@@ -58,7 +58,9 @@ function bans.checkStoredBans()
 end
 
 function bans.onInit()
-    storedBanTimer = timers.add(bans.checkStoredBans, 60000, 0, false, false)
+    if db.isConnected() then
+        storedBanTimer = timers.add(bans.checkStoredBans, 60000, 0, false, false)
+    end
 end
 events.handle("onGameInit", bans.onInit)
 
