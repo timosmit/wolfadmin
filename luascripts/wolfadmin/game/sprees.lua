@@ -246,14 +246,15 @@ function sprees.onPlayerSpree(clientId, causeId, type)
             (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS_PLAYING) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
             (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(clientId)) and
             (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(causeId)) and
-            (not currentRecords[type] or currentSpree > currentRecords[type]["record"]) then
+            (not currentRecords[type] or currentSpree > currentRecords[type]["record"])
+    then
         currentRecords[type] = {
             ["player"] = db.getPlayerId(clientId),
             ["record"] = currentSpree
         }
     end
 
-    if bits.hasbit(settings.get("g_spreeMessages"), 2^type) and #spreeMessagesByType[type] > 0 then
+    if sprees.isSpreeEnabled(type) and #spreeMessagesByType[type] > 0 then
         local spreeMessage = spreeMessages[type][currentSpree]
         local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
 
@@ -296,10 +297,8 @@ function sprees.onPlayerSpree(clientId, causeId, type)
 end
 
 function sprees.onPlayerSpreeEnd(clientId, causeId, type)
-    local settingSpreeMessages = settings.get("g_spreeMessages")
-
     if type == sprees.TYPE_DEATH then
-        if bits.hasbit(settingSpreeMessages, 2^type) and playerSprees[clientId][sprees.TYPE_DEATH] >= spreeMessagesByType[sprees.TYPE_DEATH][1]["amount"] then
+        if sprees.isSpreeEnabled(type) and sprees.isPlayerOnSpree(clientId, sprees.TYPE_DEATH) then
             local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
                 players.getName(causeId),
                 players.getName(clientId),
@@ -313,7 +312,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     elseif type == nil then
         for i = 0, sprees.TYPE_NUM - 1 do
             if i ~= sprees.TYPE_DEATH then
-                if bits.hasbit(settingSpreeMessages, 2^i) and playerSprees[clientId][i] >= spreeMessagesByType[i][1]["amount"] then
+                if sprees.isSpreeEnabled(i) and sprees.isPlayerOnSpree(clientId, i) then
                     local msg = ""
 
                     if clientId == causeId then
@@ -382,6 +381,14 @@ end
 
 function sprees.onPlayerRevive(clientMedic, clientVictim)
     events.trigger("onPlayerSpree", clientMedic, clientVictim, sprees.TYPE_REVIVE)
+end
+
+function sprees.isSpreeEnabled(type)
+    return bits.hasbit(settings.get("g_spreeMessages"), 2^type)
+end
+
+function sprees.isPlayerOnSpree(clientId, type)
+    return spreeMessagesByType[type][1] and playerSprees[clientId][type] >= spreeMessagesByType[type][1]["amount"]
 end
 
 return sprees
