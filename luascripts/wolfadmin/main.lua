@@ -51,8 +51,8 @@ local tables
 local timers
 local util
 
-local version = "1.2.1-dev"
-local release = "4 January 2019"
+local version = "1.2.1"
+local release = "14 April 2020"
 
 local basepath
 local homepath
