@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ local data = {
     ["g_botGreetings"] = 1,
     ["g_bannerInterval"] = 120,
     ["g_bannerRandomize"] = 1,
-    ["g_welcomeArea"] = 3,
+    ["g_bannerArea"] = 3,
     ["g_evenerMinDifference"] = 2,
     ["g_evenerMaxDifference"] = 5,
     ["g_evenerPlayerSelection"] = 0,
@@ -124,7 +124,7 @@ local cfgStructure = {
         ["file"] = "g_fileBanners",
         ["interval"] = "g_bannerInterval",
         ["random"] = "g_bannerRandomize",
-        ["area"] = "g_welcomeArea"
+        ["area"] = "g_bannerArea"
     },
     ["rules"] = {
         ["file"] = "g_fileRules"

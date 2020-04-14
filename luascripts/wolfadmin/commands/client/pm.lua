@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,10 +40,10 @@ function commandPersonalMessage(clientId, command, recipient, ...)
         end
     end
 end
-commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") ~= "legacy"))
-commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") ~= "legacy"))
+commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
+commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
 
-function commandPersonalMessage(clientId, command, target, ...)
+function commandPersonalMessageLegacy(clientId, command, target, ...)
     if not target or not ... then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("pm")["syntax"].."\";")
 
@@ -91,5 +91,5 @@ function commandPersonalMessage(clientId, command, target, ...)
 
     return true
 end
-commands.addclient("pm", commandPersonalMessage, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))
-commands.addclient("m", commandPersonalMessage, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))
+commands.addclient("pm", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))
+commands.addclient("m", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))

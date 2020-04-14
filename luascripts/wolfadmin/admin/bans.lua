@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -58,7 +58,9 @@ function bans.checkStoredBans()
 end
 
 function bans.onInit()
-    storedBanTimer = timers.add(bans.checkStoredBans, 60000, 0, false, false)
+    if db.isConnected() then
+        storedBanTimer = timers.add(bans.checkStoredBans, 60000, 0, false, false)
+    end
 end
 events.handle("onGameInit", bans.onInit)
 

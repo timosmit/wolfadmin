@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -46,12 +46,6 @@ function util.split(str, pat)
     end
     
     return t
-end
-
-function util.escape(str)
-    util.typecheck("util.escape", {str}, {"string"})
-
-    return string.gsub(str, "([\"'])", "\\%1")
 end
 
 function util.removeColors(str)
@@ -147,8 +141,26 @@ function util.getAreaName(areaId)
         return "cchat -1"
     elseif areaId == constants.AREA_CP then
         return "cp"
+    elseif areaId == constants.AREA_BP then
+        return "bp"
     else
         return "cp"
+    end
+end
+
+function util.getCommandForArea(areaId)
+    if areaId == constants.AREA_CONSOLE then
+        return "csay"
+    elseif areaId == constants.AREA_POPUPS then
+        return "ccpm"
+    elseif areaId == constants.AREA_CHAT then
+        return "cchat"
+    elseif areaId == constants.AREA_CP then
+        return "ccp"
+    elseif areaId == constants.AREA_BP then
+        return "cbp"
+    else
+        return "ccp"
     end
 end
 

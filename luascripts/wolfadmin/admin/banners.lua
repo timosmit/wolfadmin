@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@ local bits = wolfa_requireModule("util.bits")
 local events = wolfa_requireModule("util.events")
 local settings = wolfa_requireModule("util.settings")
 local timers = wolfa_requireModule("util.timers")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
 
 local toml = wolfa_requireLib("toml")
 
@@ -34,9 +36,10 @@ local welcomeBanners = {}
 local infoBanners = {}
 
 function banners.print(clientId, banner)
+    local prefix = (settings.get("g_bannerArea") ~= constants.AREA_CHAT) and "^7" or "^dbanner: ^9"
     local target = clientId and clientId or -1
-
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..target.." \"^dbanner: ^9"..banner["text"].."\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, 
+        string.format("%s %i \"%s%s\";", util.getCommandForArea(settings.get("g_bannerArea")), target, prefix, banner["text"]))
 end
 
 function banners.nextBanner(random)

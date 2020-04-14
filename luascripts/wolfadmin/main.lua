@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -158,7 +158,10 @@ function et_InitGame(levelTime, randomSeed, restartMap)
 end
 
 function et_ShutdownGame(restartMap)
-    events.trigger("onGameShutdown", (restartMap == 1))
+    -- check whether the module has fully initialized
+    if events then
+        events.trigger("onGameShutdown", (restartMap == 1))
+    end
 end
 
 function et_ConsoleCommand(cmdText)

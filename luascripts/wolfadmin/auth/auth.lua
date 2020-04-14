@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -87,6 +87,7 @@ auth.PERM_NEWS = "news"
 
 auth.PERM_UPTIME = "uptime"
 auth.PERM_SETLEVEL = "setlevel"
+auth.PERM_INCOGNITO = "incognito"
 auth.PERM_READCONFIG = "readconfig"
 
 auth.PERM_CRAZYSETTINGS = "crazysettings"
@@ -104,13 +105,13 @@ auth.PERM_NOCENSOR = "nocensor"
 auth.PERM_NOBALANCE = "nobalance"
 auth.PERM_NOVOTELIMIT = "novotelimit"
 auth.PERM_NOREASON = "noreason"
+auth.PERM_NOAKA = "noaka"
 auth.PERM_PERMA = "perma"
 
 auth.PERM_TEAMCMDS = "teamcmds"
 auth.PERM_SILENTCMDS = "silentcmds"
 
 auth.PERM_SPY = "spy"
-auth.PERM_INCOGNITO = "incognito"
 auth.PERM_IMMUNE = "immune"
 
 -- as this module serves as a wrapper/super class, we load the selected database

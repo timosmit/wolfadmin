@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,10 +20,13 @@ local commands = wolfa_requireModule("commands.commands")
 local settings = wolfa_requireModule("util.settings")
 
 function commandShuffle(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
-
+    if settings.get("fs_game") == "legacy" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled.\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+    end
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
 
     return true
 end
-commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams by XP to try and even them", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("shuffle", commandShuffle, auth.PERM_SHUFFLE, "shuffle the teams to try and even them", "^2!shuffle ^9", nil, (settings.get("g_standalone") == 0))

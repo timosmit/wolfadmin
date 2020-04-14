@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `mute` (
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `victim_id` INTEGER NOT NULL,
   `invoker_id` INTEGER NOT NULL,
-  `type` TEXT NOT NULL,
+  `type` INTEGER NOT NULL,
   `issued` INTEGER NOT NULL,
   `expires` INTEGER NOT NULL,
   `duration` INTEGER NOT NULL,
@@ -333,6 +333,7 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'news');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'uptime');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'setlevel');
+INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'incognito');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'readconfig');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'noinactivity');

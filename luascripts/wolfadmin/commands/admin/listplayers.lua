@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@ local auth = wolfa_requireModule("auth.auth")
 
 local commands = wolfa_requireModule("commands.commands")
 
+local db = wolfa_requireModule("db.db")
+
 local fireteams = wolfa_requireModule("game.fireteams")
 
 local players = wolfa_requireModule("players.players")
 
+local constants = wolfa_requireModule("util.constants")
 local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
@@ -37,6 +40,19 @@ function commandListPlayers(clientId, command)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dCurrently ^7"..(#playersOnline).." ^dplayers online^d:\";")
     for _, player in pairs(playersOnline) do
+        local teamColor, teamCode
+
+        if et.gentity_get(player, "pers.connected") == constants.CON_CONNECTED then
+            teamColor = util.getTeamColor(tonumber(et.gentity_get(player, "sess.sessionTeam")))
+            teamCode = util.getTeamCode(tonumber(et.gentity_get(player, "sess.sessionTeam"))):upper():sub(1,1)
+        else
+            teamColor = "^8"
+            teamCode = "C"
+        end
+
+        local level = auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and 0 or auth.getPlayerLevel(player)
+        local levelName = auth.getLevelName(level)
+
         local guidStub
 
         if players.isBot(player) then
@@ -45,26 +61,20 @@ function commandListPlayers(clientId, command)
             guidStub = players.getGUID(player):sub(-8)
         end
 
-        local level = auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and 0 or auth.getPlayerLevel(player)
-        local levelName = auth.getLevelName(level)
-
-        local teamColor, teamCode
-
-        if et.gentity_get(player, "pers.connected") then
-            teamColor = util.getTeamColor(tonumber(et.gentity_get(player, "sess.sessionTeam")))
-            teamCode = util.getTeamCode(tonumber(et.gentity_get(player, "sess.sessionTeam"))):upper():sub(1,1)
-        else
-            teamColor = "^8"
-            teamCode = "C"
-        end
-
         local fireteamId, fireteamName = fireteams.getPlayerFireteamId(player), ""
 
         if fireteamId then
             fireteamName = fireteams.getName(fireteamId):sub(1, 1)
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s%s^7%s",
+        local aka = ""
+
+        local mostUsedAlias = db.getMostUsedAlias(db.getPlayerId(player))["alias"]
+        if not players.isBot(player) and not auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and players.getName(player) ~= mostUsedAlias then
+            aka = "(a.k.a. "..mostUsedAlias.."^7)"
+        end
+
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s",
             player, -- slot
             teamColor, -- team
             teamCode, -- team
@@ -74,9 +84,7 @@ function commandListPlayers(clientId, command)
             (players.isMuted(player) and "M" or ""), -- muted
             fireteamName, -- fireteam
             players.getName(player), -- name
-            "", -- alias open
-            "", -- alias
-            "" -- alias close
+            aka -- alias
         ).."\";")
     end
 

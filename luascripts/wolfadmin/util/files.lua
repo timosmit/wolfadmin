@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -34,6 +34,18 @@ function files.ls(directory)
     end
     
     return entries
+end
+
+function files.exists(fileName)
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
+
+    if fileLength ~= -1 then
+        et.trap_FS_FCloseFile(fileDescriptor)
+
+        return true
+    end
+
+    return false
 end
 
 function files.loadFromCFG(fileName, idExpr)

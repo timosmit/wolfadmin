@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -46,8 +46,6 @@ function commandBalance(clientId, command, action)
         balancer.balance(true, false)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalance usage: "..commands.getadmin("balance")["syntax"].."\";")
-
-        return true
     end
 
     return true

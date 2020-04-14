@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -51,6 +51,10 @@ constants.SAY_TEAM_CMD = "say_team"
 constants.SAY_BUDDY_CMD = "say_buddy"
 constants.SAY_TEAMNL_CMD = "say_teamnl"
 
+constants.CON_DISCONNECTED = 0
+constants.CON_CONNECTING = 1
+constants.CON_CONNECTED = 2
+
 constants.CLASS_SOLDIER = 0
 constants.CLASS_MEDIC = 1
 constants.CLASS_ENGINEER = 2
@@ -69,6 +73,7 @@ constants.AREA_CONSOLE = 0
 constants.AREA_POPUPS = 1
 constants.AREA_CHAT = 2
 constants.AREA_CP = 3
+constants.AREA_BP = 4
 
 constants.VOTE_TYPES = { "antilag", "balancedteams", "comp", "friendlyfire", "gamconstantsype", "kick", 
     "map", "maprestart", "matchresconstants", "mutespecs", "muting", "nextcampaign", "nextmap", 

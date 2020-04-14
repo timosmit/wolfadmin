@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -80,8 +80,10 @@ function mutes.checkLiveMutes()
 end
 
 function mutes.onInit()
-    storedMuteTimer = timers.add(mutes.checkStoredMutes, 60000, 0, false, false)
-    liveMuteTimer = timers.add(mutes.checkLiveMutes, 1000, 0, false, false)
+    if db.isConnected() then
+        storedMuteTimer = timers.add(mutes.checkStoredMutes, 60000, 0, false, false)
+        liveMuteTimer = timers.add(mutes.checkLiveMutes, 1000, 0, false, false)
+    end
 end
 events.handle("onGameInit", mutes.onInit)
 
