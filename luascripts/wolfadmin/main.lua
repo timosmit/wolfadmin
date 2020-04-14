@@ -152,7 +152,10 @@ function et_InitGame(levelTime, randomSeed, restartMap)
 end
 
 function et_ShutdownGame(restartMap)
-    events.trigger("onGameShutdown", (restartMap == 1))
+    -- check whether the module has fully initialized
+    if events then
+        events.trigger("onGameShutdown", (restartMap == 1))
+    end
 end
 
 function et_ConsoleCommand(cmdText)
