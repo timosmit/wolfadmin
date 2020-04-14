@@ -117,8 +117,8 @@ function banners.onGameInit(levelTime, randomSeed, restartMap)
     banners.load()
 
     banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_START))
-    bannerTimer = timers.add(banners.autoprint, settings.get("g_bannerInterval") * 1000, 0)
 
+    bannerTimer = timers.add(banners.autoprint, settings.get("g_bannerInterval") * 1000, 0)
 end
 events.handle("onGameInit", banners.onGameInit)
 
