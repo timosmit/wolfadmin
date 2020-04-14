@@ -42,11 +42,11 @@ end
 
 -- players
 function sqlite3.addPlayer(guid, ip, lastSeen, seen)
-    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..util.escape(guid).."', '"..util.escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
+    cur = assert(con:execute("INSERT INTO `player` (`guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES ('"..con:escape(guid).."', '"..con:escape(ip).."', 0, "..tonumber(lastSeen)..", "..tonumber(seen)..")"))
 end
 
 function sqlite3.updatePlayer(guid, ip, lastSeen)
-    cur = assert(con:execute("UPDATE `player` SET `ip`='"..util.escape(ip).."', `lastseen`="..lastSeen..", `seen`=`seen`+1 WHERE `guid`='"..util.escape(guid).."'"))
+    cur = assert(con:execute("UPDATE `player` SET `ip`='"..con:escape(ip).."', `lastseen`="..lastSeen..", `seen`=`seen`+1 WHERE `guid`='"..con:escape(guid).."'"))
 end
 
 function sqlite3.updatePlayerLevel(id, level)
@@ -86,7 +86,7 @@ function sqlite3.getPlayers(limit, offset)
 end
 
 function sqlite3.getPlayer(guid)
-    cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..util.escape(guid).."'"))
+    cur = assert(con:execute("SELECT * FROM `player` WHERE `guid`='"..con:escape(guid).."'"))
     
     local player = cur:fetch({}, "a")
     cur:close()
@@ -96,11 +96,11 @@ end
 
 -- levels
 function sqlite3.addLevel(id, name)
-    cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
+    cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..con:escape(name).."')"))
 end
 
 function sqlite3.updateLevel(id, name)
-    cur = assert(con:execute("UPDATE `level` SET `name`='"..util.escape(name).."' WHERE `id`='"..tonumber(id).."'"))
+    cur = assert(con:execute("UPDATE `level` SET `name`='"..con:escape(name).."' WHERE `id`='"..tonumber(id).."'"))
 end
 
 function sqlite3.removeLevel(id)
@@ -170,11 +170,11 @@ function sqlite3.getLevelPermissions()
 end
 
 function sqlite3.addLevelPermission(levelId, permission)
-    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) VALUES ("..tonumber(levelId)..", '"..util.escape(permission).."')"))
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) VALUES ("..tonumber(levelId)..", '"..con:escape(permission).."')"))
 end
 
 function sqlite3.removeLevelPermission(levelId, permission)
-    cur = assert(con:execute("DELETE FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." AND permission='"..util.escape(permission).."'"))
+    cur = assert(con:execute("DELETE FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." AND permission='"..con:escape(permission).."'"))
 end
 
 function sqlite3.copyLevelPermissions(levelId, newLevelId)
@@ -202,11 +202,11 @@ function sqlite3.getPlayerPermissions(playerId)
 end
 
 function sqlite3.addPlayerPermission(playerId, permission)
-    cur = assert(con:execute("INSERT INTO `player_permission` (`player_id`, `permission`) VALUES ("..tonumber(playerId)..", '"..util.escape(permission).."')"))
+    cur = assert(con:execute("INSERT INTO `player_permission` (`player_id`, `permission`) VALUES ("..tonumber(playerId)..", '"..con:escape(permission).."')"))
 end
 
 function sqlite3.removePlayerPermission(playerId, permission)
-    cur = assert(con:execute("DELETE FROM `player_permission` WHERE `player_id`="..tonumber(playerId).." AND permission='"..util.escape(permission).."'"))
+    cur = assert(con:execute("DELETE FROM `player_permission` WHERE `player_id`="..tonumber(playerId).." AND permission='"..con:escape(permission).."'"))
 end
 
 function sqlite3.copyPlayerPermissions(playerId, newPlayerId)
@@ -219,7 +219,7 @@ end
 
 -- aliases
 function sqlite3.addAlias(playerid, alias, lastused)
-    cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..util.escape(alias).."', '"..util.escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
+    cur = assert(con:execute("INSERT INTO `alias` (`player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES ("..tonumber(playerid)..", '"..con:escape(alias).."', '"..con:escape(util.removeColors(alias)).."', "..tonumber(lastused)..", 1)"))
 end
 
 function sqlite3.updateAlias(aliasid, lastused)
@@ -264,7 +264,7 @@ function sqlite3.getAliasById(aliasid)
 end
 
 function sqlite3.getAliasByName(playerid, aliasname)
-    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..util.escape(aliasname).."'"))
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." AND `alias`='"..con:escape(aliasname).."'"))
     
     local alias = cur:fetch({}, "a")
     cur:close()
@@ -292,7 +292,7 @@ end
 
 -- history
 function sqlite3.addHistory(victimId, invokerId, type, datetime, reason)
-    cur = assert(con:execute("INSERT INTO `history` (`victim_id`, `invoker_id`, `type`, `datetime`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..util.escape(type).."', "..tonumber(datetime)..", '"..util.escape(reason).."')"))
+    cur = assert(con:execute("INSERT INTO `history` (`victim_id`, `invoker_id`, `type`, `datetime`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", '"..con:escape(type).."', "..tonumber(datetime)..", '"..con:escape(reason).."')"))
 end
 
 function sqlite3.removeHistory(historyId)
@@ -338,7 +338,7 @@ end
 
 -- mutes
 function sqlite3.addMute(victimId, invokerId, type, issued, duration, reason)
-    cur = assert(con:execute("INSERT INTO `mute` (`victim_id`, `invoker_id`, `type`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(type)..", "..tonumber(issued)..", "..tonumber(issued + duration)..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+    cur = assert(con:execute("INSERT INTO `mute` (`victim_id`, `invoker_id`, `type`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(type)..", "..tonumber(issued)..", "..tonumber(issued + duration)..", "..tonumber(duration)..", '"..con:escape(reason).."')"))
 end
 
 function sqlite3.removeMute(muteId)
@@ -397,7 +397,7 @@ end
 
 -- bans
 function sqlite3.addBan(victimId, invokerId, issued, duration, reason)
-    cur = assert(con:execute("INSERT INTO `ban` (`victim_id`, `invoker_id`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(issued)..", "..(tonumber(issued) + tonumber(duration))..", "..tonumber(duration)..", '"..util.escape(reason).."')"))
+    cur = assert(con:execute("INSERT INTO `ban` (`victim_id`, `invoker_id`, `issued`, `expires`, `duration`, `reason`) VALUES ("..tonumber(victimId)..", "..tonumber(invokerId)..", "..tonumber(issued)..", "..(tonumber(issued) + tonumber(duration))..", "..tonumber(duration)..", '"..con:escape(reason).."')"))
 end
 
 function sqlite3.removeBan(banId)
@@ -456,7 +456,7 @@ end
 
 -- maps
 function sqlite3.addMap(mapname, lastplayed)
-    cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..util.escape(mapname).."', "..tonumber(lastplayed)..")"))
+    cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..con:escape(mapname).."', "..tonumber(lastplayed)..")"))
 end
 
 function sqlite3.updateMap(mapid, lastplayed)
@@ -464,7 +464,7 @@ function sqlite3.updateMap(mapid, lastplayed)
 end
 
 function sqlite3.getMap(mapname)
-    cur = assert(con:execute("SELECT * FROM `map` WHERE `name`='"..util.escape(mapname).."'"))
+    cur = assert(con:execute("SELECT * FROM `map` WHERE `name`='"..con:escape(mapname).."'"))
     
     local map = cur:fetch({}, "a")
     cur:close()

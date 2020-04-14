@@ -48,12 +48,6 @@ function util.split(str, pat)
     return t
 end
 
-function util.escape(str)
-    util.typecheck("util.escape", {str}, {"string"})
-
-    return string.gsub(str, "([\"'])", "\\%1")
-end
-
 function util.removeColors(str)
     util.typecheck("util.removeColors", {str}, {"string"})
 
