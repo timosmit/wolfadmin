@@ -16,17 +16,13 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local db = wolfa_requireModule("db.db")
-
+local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
-
 local players = wolfa_requireModule("players.players")
-
 local bits = wolfa_requireModule("util.bits")
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
 local files = wolfa_requireModule("util.files")
-local settings = wolfa_requireModule("util.settings")
-
 local toml = wolfa_requireLib("toml")
 
 local sprees = {}
@@ -88,7 +84,7 @@ function sprees.reset(truncate)
 end
 
 function sprees.load()
-    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
+    if db.isConnected() and config.get("g_spreeRecords") ~= 0 then
         local map = db.getMap(game.getMap())
 
         if map then
@@ -114,7 +110,7 @@ function sprees.load()
         spreeMessagesByType[i] = {}
     end
 
-    local fileName = settings.get("g_fileSprees")
+    local fileName = config.get("g_fileSprees")
 
     if fileName == "" then
         return 0
@@ -176,7 +172,7 @@ function sprees.load()
 end
 
 function sprees.save()
-    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
+    if db.isConnected() and config.get("g_spreeRecords") ~= 0 then
         for i = 0, sprees.TYPE_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
                 if db.getRecord(currentMapId, i) then
@@ -190,7 +186,7 @@ function sprees.save()
 end
 
 function sprees.printRecords()
-    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 then
+    if db.isConnected() and config.get("g_spreeRecords") ~= 0 then
         for i = 0, sprees.TYPE_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getLastAlias(currentRecords[i]["player"])["alias"].."^9.\";")
@@ -242,10 +238,10 @@ function sprees.onPlayerSpree(clientId, causeId, type)
 
     local currentSpree = playerSprees[clientId][type]
 
-    if db.isConnected() and settings.get("g_spreeRecords") ~= 0 and
-            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS_PLAYING) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
-            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(clientId)) and
-            (bits.hasbit(settings.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(causeId)) and
+    if db.isConnected() and config.get("g_spreeRecords") ~= 0 and
+            (bits.hasbit(config.get("g_botRecords"), sprees.RECORD_BOTS_PLAYING) or tonumber(et.trap_Cvar_Get("omnibot_playing")) == 0) and
+            (bits.hasbit(config.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(clientId)) and
+            (bits.hasbit(config.get("g_botRecords"), sprees.RECORD_BOTS) or not players.isBot(causeId)) and
             (not currentRecords[type] or currentSpree > currentRecords[type]["record"])
     then
         currentRecords[type] = {
@@ -266,8 +262,8 @@ function sprees.onPlayerSpree(clientId, causeId, type)
                 currentSpree,
                 spreeNames[type])
 
-            if settings.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" and files.exists("sound/spree/"..spreeMessage["sound"]) then
-                if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
+            if config.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" and files.exists("sound/spree/"..spreeMessage["sound"]) then
+                if bits.hasbit(config.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
                 else
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..spreeMessage["sound"].."\";")
@@ -283,8 +279,8 @@ function sprees.onPlayerSpree(clientId, causeId, type)
                 currentSpree,
                 spreeNames[type])
 
-            if settings.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" and files.exists("sound/spree/"..maxSpreeMessage["sound"]) then
-                if bits.hasbit(settings.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
+            if config.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" and files.exists("sound/spree/"..maxSpreeMessage["sound"]) then
+                if bits.hasbit(config.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
                 else
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..maxSpreeMessage["sound"].."\";")
@@ -384,7 +380,7 @@ function sprees.onPlayerRevive(clientMedic, clientVictim)
 end
 
 function sprees.isSpreeEnabled(type)
-    return bits.hasbit(settings.get("g_spreeMessages"), 2^type)
+    return bits.hasbit(config.get("g_spreeMessages"), 2^type)
 end
 
 function sprees.isPlayerOnSpree(clientId, type)

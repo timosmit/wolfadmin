@@ -16,10 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandUnpause(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dpause: ^9map unpaused.\";")
@@ -28,4 +26,4 @@ function commandUnpause(clientId, command)
 
     return true
 end
-commands.addadmin("unpause", commandUnpause, auth.PERM_PAUSE, "pauses the game for all players", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("unpause", commandUnpause, auth.PERM_PAUSE, "pauses the game for all players", nil, nil, (config.get("g_standalone") == 0))

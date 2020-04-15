@@ -18,19 +18,14 @@
 local banners = wolfa_requireModule("admin.banners")
 local censor = wolfa_requireModule("admin.censor")
 local rules = wolfa_requireModule("admin.rules")
-
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local sprees = wolfa_requireModule("game.sprees")
-
 local greetings = wolfa_requireModule("players.greetings")
 
-local settings = wolfa_requireModule("util.settings")
-
 function commandReadconfig(clientId, command)
-    settings.load()
+    config.load()
     local bannersCount = banners.load()
     local rulesCount = rules.load()
     local greetingsCount = greetings.load()
@@ -40,10 +35,10 @@ function commandReadconfig(clientId, command)
 
     return false
 end
-commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true, (settings.get("g_standalone") ~= 0))
+commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the shrubbot config file and refreshes user flags", nil, true, (config.get("g_standalone") ~= 0))
 
 function commandReadconfig(clientId, command)
-    settings.load()
+    config.load()
     local bannersCount = banners.load()
     local censorCount = censor.load()
     local rulesCount = rules.load()
@@ -54,4 +49,4 @@ function commandReadconfig(clientId, command)
 
     return false
 end
-commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the config file", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("readconfig", commandReadconfig, auth.PERM_READCONFIG, "reloads the config file", nil, nil, (config.get("g_standalone") == 0))

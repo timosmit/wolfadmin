@@ -16,10 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
+local config = wolfa_requireModule("config.config")
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local timers = wolfa_requireModule("util.timers")
 local util = wolfa_requireModule("util.util")
 
@@ -63,7 +62,7 @@ function voting.load()
         forced[type] = 0
     end
 
-    local restrictedVotes = util.split(settings.get("g_restrictedVotes"), ",")
+    local restrictedVotes = util.split(config.get("g_restrictedVotes"), ",")
 
     for _, type in pairs(restrictedVotes) do
         restricted[type] = 1
@@ -73,15 +72,15 @@ end
 function voting.onGameInit(levelTime, randomSeed, restartMap)
     voting.load()
 
-    if settings.get("g_voteNextMapTimeout") > 0 then
+    if config.get("g_voteNextMapTimeout") > 0 then
         voting.allow("nextmap", 1)
     end
 end
 events.handle("onGameInit", voting.onGameInit)
 
 function voting.onGameStateChange(gameState)
-    if gameState == 0 and settings.get("g_voteNextMapTimeout") > 0 then
-        timers.add(voting.disableNextMap, settings.get("g_voteNextMapTimeout") * 1000, 1)
+    if gameState == 0 and config.get("g_voteNextMapTimeout") > 0 then
+        timers.add(voting.disableNextMap, config.get("g_voteNextMapTimeout") * 1000, 1)
     end
 end
 events.handle("onGameStateChange", voting.onGameStateChange)

@@ -16,12 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local acl = wolfa_requireModule("auth.acl")
-
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
-local settings = wolfa_requireModule("util.settings")
 
 function commandAclListLevels()
     for _, level in ipairs(acl.getLevels()) do
@@ -207,4 +204,4 @@ function commandAcl(command, action, ...)
     
     return true
 end
-commands.addserver("acl", commandAcl, (settings.get("g_standalone") == 0 or not db.isConnected()))
+commands.addserver("acl", commandAcl, (config.get("g_standalone") == 0 or not db.isConnected()))

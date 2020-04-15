@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 local players = wolfa_requireModule("players.players")
@@ -98,7 +98,7 @@ end
 events.handle("onPlayerDeath", game.ondeath)
 
 function game.onrevive(clientMedic, clientVictim)
-    if settings.get("g_announceRevives") ~= 0 then
+    if config.get("g_announceRevives") ~= 0 then
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
             if players.isConnected(playerId) and tonumber(et.gentity_get(playerId, "sess.sessionTeam")) == tonumber(et.gentity_get(clientMedic, "sess.sessionTeam")) then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..playerId.." \"^drevive: ^7"..et.gentity_get(clientMedic, "pers.netname").." ^9revived ^7"..et.gentity_get(clientVictim, "pers.netname").."^9.\";")

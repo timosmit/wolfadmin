@@ -18,14 +18,10 @@
 local admin = wolfa_requireModule("admin.admin")
 local mutes = wolfa_requireModule("admin.mutes")
 local history = wolfa_requireModule("admin.history")
-
 local auth = wolfa_requireModule("auth.auth")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
-
 local toml = wolfa_requireLib("toml")
 
 local censor = {}
@@ -60,43 +56,43 @@ function censor.filterMessage(...)
 end
 
 function censor.punishClient(clientId)
-    if settings.get("g_censorBurn") ~= 0 then
+    if config.get("g_censorBurn") ~= 0 then
         admin.burnPlayer(clientId)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dburn: ^7"..players.getName(clientId).." ^9burnt his tongue.\";")
     end
 
-    if settings.get("g_censorSlap") ~= 0 then
+    if config.get("g_censorSlap") ~= 0 then
         admin.slapPlayer(clientId, 20)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(clientId).." ^9was slapped for his foul language.\";")
     end
 
-    if settings.get("g_censorKill") ~= 0 and settings.get("g_censorGib") == 0 then
+    if config.get("g_censorKill") ~= 0 and config.get("g_censorGib") == 0 then
         admin.killPlayer(clientId)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkill: ^7"..players.getName(clientId).." ^9stumbled over his words.\";")
     end
 
-    if settings.get("g_censorGib") ~= 0 then
+    if config.get("g_censorGib") ~= 0 then
         admin.gibPlayer(clientId)
 
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(clientId).." ^9should not have said that.\";")
     end
 
-    if settings.get("g_censorMute") > 0 then
-        mutes.add(clientId, -1337, players.MUTE_CHAT + players.MUTE_VOICE, settings.get("g_censorMute"), "censor")
+    if config.get("g_censorMute") > 0 then
+        mutes.add(clientId, -1337, players.MUTE_CHAT + players.MUTE_VOICE, config.get("g_censorMute"), "censor")
 
-        if settings.get("g_playerHistory") ~= 0 then
+        if config.get("g_playerHistory") ~= 0 then
             history.add(clientId, -1337, "mute", "censor")
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmute: ^7"..players.getName(clientId).." ^9has been muted for "..settings.get("g_censorMute").." seconds\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmute: ^7"..players.getName(clientId).." ^9has been muted for "..config.get("g_censorMute").." seconds\";")
     end
 end
 
 function censor.load()
-    local fileName = settings.get("g_fileCensor")
+    local fileName = config.get("g_fileCensor")
 
     if fileName == "" then
         return 0
@@ -142,7 +138,7 @@ function censor.clear()
 end
 
 function censor.onClientConnectAttempt(clientId, firstTime, isBot)
-    if settings.get("g_censor") == 0 or auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+    if config.get("g_censor") == 0 or auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
         return
     end
 
@@ -151,7 +147,7 @@ function censor.onClientConnectAttempt(clientId, firstTime, isBot)
     local censored, censoredName = censor.filterName(et.Info_ValueForKey(clientInfo, "name"))
 
     if censored then
-        if settings.get("g_censorKick") ~= 0 then
+        if config.get("g_censorKick") ~= 0 then
             return "\n\nYou have been kicked, Reason: Name not allowed."
         else
             clientInfo = et.Info_SetValueForKey(clientInfo, "name", censoredName)
@@ -164,14 +160,14 @@ function censor.onClientConnectAttempt(clientId, firstTime, isBot)
 end
 
 function censor.onClientNameChange(clientId, oldName, newName)
-    if settings.get("g_censor") == 0 or auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+    if config.get("g_censor") == 0 or auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
         return
     end
 
     local censored, censoredName = censor.filterName(newName)
 
     if censored then
-        if settings.get("g_censorKick") ~= 0 then
+        if config.get("g_censorKick") ~= 0 then
             admin.kickPlayer(clientId, -1337, "Name not allowed.")
         else
             local clientInfo = et.trap_GetUserinfo(clientId)
@@ -183,7 +179,7 @@ function censor.onClientNameChange(clientId, oldName, newName)
 end
 
 function censor.oninit(levelTime, randomSeed, restartMap)
-    if settings.get("g_standalone") ~= 0 then
+    if config.get("g_standalone") ~= 0 then
         censor.load()
 
         events.handle("onClientConnectAttempt", censor.onClientConnectAttempt)

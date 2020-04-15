@@ -16,9 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local db = wolfa_requireModule("db.db")
-
+local config = wolfa_requireModule("config.config")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 
 local auth = {}
 
@@ -118,7 +117,7 @@ auth.PERM_IMMUNE = "immune"
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
 function auth.onGameInit()
-    if settings.get("g_standalone") ~= 0 then
+    if config.get("g_standalone") ~= 0 then
         if et.trap_Cvar_Get("g_shrubbot") ~= "" then
             outputDebug("Running in standalone mode while g_shrubbot is set", 3)
         end

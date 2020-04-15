@@ -15,13 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
-local settings = wolfa_requireModule("util.settings")
 local tables = wolfa_requireModule("util.tables")
-
 local luasql = require "luasql.sqlite3"
 
 local sqlite3 = {}
@@ -528,7 +526,7 @@ function sqlite3.isConnected()
 end
 
 function sqlite3.start()
-    local uri, file = nil, settings.get("db_file")
+    local uri, file = nil, config.get("db_file")
 
     if string.find(file, ":memory:%?cache=shared") then
         uri = file

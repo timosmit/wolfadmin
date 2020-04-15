@@ -16,17 +16,13 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local bans = wolfa_requireModule("admin.bans")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
 
-local settings = wolfa_requireModule("util.settings")
-
 function commandRemoveBan(clientId, command, banId)
-    if settings.get("g_standalone") == 0 or not db.isConnected() then
+    if config.get("g_standalone") == 0 or not db.isConnected() then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9bans are disabled.\";")
 
         return true
@@ -46,4 +42,4 @@ function commandRemoveBan(clientId, command, banId)
 
     return true
 end
-commands.addadmin("unban", commandRemoveBan, auth.PERM_BAN, "unbans a player specified ban number as seen in ^2!showbans^9", "^9[^3ban#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("unban", commandRemoveBan, auth.PERM_BAN, "unbans a player specified ban number as seen in ^2!showbans^9", "^9[^3ban#^9]", nil, (config.get("g_standalone") == 0))

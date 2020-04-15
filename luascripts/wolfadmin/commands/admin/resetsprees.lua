@@ -16,15 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
 local sprees = wolfa_requireModule("game.sprees")
-
-local settings = wolfa_requireModule("util.settings")
 
 function commandResetSprees(clientId, command, map)
     if not db.isConnected() then
@@ -45,4 +41,4 @@ function commandResetSprees(clientId, command, map)
     
     return true
 end
-commands.addadmin("resetsprees", commandResetSprees, auth.PERM_READCONFIG, "resets the spree records", nil, (settings.get("g_spreeRecords") == 0))
+commands.addadmin("resetsprees", commandResetSprees, auth.PERM_READCONFIG, "resets the spree records", nil, (config.get("g_spreeRecords") == 0))

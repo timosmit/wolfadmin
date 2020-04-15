@@ -30,6 +30,8 @@ local db
 
 local commands
 
+local config
+
 local bots
 local combis
 local fireteams
@@ -48,7 +50,6 @@ local events
 local files
 local logs
 local pagination
-local settings
 local tables
 local timers
 local vectors
@@ -124,6 +125,8 @@ function et_InitGame(levelTime, randomSeed, restartMap)
 
     commands = wolfa_requireModule("commands.commands")
 
+    config = wolfa_requireModule("config.config")
+
     bots = wolfa_requireModule("game.bots")
     combis = wolfa_requireModule("game.combis")
     game = wolfa_requireModule("game.game")
@@ -142,7 +145,6 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     files = wolfa_requireModule("util.files")
     logs = wolfa_requireModule("util.logs")
     pagination = wolfa_requireModule("util.pagination")
-    settings = wolfa_requireModule("util.settings")
     tables = wolfa_requireModule("util.tables")
     timers = wolfa_requireModule("util.timers")
     vectors = wolfa_requireModule("util.vectors")

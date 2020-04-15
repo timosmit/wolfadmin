@@ -17,7 +17,7 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandReset(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dreset: ^9match reset.\";")
@@ -26,4 +26,4 @@ function commandReset(clientId, command)
 
     return true
 end
-commands.addadmin("reset", commandReset, auth.PERM_RESTART, "resets the current match", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("reset", commandReset, auth.PERM_RESTART, "resets the current match", nil, nil, (config.get("g_standalone") == 0))

@@ -16,14 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local teams = wolfa_requireModule("game.teams")
-
 local util = wolfa_requireModule("util.util")
 local constants = wolfa_requireModule("util.constants")
-local settings = wolfa_requireModule("util.settings")
 
 function commandLock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then
@@ -42,7 +39,7 @@ function commandLock(clientId, command, team)
 
     return false
 end
-commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true, (settings.get("g_standalone") ~= 0))
+commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", true, (config.get("g_standalone") ~= 0))
 
 function commandLock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then
@@ -68,4 +65,4 @@ function commandLock(clientId, command, team)
 
     return false
 end
-commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of the teams from players joining", "^9[^3r|b|s|all#^9]", nil, (config.get("g_standalone") == 0))

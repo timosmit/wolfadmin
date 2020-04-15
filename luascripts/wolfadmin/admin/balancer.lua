@@ -16,11 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local teams = wolfa_requireModule("game.teams")
-
+local config = wolfa_requireModule("config.config")
 local constants = wolfa_requireModule("util.constants")
 local bits = wolfa_requireModule("util.bits")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local tables = wolfa_requireModule("util.tables")
 local timers = wolfa_requireModule("util.timers")
 local util = wolfa_requireModule("util.util")
@@ -60,7 +59,7 @@ function balancer.balance(byAdmin, forceBalance)
         teamSmaller = constants.TEAM_AXIS
     end
 
-    if settings.get("g_evenerMaxDifference") > 0 and teamsDifference >= settings.get("g_evenerMaxDifference") then
+    if config.get("g_evenerMaxDifference") > 0 and teamsDifference >= config.get("g_evenerMaxDifference") then
         evenerCount = evenerCount + 1
 
         if forceBalance or evenerCount >= 2 then
@@ -71,7 +70,7 @@ function balancer.balance(byAdmin, forceBalance)
         else
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "cpm \"^dbalancer: ^1EVEN THE TEAMS ^7OR ^1SHUFFLE\";")
         end
-    elseif teamsDifference >= settings.get("g_evenerMinDifference") then
+    elseif teamsDifference >= config.get("g_evenerMinDifference") then
         evenerCount = evenerCount + 1
 
         if forceBalance or evenerCount >= 3 then
@@ -97,7 +96,7 @@ function balancer.balance(byAdmin, forceBalance)
 end
 
 function balancer.findPlayer(team, teamGreater, teamSmaller)
-    local playerSelection = settings.get("g_evenerPlayerSelection")
+    local playerSelection = config.get("g_evenerPlayerSelection")
 
     if bits.hasbit(playerSelection, balancer.BALANCE_LAST_JOINED) then
         if #lastJoined[teamGreater] > 0 then
@@ -157,7 +156,7 @@ end
 events.handle("onClientDisconnect", balancer.onclientdisconnect)
 
 function balancer.enable()
-    balancerTimer = timers.add(balancer.balance, settings.get("g_evenerInterval") * 1000, 0, false, false)
+    balancerTimer = timers.add(balancer.balance, config.get("g_evenerInterval") * 1000, 0, false, false)
 end
 
 function balancer.disable()
@@ -171,7 +170,7 @@ function balancer.isRunning()
 end
 
 function balancer.oninit()
-    if settings.get("g_balancedteams") ~= 0 and settings.get("g_evenerInterval") > 0 then
+    if config.get("g_balancedteams") ~= 0 and config.get("g_evenerInterval") > 0 then
         balancer.enable()
     end
 end

@@ -16,13 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local teams = wolfa_requireModule("game.teams")
-
 local players = wolfa_requireModule("players.players")
-
 local util = wolfa_requireModule("util.util")
-local settings = wolfa_requireModule("util.settings")
 
 function commandTeam(clientId, command)
     if players.isTeamLocked(clientId) then
@@ -36,7 +33,7 @@ function commandTeam(clientId, command)
     end
 
     local team = util.getTeamFromCode(et.trap_Argv(1))
-    if settings.get("g_standalone") ~= 0 and teams.isLocked(team) then
+    if config.get("g_standalone") ~= 0 and teams.isLocked(team) then
         local teamName = util.getTeamName(team)
         local teamColor = util.getTeamColor(team)
 

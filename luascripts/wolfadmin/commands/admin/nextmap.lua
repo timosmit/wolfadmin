@@ -17,7 +17,7 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandNextMap(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dnextmap: ^9next map was loaded.\";")
@@ -26,4 +26,4 @@ function commandNextMap(clientId, command)
 
     return true
 end
-commands.addadmin("nextmap", commandNextMap, auth.PERM_NEXTMAP, "loads the next map", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("nextmap", commandNextMap, auth.PERM_NEXTMAP, "loads the next map", nil, nil, (config.get("g_standalone") == 0))

@@ -15,16 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local game = wolfa_requireModule("game.game")
-
 local players = wolfa_requireModule("players.players")
-
 local bits = wolfa_requireModule("util.bits")
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local timers = wolfa_requireModule("util.timers")
 
 local toml = wolfa_requireLib("toml")
@@ -70,7 +67,7 @@ function combis.load()
         combiMessagesByType[i] = {}
     end
 
-    local fileName = settings.get("g_fileCombis")
+    local fileName = config.get("g_fileCombis")
 
     if fileName == "" then
         return 0
@@ -112,14 +109,14 @@ end
 function combis.printCombi(clientId, type)
     local currentCombi = playerCombis[clientId][type]["total"]
 
-    if bits.hasbit(settings.get("g_combiMessages"), 2^type) and #combiMessagesByType[type] > 0 then
+    if bits.hasbit(config.get("g_combiMessages"), 2^type) and #combiMessagesByType[type] > 0 then
         local combiMessage = combiMessages[type][currentCombi]
 
         if combiMessage then
             local msg = string.gsub(combiMessage["msg"], "%[N%]", players.getName(clientId))
 
-            if settings.get("g_combiSounds") > 0 and combiMessage["sound"] and combiMessage["sound"] ~= "" then
-                if bits.hasbit(settings.get("g_combiSounds"), combis.SOUND_PLAY_PUBLIC) then
+            if config.get("g_combiSounds") > 0 and combiMessage["sound"] and combiMessage["sound"] ~= "" then
+                if bits.hasbit(config.get("g_combiSounds"), combis.SOUND_PLAY_PUBLIC) then
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/combi/"..combiMessage["sound"].."\";")
                 else
                     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/combi/"..combiMessage["sound"].."\";")
@@ -161,7 +158,7 @@ function combis.onGameStateChange(gameState)
 end
 
 function combis.onPlayerCombi(clientId, type, sourceId)
-    if not playerCombis[clientId][type]["last"] or et.trap_Milliseconds() - playerCombis[clientId][type]["last"] > settings.get("g_combiTime") then
+    if not playerCombis[clientId][type]["last"] or et.trap_Milliseconds() - playerCombis[clientId][type]["last"] > config.get("g_combiTime") then
         playerCombis[clientId][type]["total"] = 0
     elseif playerCombis[clientId][type]["timer"] then
         timers.remove(playerCombis[clientId][type]["timer"])
@@ -169,7 +166,7 @@ function combis.onPlayerCombi(clientId, type, sourceId)
 
     playerCombis[clientId][type]["last"] = et.trap_Milliseconds()
     playerCombis[clientId][type]["total"] = playerCombis[clientId][type]["total"] + 1
-    playerCombis[clientId][type]["timer"] = timers.add(combis.printCombi, settings.get("g_combiTime"), 1, clientId, type)
+    playerCombis[clientId][type]["timer"] = timers.add(combis.printCombi, config.get("g_combiTime"), 1, clientId, type)
 end
 
 function combis.onPlayerDeath(victimId, attackerId, meansOfDeath)

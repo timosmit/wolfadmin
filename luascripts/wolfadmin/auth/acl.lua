@@ -15,12 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local players = wolfa_requireModule("players.players")
-
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local tables = wolfa_requireModule("util.tables")
 
 local acl = {}
@@ -29,7 +27,7 @@ local cachedLevels = {}
 local cachedClients = {}
 
 function acl.onClientConnect(clientId, firstTime, isBot)
-    if settings.get("g_standalone") ~= 0 and db.isConnected() then
+    if config.get("g_standalone") ~= 0 and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
         local player = db.getPlayer(guid)
 

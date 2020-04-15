@@ -16,17 +16,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local fireteams = wolfa_requireModule("game.fireteams")
-
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 function commandListPlayers(clientId, command)
@@ -92,4 +87,4 @@ function commandListPlayers(clientId, command)
 
     return true
 end
-commands.addadmin("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (config.get("g_standalone") == 0))

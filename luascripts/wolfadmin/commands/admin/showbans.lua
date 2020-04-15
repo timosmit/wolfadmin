@@ -16,15 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local bans = wolfa_requireModule("admin.bans")
-
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
 local pagination = wolfa_requireModule("util.pagination")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 function commandShowBans(clientId, offset)
@@ -52,4 +48,4 @@ function commandShowBans(clientId, offset)
 
     return true
 end
-commands.addadmin("showbans", commandShowBans, auth.PERM_LISTBANS, "display a (partial) list of active bans", "(^hstart at ban#^9) ((^hbanner^9) (^3banner's name^9)) ((^3find^9) (^hbanned player^9)) ((^3reason^9) (^hreason for ban^9))", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("showbans", commandShowBans, auth.PERM_LISTBANS, "display a (partial) list of active bans", "(^hstart at ban#^9) ((^hbanner^9) (^3banner's name^9)) ((^3find^9) (^hbanned player^9)) ((^3reason^9) (^hreason for ban^9))", nil, (config.get("g_standalone") == 0))

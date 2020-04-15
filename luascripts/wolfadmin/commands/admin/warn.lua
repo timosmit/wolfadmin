@@ -16,21 +16,16 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local history = wolfa_requireModule("admin.history")
-
-local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
+local db = wolfa_requireModule("db.db")
 local players = wolfa_requireModule("players.players")
-
-local settings = wolfa_requireModule("util.settings")
 
 function commandWarn(clientId, command, victim, ...)
     local cmdClient
 
-    if not db.isConnected() or settings.get("g_playerHistory") == 0 then
+    if not db.isConnected() or config.get("g_playerHistory") == 0 then
         return false
     elseif not victim or not ... then
         return false
@@ -50,7 +45,7 @@ function commandWarn(clientId, command, victim, ...)
 
     return false
 end
-commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") ~= 0 or settings.get("g_playerHistory") == 0))
+commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (config.get("g_standalone") ~= 0 or config.get("g_playerHistory") == 0))
 
 function commandWarn(clientId, command, victim, ...)
     local cmdClient
@@ -83,7 +78,7 @@ function commandWarn(clientId, command, victim, ...)
 
     local reason = table.concat({...}, " ")
 
-    if settings.get("g_playerHistory") ~= 0 then
+    if config.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "warn", reason)
     end
 
@@ -94,4 +89,4 @@ function commandWarn(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", nil, (config.get("g_standalone") == 0))

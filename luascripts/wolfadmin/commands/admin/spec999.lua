@@ -16,15 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local admin = wolfa_requireModule("admin.admin")
-
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
-local settings = wolfa_requireModule("util.settings")
 
 function commandSpec999(clientId, command)
     local count = 0
@@ -43,4 +39,4 @@ function commandSpec999(clientId, command)
 
     return true
 end
-commands.addadmin("spec999", commandSpec999, auth.PERM_SPEC999, "moves 999 pingers to the spectator team", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("spec999", commandSpec999, auth.PERM_SPEC999, "moves 999 pingers to the spectator team", nil, nil, (config.get("g_standalone") == 0))

@@ -16,12 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
-local settings = wolfa_requireModule("util.settings")
 
 function commandRename(clientId, command, victim, newName)
     local cmdClient
@@ -57,4 +54,4 @@ function commandRename(clientId, command, victim, newName)
 
     return true
 end
-commands.addadmin("rename", commandRename, auth.PERM_RENAME, "renames a player", "^9[^3name|slot#^9] [^3new name^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("rename", commandRename, auth.PERM_RENAME, "renames a player", "^9[^3name|slot#^9] [^3new name^9]", nil, (config.get("g_standalone") == 0))

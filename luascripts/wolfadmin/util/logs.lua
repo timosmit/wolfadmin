@@ -16,24 +16,23 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local players = wolfa_requireModule("players.players")
-
+local config = wolfa_requireModule("config.config")
 local files = wolfa_requireModule("util.files")
-local settings = wolfa_requireModule("util.settings")
 
 local logs = {}
 
 function logs.writeChat(clientId, type, ...)
-    if settings.get("g_logChat") == "" then
+    if config.get("g_logChat") == "" then
         return
     end
 
-    if not files.exists(settings.get("g_logChat")) then
-        local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_WRITE)
+    if not files.exists(config.get("g_logChat")) then
+        local fileDescriptor, _ = et.trap_FS_FOpenFile(config.get("g_logChat"), et.FS_WRITE)
 
         et.trap_FS_FCloseFile(fileDescriptor)
     end
 
-    local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logChat"), et.FS_APPEND)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(config.get("g_logChat"), et.FS_APPEND)
 
     local logLine
 
@@ -55,17 +54,17 @@ function logs.writeChat(clientId, type, ...)
 end
 
 function logs.writeAdmin(clientId, command, victimId, ...)
-    if settings.get("g_logAdmin") == "" then
+    if config.get("g_logAdmin") == "" then
         return
     end
 
-    if not files.exists(settings.get("g_logAdmin")) then
-        local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_WRITE)
+    if not files.exists(config.get("g_logAdmin")) then
+        local fileDescriptor, _ = et.trap_FS_FOpenFile(config.get("g_logAdmin"), et.FS_WRITE)
 
         et.trap_FS_FCloseFile(fileDescriptor)
     end
 
-    local fileDescriptor, _ = et.trap_FS_FOpenFile(settings.get("g_logAdmin"), et.FS_APPEND)
+    local fileDescriptor, _ = et.trap_FS_FOpenFile(config.get("g_logAdmin"), et.FS_APPEND)
 
     local logLine
 
@@ -74,7 +73,7 @@ function logs.writeAdmin(clientId, command, victimId, ...)
     local clientFlags = ""
     local args = table.concat({...}, " ")
 
-    if settings.get("g_standalone") ~= 0 then
+    if config.get("g_standalone") ~= 0 then
         if victimId then
             local victimName = players.getName(victimId)
             logLine = string.format("[%s] %s: %s: %s: %s: \"%s\"\n", os.date("%Y-%m-%d %H:%M:%S"), clientGUID, clientName, command, victimName, args)

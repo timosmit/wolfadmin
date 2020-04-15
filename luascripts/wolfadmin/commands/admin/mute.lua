@@ -16,16 +16,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local history = wolfa_requireModule("admin.history")
 local mutes = wolfa_requireModule("admin.mutes")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local util = wolfa_requireModule("util.util")
-local settings = wolfa_requireModule("util.settings")
 
 function commandMute(clientId, command, victim, ...)
     local cmdClient
@@ -87,7 +83,7 @@ function commandMute(clientId, command, victim, ...)
 
     mutes.add(cmdClient, clientId, players.MUTE_CHAT + players.MUTE_VOICE, duration, reason)
 
-    if settings.get("g_playerHistory") ~= 0 then
+    if config.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "mute", reason)
     end
 
@@ -95,4 +91,4 @@ function commandMute(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("mute", commandMute, auth.PERM_MUTE, "mutes a player (text and voice chat)", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("mute", commandMute, auth.PERM_MUTE, "mutes a player (text and voice chat)", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", nil, (config.get("g_standalone") == 0))

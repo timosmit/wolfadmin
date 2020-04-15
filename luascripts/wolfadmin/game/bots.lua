@@ -15,10 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 local bots = {}
@@ -27,7 +26,7 @@ function bots.put(team)
     local team = util.getTeamCode(team)
 
     local command
-    if settings.get("g_standalone") ~= 0 then
+    if config.get("g_standalone") ~= 0 then
         command = "forceteam"
     else
         command = "!put"
@@ -43,7 +42,7 @@ end
 function bots.enable(enable)
     if enable then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot minbots -1;")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot maxbots "..settings.get("omnibot_maxbots")..";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot maxbots "..config.get("omnibot_maxbots")..";")
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot minbots -1;")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot maxbots -1;")

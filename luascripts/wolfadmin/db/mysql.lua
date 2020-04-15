@@ -15,11 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
-local settings = wolfa_requireModule("util.settings")
 local tables = wolfa_requireModule("util.tables")
 
 local luasql = require "luasql.mysql"
@@ -32,7 +31,7 @@ local cur
 
 -- config
 function mysql.isSchemaExistent()
-    cur = assert(con:execute("SELECT * FROM `information_schema`.`tables` WHERE `table_schema`='"..con:escape(settings.get("db_database")).."' AND `table_name`='config' LIMIT 1"))
+    cur = assert(con:execute("SELECT * FROM `information_schema`.`tables` WHERE `table_schema`='"..con:escape(config.get("db_database")).."' AND `table_name`='config' LIMIT 1"))
 
     local tbl = cur:fetch({}, "a")
     cur:close()
@@ -528,7 +527,7 @@ function mysql.isConnected()
 end
 
 function mysql.start()
-    con = env:connect(settings.get("db_database"), settings.get("db_username"), settings.get("db_password"), settings.get("db_hostname"), settings.get("db_port"))
+    con = env:connect(config.get("db_database"), config.get("db_username"), config.get("db_password"), config.get("db_hostname"), config.get("db_port"))
 
     if not con then
         outputDebug("Could not connect to database.", 3)

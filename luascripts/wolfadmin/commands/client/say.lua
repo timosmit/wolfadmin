@@ -16,15 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local censor = wolfa_requireModule("admin.censor")
-
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local logs = wolfa_requireModule("util.logs")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 local types = {
@@ -44,7 +40,7 @@ function commandSay(clientId, command, ...)
         return true
     end
 
-    if settings.get("g_censor") ~= 0 and not auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
+    if config.get("g_censor") ~= 0 and not auth.isPlayerAllowed(clientId, auth.PERM_NOCENSOR) then
         local censored, message = censor.filterMessage(...)
 
         if censored then
@@ -56,14 +52,14 @@ function commandSay(clientId, command, ...)
         end
     end
 
-    if settings.get("fs_game") == "legacy" then
+    if config.get("fs_game") == "legacy" then
         logs.writeChat(clientId, types[command], ...)
     end
 end
-commands.addclient("say", commandSay, "", "", false, (settings.get("g_standalone") == 0))
-commands.addclient("say_team", commandSay, "", "", false, (settings.get("g_standalone") == 0))
-commands.addclient("say_teamnl", commandSay, "", "", false, (settings.get("g_standalone") == 0))
-commands.addclient("say_buddy", commandSay, "", "", false, (settings.get("g_standalone") == 0))
+commands.addclient("say", commandSay, "", "", false, (config.get("g_standalone") == 0))
+commands.addclient("say_team", commandSay, "", "", false, (config.get("g_standalone") == 0))
+commands.addclient("say_teamnl", commandSay, "", "", false, (config.get("g_standalone") == 0))
+commands.addclient("say_buddy", commandSay, "", "", false, (config.get("g_standalone") == 0))
 
 function commandVoiceSay(clientId, command, ...)
     if players.isMuted(clientId, players.MUTE_VOICE) then
@@ -72,7 +68,7 @@ function commandVoiceSay(clientId, command, ...)
         return true
     end
 
-    if settings.get("fs_game") == "legacy" then
+    if config.get("fs_game") == "legacy" then
         logs.writeChat(clientId, types[command], ...)
     end
 end

@@ -17,8 +17,8 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
+local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
-local settings = wolfa_requireModule("util.settings")
 
 function commandRestart(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drestart: ^9map restarted.\";")
@@ -34,4 +34,4 @@ function commandRestart(clientId, command)
 
     return true
 end
-commands.addadmin("restart", commandRestart, auth.PERM_RESTART, "restarts the current map", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("restart", commandRestart, auth.PERM_RESTART, "restarts the current map", nil, nil, (config.get("g_standalone") == 0))

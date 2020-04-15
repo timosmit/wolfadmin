@@ -16,21 +16,17 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local history = wolfa_requireModule("admin.history")
-
 local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local util = wolfa_requireModule("util.util")
 local pagination = wolfa_requireModule("util.pagination")
-local settings = wolfa_requireModule("util.settings")
 
 function commandListHistory(clientId, command, victim, offset)
     local cmdClient
 
-    if not db.isConnected() or settings.get("g_playerHistory") == 0 then
+    if not db.isConnected() or config.get("g_playerHistory") == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9player history is disabled.\";")
 
         return true
@@ -72,4 +68,4 @@ function commandListHistory(clientId, command, victim, offset)
 
     return true
 end
-commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))
+commands.addadmin("showhistory", commandListHistory, auth.PERM_LISTHISTORY, "display history for a specific player", "^9[^3name|slot#^9] ^9(^hoffset^9)", (config.get("g_playerHistory") == 0))

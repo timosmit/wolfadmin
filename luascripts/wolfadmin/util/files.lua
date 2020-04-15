@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 local files = {}
 
 function files.ls(directory)
-    local platform, command = settings.get("sv_os"), ""
+    local platform, command = config.get("sv_os"), ""
     local entries = {}
     
     if platform == "unix" then

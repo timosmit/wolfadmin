@@ -16,12 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 function commandFinger(clientId, command, victim)
@@ -65,4 +62,4 @@ function commandFinger(clientId, command, victim)
 
     return true
 end
-commands.addadmin("finger", commandFinger, auth.PERM_FINGER, "gives specific information about a player", "^9[^3name|slot#^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("finger", commandFinger, auth.PERM_FINGER, "gives specific information about a player", "^9[^3name|slot#^9]", nil, (config.get("g_standalone") == 0))

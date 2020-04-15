@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 
 local db = {}
 
@@ -30,10 +30,10 @@ end
 -- system in this function. might have to think of a better way to implement
 -- this, but it will suffice.
 function db.oninit()
-    if settings.get("db_type") ~= "none" then
-        if settings.get("db_type") == "sqlite3" then
+    if config.get("db_type") ~= "none" then
+        if config.get("db_type") == "sqlite3" then
             con = wolfa_requireModule("db.sqlite3")
-        elseif settings.get("db_type") == "mysql" then
+        elseif config.get("db_type") == "mysql" then
             con = wolfa_requireModule("db.mysql")
         else
             outputDebug("Invalid database system (none|sqlite3|mysql), defaulting to 'none'.")

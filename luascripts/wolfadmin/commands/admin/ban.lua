@@ -16,14 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local bans = wolfa_requireModule("admin.bans")
 local history = wolfa_requireModule("admin.history")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local util = wolfa_requireModule("util.util")
-local settings = wolfa_requireModule("util.settings")
 
 function commandBan(clientId, command, victim, ...)
     local cmdClient
@@ -78,7 +75,7 @@ function commandBan(clientId, command, victim, ...)
         return true
     end
 
-    if settings.get("g_playerHistory") ~= 0 then
+    if config.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "ban", reason)
     end
 
@@ -94,4 +91,4 @@ function commandBan(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("ban", commandBan, auth.PERM_BAN, "ban a player with an optional duration and reason", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("ban", commandBan, auth.PERM_BAN, "ban a player with an optional duration and reason", "^9[^3name|slot#^9] ^9(^3duration^9) ^9(^3reason^9)", nil, (config.get("g_standalone") == 0))

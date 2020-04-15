@@ -16,15 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local admin = wolfa_requireModule("admin.admin")
-
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
-local settings = wolfa_requireModule("util.settings")
 
 function commandSlap(clientId, command, victim)
     local cmdClient
@@ -73,4 +69,4 @@ function commandSlap(clientId, command, victim)
 
     return true
 end
-commands.addadmin("slap", commandSlap, auth.PERM_SLAP, "give a player a specified amount of damage for a specified reason", "^9[^3name|slot#^9] (^hdamage^9) (^hreason^9)", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("slap", commandSlap, auth.PERM_SLAP, "give a player a specified amount of damage for a specified reason", "^9[^3name|slot#^9] (^hdamage^9) (^hreason^9)", nil, (config.get("g_standalone") == 0))

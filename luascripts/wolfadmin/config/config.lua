@@ -18,7 +18,7 @@
 local toml = wolfa_requireLib("toml")
 local events = wolfa_requireModule("util.events")
 
-local settings = {}
+local config = {}
 
 local data = {
     ["g_logChat"] = "chat.log",
@@ -151,15 +151,15 @@ local cfgStructure = {
     }
 }
 
-function settings.get(name)
+function config.get(name)
     return data[name]
 end
 
-function settings.set(name, value)
+function config.set(name, value)
     data[name] = value
 end
 
-function settings.load()
+function config.load()
     -- compatibility for 1.1.* and lower
     for setting, default in pairs(data) do
         local cvar = et.trap_Cvar_Get(setting)
@@ -179,8 +179,8 @@ function settings.load()
         et.trap_FS_FCloseFile(fileDescriptor)
 
         local fileTable = toml.parse(fileString)
-        for module, settings in pairs(fileTable) do
-            for setting, value in pairs(settings) do
+        for module, config in pairs(fileTable) do
+            for setting, value in pairs(config) do
                 if cfgStructure[module] and cfgStructure[module][setting] then
                     data[cfgStructure[module][setting]] = value
                 end
@@ -198,22 +198,22 @@ function settings.load()
         local files = wolfa_requireModule("util.files")
         local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
 
-        for blocksname, settings in pairs(array) do
-            for k, v in pairs(settings[1]) do
+        for blocksname, config in pairs(array) do
+            for k, v in pairs(config[1]) do
                 data[cfgStructure[blocksname][k]] = v
             end
         end
     end
 
-    settings.determineOS()
-    settings.determineMode()
+    config.determineOS()
+    config.determineMode()
 
-    outputDebug("WolfAdmin running in "..(settings.get("g_standalone") ~= 0 and "standalone" or "add-on").." mode on "..settings.get("sv_os")..".")
+    outputDebug("WolfAdmin running in "..(config.get("g_standalone") ~= 0 and "standalone" or "add-on").." mode on "..config.get("sv_os")..".")
 end
 
-function settings.determineOS()
+function config.determineOS()
     -- OS has been manually specified
-    local os = settings.get("sv_os") and string.lower(settings.get("sv_os")) or nil
+    local os = config.get("sv_os") and string.lower(config.get("sv_os")) or nil
 
     if os == "unix" or os == "windows" then
         return
@@ -227,7 +227,7 @@ function settings.determineOS()
     -- 'uname' is available on Unix systems
     local uname = io.popen("uname -s 2>nul"):read("*l")
     if uname then
-        settings.set("sv_os", "unix")
+        config.set("sv_os", "unix")
 
         return
     end
@@ -235,38 +235,38 @@ function settings.determineOS()
     -- 'ver' is available on Windows systems
     local ver = io.popen("ver 2>nul"):read("*l")
     if ver then
-        settings.set("sv_os", "windows")
+        config.set("sv_os", "windows")
 
         return
     end
 
     outputDebug("Operating system could not be determined, falling back to 'unix'.", 3)
 
-    settings.set("sv_os", "unix")
+    config.set("sv_os", "unix")
 end
 
-function settings.determineMode()
-    settings.set("fs_game", et.trap_Cvar_Get("fs_game"))
+function config.determineMode()
+    config.set("fs_game", et.trap_Cvar_Get("fs_game"))
 
     -- mode has been manually specified
-    if settings.get("g_standalone") then
+    if config.get("g_standalone") then
         return
     end
 
     local shrubbot = et.trap_Cvar_Get("g_shrubbot") -- etpub, nq
     local dbDir = et.trap_Cvar_Get("g_dbDirectory") -- silent
-    if settings.get("fs_game") == "legacy" or settings.get("fs_game") == "etpro" then
-        settings.set("g_standalone", 1)
+    if config.get("fs_game") == "legacy" or config.get("fs_game") == "etpro" then
+        config.set("g_standalone", 1)
     elseif (not shrubbot or shrubbot == "") and (not dbDir or dbDir == "") then
-        settings.set("g_standalone", 1)
+        config.set("g_standalone", 1)
     else
-        settings.set("g_standalone", 0)
+        config.set("g_standalone", 0)
     end
 end
 
-function settings.oninit(levelTime, randomSeed, restartMap)
-    settings.load()
+function config.oninit(levelTime, randomSeed, restartMap)
+    config.load()
 end
-events.handle("onGameInit", settings.oninit)
+events.handle("onGameInit", config.oninit)
 
-return settings
+return config

@@ -17,7 +17,7 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandHelp(clientId, command, cmd)
     local cmds = commands.getadmin()
@@ -31,7 +31,7 @@ function commandHelp(clientId, command, cmd)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((settings.get("g_standalone") ~= 0) and "available" or "additional").." commands (open console for the full list)\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((config.get("g_standalone") ~= 0) and "available" or "additional").." commands (open console for the full list)\";")
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         
@@ -68,4 +68,4 @@ function commandHelp(clientId, command, cmd)
     
     return false
 end
-commands.addadmin("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", (settings.get("g_standalone") == 0))
+commands.addadmin("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", (config.get("g_standalone") == 0))

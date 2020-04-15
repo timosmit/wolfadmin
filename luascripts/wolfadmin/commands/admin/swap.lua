@@ -17,7 +17,7 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandSwap(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dswap: ^9teams swapped.\";")
@@ -26,4 +26,4 @@ function commandSwap(clientId, command)
 
     return true
 end
-commands.addadmin("swap", commandSwap, auth.PERM_SWAP, "swap teams", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("swap", commandSwap, auth.PERM_SWAP, "swap teams", nil, nil, (config.get("g_standalone") == 0))

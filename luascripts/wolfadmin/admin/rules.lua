@@ -15,10 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local events = wolfa_requireModule("util.events")
 local files = wolfa_requireModule("util.files")
-local settings = wolfa_requireModule("util.settings")
-
 local toml = wolfa_requireLib("toml")
 
 local rules = {}
@@ -34,7 +33,7 @@ function rules.get(shortcut)
 end
 
 function rules.load()
-    local fileName = settings.get("g_fileRules")
+    local fileName = config.get("g_fileRules")
 
     if fileName == "" then
         return 0

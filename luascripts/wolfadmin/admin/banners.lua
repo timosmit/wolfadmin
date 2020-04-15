@@ -15,9 +15,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local config = wolfa_requireModule("config.config")
 local bits = wolfa_requireModule("util.bits")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local timers = wolfa_requireModule("util.timers")
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
@@ -36,10 +36,10 @@ local welcomeBanners = {}
 local infoBanners = {}
 
 function banners.print(clientId, banner)
-    local prefix = (settings.get("g_bannerArea") ~= constants.AREA_CHAT) and "^7" or "^dbanner: ^9"
+    local prefix = (config.get("g_bannerArea") ~= constants.AREA_CHAT) and "^7" or "^dbanner: ^9"
     local target = clientId and clientId or -1
     et.trap_SendConsoleCommand(et.EXEC_APPEND, 
-        string.format("%s %i \"%s%s\";", util.getCommandForArea(settings.get("g_bannerArea")), target, prefix, banner["text"]))
+        string.format("%s %i \"%s%s\";", util.getCommandForArea(config.get("g_bannerArea")), target, prefix, banner["text"]))
 end
 
 function banners.nextBanner(random)
@@ -59,11 +59,11 @@ function banners.autoprint()
         banners.print(nil, infoBanners[nextBannerId])
     end
 
-    banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_ALL))
+    banners.nextBanner(bits.hasbit(config.get("g_bannerRandomize"), banners.RANDOM_ALL))
 end
 
 function banners.load()
-    local fileName = settings.get("g_fileBanners")
+    local fileName = config.get("g_fileBanners")
 
     if fileName == "" then
         return 0
@@ -116,9 +116,9 @@ events.handle("onPlayerReady", banners.onPlayerReady)
 function banners.onGameInit(levelTime, randomSeed, restartMap)
     banners.load()
 
-    banners.nextBanner(bits.hasbit(settings.get("g_bannerRandomize"), banners.RANDOM_START))
+    banners.nextBanner(bits.hasbit(config.get("g_bannerRandomize"), banners.RANDOM_START))
 
-    bannerTimer = timers.add(banners.autoprint, settings.get("g_bannerInterval") * 1000, 0)
+    bannerTimer = timers.add(banners.autoprint, config.get("g_bannerInterval") * 1000, 0)
 end
 events.handle("onGameInit", banners.onGameInit)
 

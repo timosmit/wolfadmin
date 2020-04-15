@@ -16,12 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local db = wolfa_requireModule("db.db")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 local admin = {}
@@ -33,7 +31,7 @@ function admin.checkDamage(clientId)
     local totalDamage = teamDamage + et.gentity_get(clientId, "sess.damage_given")
     local teamDamagePercentage = teamDamage / totalDamage
 
-    if teamDamage > 250 and totalDamage > 500 and teamDamagePercentage > settings.get("g_maxTeamDamage") then
+    if teamDamage > 250 and totalDamage > 500 and teamDamagePercentage > config.get("g_maxTeamDamage") then
         admin.kickPlayer(clientId, -1337, "Too much team damage.")
     end
 end
@@ -110,7 +108,7 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
-        if settings.get("g_standalone") ~= 0 then
+        if config.get("g_standalone") ~= 0 then
             local player = db.getPlayer(guid)
             if player then
                 local playerId = player["id"]
@@ -127,7 +125,7 @@ end
 events.handle("onClientConnectAttempt", admin.onClientConnectAttempt)
 
 function admin.onClientConnect(clientId, firstTime, isBot)
-    if settings.get("g_standalone") ~= 0 and db.isConnected() then
+    if config.get("g_standalone") ~= 0 and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
         local player = db.getPlayer(guid)
 
@@ -198,7 +196,7 @@ function admin.onClientNameChange(clientId, oldName, newName)
         if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
             local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
 
-            if renamesPerMinute > settings.get("g_renameLimit") then
+            if renamesPerMinute > config.get("g_renameLimit") then
                 admin.kickPlayer(clientId, -1337, "Too many name changes.")
             end
         end

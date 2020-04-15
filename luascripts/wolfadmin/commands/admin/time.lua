@@ -17,11 +17,11 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandTime(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dtime: ^9current time is ^7"..os.date("%H:%M:%S").."^9.\";")
 
     return true
 end
-commands.addadmin("time", commandTime, auth.PERM_TIME, "displays the local time", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("time", commandTime, auth.PERM_TIME, "displays the local time", nil, nil, (config.get("g_standalone") == 0))

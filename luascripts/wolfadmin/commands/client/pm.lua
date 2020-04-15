@@ -16,11 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
 local logs = wolfa_requireModule("util.logs")
-local settings = wolfa_requireModule("util.settings")
 local util = wolfa_requireModule("util.util")
 
 function commandPersonalMessage(clientId, command, recipient, ...)
@@ -40,8 +38,8 @@ function commandPersonalMessage(clientId, command, recipient, ...)
         end
     end
 end
-commands.addclient("pm", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
-commands.addclient("m", commandPersonalMessage, "", "", true, (settings.get("fs_game") == "legacy"))
+commands.addclient("pm", commandPersonalMessage, "", "", true, (config.get("fs_game") == "legacy"))
+commands.addclient("m", commandPersonalMessage, "", "", true, (config.get("fs_game") == "legacy"))
 
 function commandPersonalMessageLegacy(clientId, command, target, ...)
     if not target or not ... then
@@ -91,5 +89,5 @@ function commandPersonalMessageLegacy(clientId, command, target, ...)
 
     return true
 end
-commands.addclient("pm", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))
-commands.addclient("m", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (settings.get("fs_game") ~= "legacy"))
+commands.addclient("pm", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (config.get("fs_game") ~= "legacy"))
+commands.addclient("m", commandPersonalMessageLegacy, "", "[^2name^7|^2slot#^7] [^2message^7]", true, (config.get("fs_game") ~= "legacy"))

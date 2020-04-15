@@ -16,12 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local players = wolfa_requireModule("players.players")
-
-local settings = wolfa_requireModule("util.settings")
 
 function commandAdminTest(clientId, command)
     local level = auth.getPlayerLevel(clientId)
@@ -31,4 +28,4 @@ function commandAdminTest(clientId, command)
 
     return true
 end
-commands.addadmin("admintest", commandAdminTest, auth.PERM_ADMINTEST, "display your current admin level", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("admintest", commandAdminTest, auth.PERM_ADMINTEST, "display your current admin level", nil, nil, (config.get("g_standalone") == 0))

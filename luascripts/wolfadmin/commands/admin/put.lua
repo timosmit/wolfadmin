@@ -16,14 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local admin = wolfa_requireModule("admin.admin")
-
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local config = wolfa_requireModule("config.config")
 local util = wolfa_requireModule("util.util")
 local constants = wolfa_requireModule("util.constants")
-local settings = wolfa_requireModule("util.settings")
 
 function commandPlayerPut(clientId, command, victim, team)
     local cmdClient
@@ -68,4 +65,4 @@ function commandPlayerPut(clientId, command, victim, team)
 
     return true
 end
-commands.addadmin("put", commandPlayerPut, auth.PERM_PUT, "move a player to a specified team", "^9[^3name|slot#^9] [^3r|b|s^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("put", commandPlayerPut, auth.PERM_PUT, "move a player to a specified team", "^9[^3name|slot#^9] [^3r|b|s^9]", nil, (config.get("g_standalone") == 0))

@@ -16,13 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local admin = wolfa_requireModule("admin.admin")
 local history = wolfa_requireModule("admin.history")
-
 local commands = wolfa_requireModule("commands.commands")
-
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandKick(clientId, command, victim, ...)
     local cmdClient
@@ -70,7 +67,7 @@ function commandKick(clientId, command, victim, ...)
         return true
     end
 
-    if settings.get("g_playerHistory") ~= 0 then
+    if config.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "kick", reason)
     end
 
@@ -80,4 +77,4 @@ function commandKick(clientId, command, victim, ...)
 
     return true
 end
-commands.addadmin("kick", commandKick, auth.PERM_KICK, "kick a player with an optional reason", "^9[^3name|slot#^9] ^9(^3reason^9)", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("kick", commandKick, auth.PERM_KICK, "kick a player with an optional reason", "^9[^3name|slot#^9] ^9(^3reason^9)", nil, (config.get("g_standalone") == 0))

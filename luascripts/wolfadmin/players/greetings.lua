@@ -16,15 +16,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
+local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-
 local players = wolfa_requireModule("players.players")
-
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
 local events = wolfa_requireModule("util.events")
-local settings = wolfa_requireModule("util.settings")
 local files = wolfa_requireModule("util.files")
 
 local toml = wolfa_requireLib("toml")
@@ -54,11 +51,11 @@ function greetings.show(clientId)
     local greeting = greetings.get(clientId)
     
     if greeting then
-        local prefix = (util.getAreaName(settings.get("g_greetingArea")) ~= "cp") and "^dgreeting: ^9" or "^7"
+        local prefix = (util.getAreaName(config.get("g_greetingArea")) ~= "cp") and "^dgreeting: ^9" or "^7"
         local text = prefix..greeting["text"]:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
         local out = ""
         
-        while util.getAreaName(settings.get("g_greetingArea")) == "cp" and string.len(text) > constants.MAX_LENGTH_CP do
+        while util.getAreaName(config.get("g_greetingArea")) == "cp" and string.len(text) > constants.MAX_LENGTH_CP do
             local sub = text:sub(1, constants.MAX_LENGTH_CP)
             local rev = sub:reverse()
 
@@ -79,12 +76,12 @@ function greetings.show(clientId)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"/sound/"..greeting["sound"].."\";")
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, util.getAreaName(settings.get("g_greetingArea")).." \""..out..text.."\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, util.getAreaName(config.get("g_greetingArea")).." \""..out..text.."\";")
     end
 end
 
 function greetings.load()
-    local fileName = settings.get("g_fileGreetings")
+    local fileName = config.get("g_fileGreetings")
 
     if fileName == "" then
         return 0
@@ -163,7 +160,7 @@ function greetings.load()
 end
 
 function greetings.oninit(levelTime, randomSeed, restartMap)
-    if settings.get("g_fileGreetings") ~= "" then
+    if config.get("g_fileGreetings") ~= "" then
         greetings.load()
         
         events.handle("onPlayerReady", greetings.onready)
@@ -172,7 +169,7 @@ end
 events.handle("onGameInit", greetings.oninit)
 
 function greetings.onready(clientId, firstTime)
-    if firstTime and (not players.isBot(clientId) or settings.get("g_botGreetings") == 1) then
+    if firstTime and (not players.isBot(clientId) or config.get("g_botGreetings") == 1) then
         greetings.show(clientId)
     end
 end

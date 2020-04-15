@@ -16,12 +16,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local balancer = wolfa_requireModule("admin.balancer")
-
 local commands = wolfa_requireModule("commands.commands")
-
-local settings = wolfa_requireModule("util.settings")
+local config = wolfa_requireModule("config.config")
 
 function commandBalance(clientId, command, action)
     if action == "enable" then
@@ -50,4 +47,4 @@ function commandBalance(clientId, command, action)
 
     return true
 end
-commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^henable|disable|force^9)", nil, (settings.get("fs_game") == "etpub"))
+commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^henable|disable|force^9)", nil, (config.get("fs_game") == "etpub"))
