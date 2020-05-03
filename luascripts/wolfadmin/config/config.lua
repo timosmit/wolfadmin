@@ -255,9 +255,10 @@ function config.determineMode()
 
     local shrubbot = et.trap_Cvar_Get("g_shrubbot") -- etpub, nq
     local dbDir = et.trap_Cvar_Get("g_dbDirectory") -- silent
+    local dbFile = et.trap_Cvar_Get("n_SQLiteDBPath") -- nitmod
     if config.get("fs_game") == "legacy" or config.get("fs_game") == "etpro" then
         config.set("g_standalone", 1)
-    elseif (not shrubbot or shrubbot == "") and (not dbDir or dbDir == "") then
+    elseif (not shrubbot or shrubbot == "") and (not dbDir or dbDir == "") and (not dbFile or dbFile == "") then
         config.set("g_standalone", 1)
     else
         config.set("g_standalone", 0)
