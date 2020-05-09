@@ -16,11 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
-local util = wolfa_requireModule("util.util")
+local client = wolfa_requireModule("game.client")
 
 function commandBannerPrint(command, clientId, text)
-    et.trap_SendServerCommand(clientId, "bp \""..text.."\";")
+    client.outputBanner(text, tonumber(clientId))
+
     return true
 end
 

@@ -16,17 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
-local util = wolfa_requireModule("util.util")
+local client = wolfa_requireModule("game.client")
 
 function commandClientAnnounce(command, clientId, text)
-    local clientId = tonumber(clientId)
-
-    if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-        et.trap_SendServerCommand(clientId, "announce \""..text.."\";")
-    elseif clientId then
-        et.G_Print(util.removeColors(text).."\n")
-    end
+    client.outputAnnounce(text, tonumber(clientId))
 
     return true
 end

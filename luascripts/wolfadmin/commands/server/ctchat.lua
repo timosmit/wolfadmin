@@ -16,11 +16,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-local client = wolfa_requireModule("game.client")
 
-function commandClientChatPrint(command, clientId, text)
-    client.outputChat(text, tonumber(clientId))
+local util = wolfa_requireModule("util.util")
+
+function commandClientTeamChat(command, clientId, victimId, text, x, y, z)
+    client.outputTeamChat(text, tonumber(clientId), tonumber(victimId), tonumber(x), tonumber(y), tonumber(z))
 
     return true
 end
-commands.addserver("cchat", commandClientChatPrint)
+commands.addserver("ctchat", commandClientTeamChat)

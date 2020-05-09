@@ -16,18 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
-local util = wolfa_requireModule("util.util")
+local client = wolfa_requireModule("game.client")
 
 function commandClientCPM(command, clientId, text, type)
-    local clientId = tonumber(clientId)
-    local type = tonumber(type) and tonumber(type) or 4
-
-    if clientId and clientId ~= -1337 then -- -1337 because -1 is a magic number/broadcasted to all clients
-        et.trap_SendServerCommand(clientId, "cpm \""..text.."\" "..type..";")
-    elseif clientId then
-        et.G_Print(util.removeColors(text).."\n")
-    end
+    client.outputPopup(text, tonumber(clientId), tonumber(type))
 
     return true
 end
