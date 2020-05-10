@@ -32,7 +32,7 @@ local userGreetings = {}
 local levelGreetings = {}
 
 function greetings.get(clientId)
-    if db.isConnected() and not auth.isPlayerAllowed(clientId, auth.PERM_INCOGNITO) then
+    if db.isConnected() and not auth.isPlayerAllowed(clientId, auth.PERM_NOAKA) then
         local lvl = auth.getPlayerLevel(clientId)
 
         if userGreetings[players.getGUID(clientId)] ~= nil then

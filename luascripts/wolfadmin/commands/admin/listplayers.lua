@@ -45,16 +45,15 @@ function commandListPlayers(clientId, command)
             teamCode = "C"
         end
 
-        local level = auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and 0 or auth.getPlayerLevel(player)
+        local level = auth.isPlayerAllowed(player, auth.PERM_NOAKA) and 0 or auth.getPlayerLevel(player)
         local levelName = auth.getLevelName(level)
         local guidStub = not players.isBot(player) and players.getGUID(player):sub(1, 8).."*" or players.getGUID(player):sub(1, 9)
         local fireteamId = fireteams.getPlayerFireteamId(player)
         local fireteamName = fireteamId and fireteams.getName(fireteamId):sub(1, 1) or ""
 
         local aka = ""
-
         local mostUsedAlias = db.getMostUsedAlias(db.getPlayerId(player))["alias"]
-        if not players.isBot(player) and not auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and players.getName(player) ~= mostUsedAlias then
+        if not players.isBot(player) and not auth.isPlayerAllowed(player, auth.PERM_NOAKA) and players.getName(player) ~= mostUsedAlias then
             aka = "(a.k.a. "..mostUsedAlias.."^7)"
         end
 
