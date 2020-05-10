@@ -47,20 +47,9 @@ function commandListPlayers(clientId, command)
 
         local level = auth.isPlayerAllowed(player, auth.PERM_INCOGNITO) and 0 or auth.getPlayerLevel(player)
         local levelName = auth.getLevelName(level)
-
-        local guidStub
-
-        if players.isBot(player) then
-            guidStub = "OMNIBOT-"
-        else
-            guidStub = players.getGUID(player):sub(-8)
-        end
-
-        local fireteamId, fireteamName = fireteams.getPlayerFireteamId(player), ""
-
-        if fireteamId then
-            fireteamName = fireteams.getName(fireteamId):sub(1, 1)
-        end
+        local guidStub = not players.isBot(player) and players.getGUID(player):sub(1, 8).."*" or players.getGUID(player):sub(1, 9)
+        local fireteamId = fireteams.getPlayerFireteamId(player)
+        local fireteamName = fireteamId and fireteams.getName(fireteamId):sub(1, 1) or ""
 
         local aka = ""
 
@@ -69,7 +58,7 @@ function commandListPlayers(clientId, command)
             aka = "(a.k.a. "..mostUsedAlias.."^7)"
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(*%s) ^1%1s ^3%1s ^7%s ^7%s",
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(%s) ^1%1s ^3%1s ^7%s ^7%s",
             player, -- slot
             teamColor, -- team
             teamCode, -- team
