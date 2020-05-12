@@ -16,7 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
+local mutes = wolfa_requireModule("admin.mutes")
 local commands = wolfa_requireModule("commands.commands")
 
 local players = wolfa_requireModule("players.players")
