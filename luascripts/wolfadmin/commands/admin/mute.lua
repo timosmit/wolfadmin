@@ -20,6 +20,7 @@ local history = wolfa_requireModule("admin.history")
 local mutes = wolfa_requireModule("admin.mutes")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local util = wolfa_requireModule("util.util")
 
@@ -27,7 +28,7 @@ function commandMute(clientId, command, victim, ...)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
+        output.clientConsole("^dmute usage: "..commands.getadmin("mute")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -37,11 +38,11 @@ function commandMute(clientId, command, victim, ...)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dmute: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dmute: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -62,21 +63,21 @@ function commandMute(clientId, command, victim, ...)
         duration = 600
         reason = "muted by admin"
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute usage: "..commands.getadmin("mute")["syntax"].."\";")
+        output.clientConsole("^dmute usage: "..commands.getadmin("mute")["syntax"].."", clientId)
 
         return true
     end
 
     if players.isMuted(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.\";")
+        output.clientConsole("^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already muted.", clientId)
 
         return true
     elseif auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
 
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dmute: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dmute: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     end
@@ -87,7 +88,7 @@ function commandMute(clientId, command, victim, ...)
         history.add(cmdClient, clientId, "mute", reason)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds\";")
+    output.clientChat("^dmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been muted for "..duration.." seconds")
 
     return true
 end

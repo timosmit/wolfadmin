@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local events = wolfa_requireModule("util.events")
 local util = wolfa_requireModule("util.util")
 
@@ -77,12 +78,12 @@ function game.onstatechange(gameState)
     if gameState == 3 then
         -- do not display when there haven't been any kills
         if lastKillerId ~= nil then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dAnd the last kill of the round goes to.. ^7"..et.gentity_get(lastKillerId, "pers.netname").."^d!\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dA total of ^7"..killCount.." ^dsoldiers died during this battle.\";")
+            output.clientChat("^dAnd the last kill of the round goes to.. ^7"..et.gentity_get(lastKillerId, "pers.netname").."^d!")
+            output.clientChat("^dA total of ^7"..killCount.." ^dsoldiers died during this battle.")
         end
 
         if game.getNextMap() ~= nil then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dNext map: ^7"..game.getNextMap().."^d.\";")
+            output.clientChat("^dNext map: ^7"..game.getNextMap().."^d.")
         end
     end
 end

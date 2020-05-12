@@ -21,6 +21,7 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
 
 function commandSetLevel(clientId, command, victim, level)
     local cmdClient
@@ -57,7 +58,7 @@ function commandSetLevel(clientId, command, victim, level)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel usage: "..commands.getadmin("setlevel")["syntax"].."\";")
+        output.clientConsole("^dsetlevel usage: "..commands.getadmin("setlevel")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -67,11 +68,11 @@ function commandSetLevel(clientId, command, victim, level)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dsetlevel: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dsetlevel: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -79,15 +80,15 @@ function commandSetLevel(clientId, command, victim, level)
     level = tonumber(level) or 0
     
     if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dsetlevel: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     elseif not db.getLevel(level) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9this admin level does not exist.\";")
+        output.clientConsole("^dsetlevel: ^9this admin level does not exist.", clientId)
 
         return true
     elseif level > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsetlevel: ^9you may not setlevel higher than your current level.\";")
+        output.clientConsole("^dsetlevel: ^9you may not setlevel higher than your current level.", clientId)
 
         return true
     end
@@ -95,7 +96,7 @@ function commandSetLevel(clientId, command, victim, level)
     admin.setPlayerLevel(cmdClient, level, clientId)
     history.add(cmdClient, clientId, "level", tostring(level))
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.\";")
+    output.clientChat("^dsetlevel: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is now a level ^7"..level.." ^9player.")
 
     return true
 end

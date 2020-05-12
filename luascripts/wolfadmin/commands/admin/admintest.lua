@@ -18,13 +18,14 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandAdminTest(clientId, command)
     local level = auth.getPlayerLevel(clientId)
     local levelName = auth.getLevelName(level)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dadmintest: ^7"..players.getName(clientId).." ^9is a level "..level.." user (^7"..levelName.."^9).\";")
+    output.clientChat("^dadmintest: ^7"..players.getName(clientId).." ^9is a level "..level.." user (^7"..levelName.."^9).")
 
     return true
 end

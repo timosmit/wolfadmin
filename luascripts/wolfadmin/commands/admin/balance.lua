@@ -17,6 +17,7 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local balancer = wolfa_requireModule("admin.balancer")
+local output = wolfa_requireModule("game.output")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 
@@ -25,24 +26,24 @@ function commandBalance(clientId, command, action)
         if not balancer.isRunning() then
             balancer.enable()
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer enabled.\";")
+            output.clientChat("^dbalancer: ^9balancer enabled.")
         else
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer is already running.\";")
+            output.clientConsole("^dbalancer: ^9balancer is already running.", clientId)
         end
     elseif action == "disable" then
         if balancer.isRunning() then
             balancer.disable()
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer disabled.\";")
+            output.clientChat("^dbalancer: ^9balancer disabled.")
         else
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalancer: ^9balancer was not running.\";")
+            output.clientConsole("^dbalancer: ^9balancer was not running.", clientId)
         end
     elseif action == "force" then
         balancer.balance(true, true)
     elseif not action then
         balancer.balance(true, false)
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalance usage: "..commands.getadmin("balance")["syntax"].."\";")
+        output.clientConsole("^dbalance usage: "..commands.getadmin("balance")["syntax"], clientId)
     end
 
     return true

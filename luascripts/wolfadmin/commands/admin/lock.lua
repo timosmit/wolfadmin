@@ -19,6 +19,7 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local teams = wolfa_requireModule("game.teams")
+local output = wolfa_requireModule("game.output")
 local util = wolfa_requireModule("util.util")
 local constants = wolfa_requireModule("util.constants")
 
@@ -43,7 +44,7 @@ commands.addadmin("lock", commandLock, auth.PERM_LOCKTEAM, "lock one or all of t
 
 function commandLock(clientId, command, team)
     if team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC and team ~= "all") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlock usage: "..commands.getadmin("lock")["syntax"].."\";")
+        output.clientConsole("^dlock usage: "..commands.getadmin("lock")["syntax"], clientId)
 
         return true
     end
@@ -53,7 +54,7 @@ function commandLock(clientId, command, team)
         teams.lock(constants.TEAM_ALLIES)
         teams.lock(constants.TEAM_SPECTATORS)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlock: ^9all teams have been locked.\";")
+        output.clientChat("^dlock: ^9all teams have been locked.")
 
         return false
     end
@@ -61,7 +62,7 @@ function commandLock(clientId, command, team)
     local team = util.getTeamFromCode(team)
     teams.lock(team)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been locked.\";")
+    output.clientChat("^dlock: "..util.getTeamColor(team)..util.getTeamName(team).." ^9team has been locked.")
 
     return false
 end

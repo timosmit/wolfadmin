@@ -16,30 +16,27 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
 local game = wolfa_requireModule("game.game")
+local output = wolfa_requireModule("game.output")
 
 function commandListMaps(clientId, command)
     local maps = game.getMaps()
 
     if #maps == 0 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistmaps: ^9no map information available.\";")
+        output.clientConsole("^dlistmaps: ^9no map information available.", clientId)
 
         return true
     end
 
-    local output = ""
-
+    local message = ""
     for _, map in ipairs(maps) do
-        local prefix = "^9"
-        if map == game.getMap() then prefix = "^7" end
+        local prefix = map == game.getMap() and "^7" or "^9"
 
-        output = (output ~= "") and output.." "..prefix..map or prefix..map
+        message = (message ~= "") and message.." "..prefix..map or prefix..map
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dlistmaps: ^9"..output.. "\";")
+    output.clientChat("^dlistmaps: ^9"..message)
 
     return true
 end

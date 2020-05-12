@@ -18,14 +18,14 @@
 local auth = wolfa_requireModule("auth.auth")
 local mutes = wolfa_requireModule("admin.mutes")
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandVoiceUnmute(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute usage: "..commands.getadmin("vunmute")["syntax"].."\";")
+        output.clientConsole("^dvunmute usage: "..commands.getadmin("vunmute")["syntax"], clientId)
         
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -35,22 +35,22 @@ function commandVoiceUnmute(clientId, command, victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dvunmute: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dvunmute: ^9no connected player by that name or slot #", clientId)
         
         return true
     end
     
     if not players.isMuted(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dvunmute: ^9no player by that name or slot # is voicemuted\";")
+        output.clientConsole("^dvunmute: ^9no player by that name or slot # is voicemuted", clientId)
         
         return true
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unvoicemuted\";")
+    output.clientChat("^dvunmute: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unvoicemuted.")
 
     mutes.removeByClient(cmdClient)
     

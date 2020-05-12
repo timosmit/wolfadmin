@@ -16,16 +16,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandPlayerLock(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock usage: "..commands.getadmin("plock")["syntax"].."\";")
+        output.clientConsole("^dplock usage: "..commands.getadmin("plock")["syntax"], clientId)
         
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -35,30 +34,30 @@ function commandPlayerLock(clientId, command, victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dplock: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dplock: ^9no connected player by that name or slot #", clientId)
         
         return true
     end
     
     if players.isTeamLocked(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already locked to a team.\";")
+        output.clientConsole("^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is already locked to a team.", clientId)
         
         return true
     elseif auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
         
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dplock: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dplock: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
         
         return true
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team\";")
+    output.clientChat("^dplock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been locked to his team")
 
     players.setTeamLocked(cmdClient, true)
     

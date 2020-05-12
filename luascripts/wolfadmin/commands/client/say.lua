@@ -19,6 +19,7 @@ local censor = wolfa_requireModule("admin.censor")
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local logs = wolfa_requireModule("util.logs")
 local util = wolfa_requireModule("util.util")
@@ -35,7 +36,7 @@ local types = {
 
 function commandSay(clientId, command, ...)
     if players.isMuted(clientId, players.MUTE_CHAT) then
-        et.trap_SendServerCommand(clientId, "cp \"^1You are muted\"")
+        output.clientCenter("^1You are muted", clientId)
 
         return true
     end
@@ -63,7 +64,7 @@ commands.addclient("say_buddy", commandSay, "", "", false, (config.get("g_standa
 
 function commandVoiceSay(clientId, command, ...)
     if players.isMuted(clientId, players.MUTE_VOICE) then
-        et.trap_SendServerCommand(clientId, "cp \"^1You are voicemuted\"")
+        output.clientCenter("^1You are voicemuted", clientId)
 
         return true
     end

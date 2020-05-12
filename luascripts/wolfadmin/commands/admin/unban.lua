@@ -20,22 +20,23 @@ local bans = wolfa_requireModule("admin.bans")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
 
 function commandRemoveBan(clientId, command, banId)
     if config.get("g_standalone") == 0 or not db.isConnected() then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9bans are disabled.\";")
+        output.clientConsole("^dunban: ^9bans are disabled.", clientId)
 
         return true
     elseif not banId or tonumber(banId) == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban usage: "..commands.getadmin("unban")["syntax"].."\";")
+        output.clientConsole("^dunban usage: "..commands.getadmin("unban")["syntax"], clientId)
 
         return true
     end
 
     if not bans.get(tonumber(banId)) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..banId.." does not exist.\";")
+        output.clientConsole("^dunban: ^9ban #"..banId.." does not exist.", clientId)
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dunban: ^9ban #"..banId.." removed.\";")
+        output.clientConsole("^dunban: ^9ban #"..banId.." removed.", clientId)
 
         bans.remove(tonumber(banId))
     end

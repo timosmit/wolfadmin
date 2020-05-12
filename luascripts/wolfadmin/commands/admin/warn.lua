@@ -20,6 +20,8 @@ local history = wolfa_requireModule("admin.history")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 
 function commandWarn(clientId, command, victim, ...)
@@ -51,7 +53,7 @@ function commandWarn(clientId, command, victim, ...)
     local cmdClient
 
     if not victim or not ... then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn usage: "..commands.getadmin("warn")["syntax"].."\";")
+        output.clientConsole("^dwarn usage: "..commands.getadmin("warn")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -61,17 +63,17 @@ function commandWarn(clientId, command, victim, ...)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dwarn: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dwarn: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
 
     if auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dwarn: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dwarn: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     end
@@ -82,10 +84,10 @@ function commandWarn(clientId, command, victim, ...)
         history.add(cmdClient, clientId, "warn", reason)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
+    output.clientCenter("^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".", cmdClient)
+    output.clientChat("^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
+    server.exec("playsound \"sound/misc/referee.wav\";")
 
     return true
 end

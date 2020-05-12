@@ -21,10 +21,11 @@ local util = wolfa_requireModule("util.util")
 local balancer = wolfa_requireModule("admin.balancer")
 local commands = wolfa_requireModule("commands.commands")
 local bots = wolfa_requireModule("game.bots")
+local output = wolfa_requireModule("game.output")
 
 function commandPutBots(clientId, command, team)
     if team == nil and team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dputbots usage: "..commands.getadmin("putbots")["syntax"].."\";")
+        output.clientConsole("^dputbots usage: "..commands.getadmin("putbots")["syntax"], clientId)
         
         return true
     end
@@ -33,12 +34,12 @@ function commandPutBots(clientId, command, team)
     
     bots.put(team)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dputbots: ^9all bots were set to ^7"..util.getTeamColor(team)..util.getTeamName(team).." ^9team.\";")
+    output.clientChat("^dputbots: ^9all bots were set to ^7"..util.getTeamColor(team)..util.getTeamName(team).." ^9team")
 
     if (team == constants.TEAM_AXIS or team == constants.TEAM_ALLIES) and balancer.isRunning() then
         balancer.disable()
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dbalancer: ^9balancer disabled.\";")
+        output.clientChat("^dbalancer: ^9balancer disabled")
     end
     
     return true

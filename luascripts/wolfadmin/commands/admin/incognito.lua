@@ -16,8 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
+local output = wolfa_requireModule("game.output")
 
 function commandIncognito(clientId, command)
     local isIncognito = auth.isPlayerAllowed(clientId, auth.PERM_NOAKA, true)
@@ -25,11 +25,11 @@ function commandIncognito(clientId, command)
     if not isIncognito then
         auth.addPlayerPermission(clientId, auth.PERM_NOAKA)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you are now playing incognito.\";")
+        output.clientChat("^dincognito: ^9you are now playing incognito.", clientId)
     else
         auth.removePlayerPermission(clientId, auth.PERM_NOAKA)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dincognito: ^9you stopped playing incognito.\";")
+        output.clientChat("^dincognito: ^9you stopped playing incognito.", clientId)
     end
 
     return true

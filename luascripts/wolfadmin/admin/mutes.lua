@@ -16,9 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local db = wolfa_requireModule("db.db")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
-
 local events = wolfa_requireModule("util.events")
 local timers = wolfa_requireModule("util.timers")
 
@@ -43,7 +42,7 @@ function mutes.add(victimId, invokerId, type, duration, reason)
     local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
     local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
 
-    local reason = reason and reason or "muted by admin"
+    reason = reason and reason or "muted by admin"
 
     players.setMuted(victimId, true, type, os.time(), os.time() + duration)
     db.addMute(victimPlayerId, invokerPlayerId, type, os.time(), duration, reason)
@@ -74,7 +73,7 @@ function mutes.checkLiveMutes()
         if players.isMuted(clientId) and players.getMuteExpiresAt(clientId) < os.time() then
             mutes.removeByClient(clientId)
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dunmute: ^7"..et.gentity_get(clientId, "pers.netname").." ^9has been automatically unmuted\";")
+            output.clientChat("^dunmute: ^7"..et.gentity_get(clientId, "pers.netname").." ^9has been automatically unmuted.")
         end
     end
 end

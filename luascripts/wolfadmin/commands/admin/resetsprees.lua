@@ -21,10 +21,11 @@ local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
 local sprees = wolfa_requireModule("game.sprees")
+local output = wolfa_requireModule("game.output")
 
 function commandResetSprees(clientId, command, map)
     if not db.isConnected() then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9spree records are disabled.\";")
+        output.clientConsole("^dsprees: ^9spree records are disabled.", clientId)
         
         return true
     end
@@ -32,11 +33,11 @@ function commandResetSprees(clientId, command, map)
     if map and map == "all" then
         sprees.reset(true)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dresetsprees: ^9all spree records have been reset.\";")
+        output.clientChat("^dresetsprees: ^9all spree records have been reset.")
     else
         sprees.reset()
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.\";")
+        output.clientChat("^dresetsprees: ^9spree records have been reset for map '^7"..game.getMap().."^9'.")
     end
     
     return true

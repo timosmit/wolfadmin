@@ -16,7 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
+local output = wolfa_requireModule("game.output")
 local util = wolfa_requireModule("util.util")
 local events = wolfa_requireModule("util.events")
 local files = wolfa_requireModule("util.files")
@@ -279,7 +279,7 @@ function commands.onClientCommand(clientId, command)
                         return 1
                     end
                 else
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \""..shrubCmd..": permission denied\";")
+                    output.clientConsole(shrubCmd..": permission denied", clientId)
                 end
             end
         end

@@ -17,38 +17,39 @@
 
 local acl = wolfa_requireModule("auth.acl")
 local config = wolfa_requireModule("config.config")
-local db = wolfa_requireModule("db.db")
 local commands = wolfa_requireModule("commands.commands")
+local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
 
 function commandAclListLevels()
     for _, level in ipairs(acl.getLevels()) do
-        et.G_Print(string.format("%5d %30s %6d players", level["id"], level["name"], level["players"]).."\n")
+        output.serverConsole(string.format("%5d %30s %6d players", level["id"], level["name"], level["players"]))
     end
 end
 
 function commandAclAddLevel(levelId, name)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId then
-        et.G_Print("usage: acl addlevel [id] [name]\n")
+        output.serverConsole("usage: acl addlevel [id] [name]")
 
         return true
     elseif acl.isLevel(levelId) then
-        et.G_Print("error: level "..levelId.." already exists\n")
+        output.serverConsole("error: level "..levelId.." already exists")
 
         return true
     end
 
     acl.addLevel(levelId, name)
 
-    et.G_Print("added level "..levelId.." ("..name..")\n")
+    output.serverConsole("added level "..levelId.." ("..name..")")
 end
 
 function commandAclRemoveLevel(levelId)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
-        et.G_Print("usage: acl removelevel [id]\n")
+        output.serverConsole("usage: acl removelevel [id]")
 
         return true
     end
@@ -56,59 +57,59 @@ function commandAclRemoveLevel(levelId)
     acl.removeLevelPermissions(levelId)
     acl.removeLevel(levelId)
 
-    et.G_Print("removed level "..levelId.."\n")
+    output.serverConsole("removed level "..levelId)
 end
 
 function commandAclReLevel(levelId, newLevelId)
-    local levelId = tonumber(levelId)
-    local newLevelId = tonumber(newLevelId)
+    levelId = tonumber(levelId)
+    newLevelId = tonumber(newLevelId)
 
     if not levelId or not acl.isLevel(levelId) or not newLevelId or not acl.isLevel(newLevelId) then
-        et.G_Print("usage: acl relevel [id] [newid]\n")
+        output.serverConsole("usage: acl relevel [id] [newid]")
 
         return true
     end
 
     acl.reLevel(levelId, newLevelId)
 
-    et.G_Print("releveled all players with "..levelId.." to "..newLevelId.."\n")
+    output.serverConsole("releveled all players with "..levelId.." to "..newLevelId)
 end
 
 function commandAclListLevelPermissions(levelId)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
-        et.G_Print("usage: acl listpermissions [id]\n")
+        output.serverConsole("usage: acl listpermissions [id]")
 
         return true
     end
 
-    et.G_Print("permissions for level "..levelId..":\n")
+    output.serverConsole("permissions for level "..levelId..":")
 
     for _, permission in ipairs(acl.getLevelPermissions(levelId)) do
-        et.G_Print(permission.."\n")
+        output.serverConsole(permission)
     end
 end
 
 function commandAclIsAllowed(levelId, permission)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not permission then
-        et.G_Print("usage: acl isallowed [id] [permission]\n")
+        output.serverConsole("usage: acl isallowed [id] [permission]")
 
         return true
     end
 
     local isAllowed = acl.isLevelAllowed(levelId, permission)
 
-    et.G_Print("level "..levelId.." "..(isAllowed and "HAS" or "HAS NOT").." "..permission.."\n")
+    output.serverConsole("level "..levelId.." "..(isAllowed and "HAS" or "HAS NOT").." "..permission)
 end
 
 function commandAclAddLevelPermission(levelId, permission)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not permission then
-        et.G_Print("usage: acl addpermission [id] [permission]\n")
+        output.serverConsole("usage: acl addpermission [id] [permission]")
 
         return true
     end
@@ -116,21 +117,21 @@ function commandAclAddLevelPermission(levelId, permission)
     local isAllowed = acl.isLevelAllowed(levelId, permission)
 
     if isAllowed then
-        et.G_Print("error: level "..levelId.." already has '"..permission.."'\n")
+        output.serverConsole("error: level "..levelId.." already has '"..permission.."'")
 
         return true
     end
 
     acl.addLevelPermission(levelId, permission)
 
-    et.G_Print("added permission "..permission.." to level "..levelId.."\n")
+    output.serverConsole("added permission "..permission.." to level "..levelId)
 end
 
 function commandAclRemoveLevelPermission(levelId, permission)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) or not permission then
-        et.G_Print("usage: acl removepermission [id] [permission]\n")
+        output.serverConsole("usage: acl removepermission [id] [permission]")
 
         return true
     end
@@ -138,43 +139,43 @@ function commandAclRemoveLevelPermission(levelId, permission)
     local isAllowed = acl.isLevelAllowed(levelId, permission)
 
     if not isAllowed then
-        et.G_Print("error: level "..levelId.." does not have '"..permission.."'\n")
+        output.serverConsole("error: level "..levelId.." does not have '"..permission.."'")
 
         return true
     end
 
     acl.removeLevelPermission(levelId, permission)
 
-    et.G_Print("removed permission "..permission.." from level "..levelId.."\n")
+    output.serverConsole("removed permission "..permission.." from level "..levelId)
 end
 
 function commandAclCopyLevelPermissions(levelId, newLevelId)
-    local levelId = tonumber(levelId)
-    local newLevelId = tonumber(newLevelId)
+    levelId = tonumber(levelId)
+    newLevelId = tonumber(newLevelId)
 
     if not levelId or not acl.isLevel(levelId) or not newLevelId or not acl.isLevel(newLevelId) then
-        et.G_Print("usage: acl copypermissions [id] [newid]\n")
+        output.serverConsole("usage: acl copypermissions [id] [newid]")
 
         return true
     end
 
     acl.copyLevelPermissions(levelId, newLevelId)
 
-    et.G_Print("copied permissions from "..levelId.." to "..newLevelId.."\n")
+    output.serverConsole("copied permissions from "..levelId.." to "..newLevelId)
 end
 
 function commandAclRemoveLevelPermissions(levelId)
-    local levelId = tonumber(levelId)
+    levelId = tonumber(levelId)
 
     if not levelId or not acl.isLevel(levelId) then
-        et.G_Print("usage: acl removepermissions [id]\n")
+        output.serverConsole("usage: acl removepermissions [id]")
 
         return true
     end
 
     acl.removeLevelPermissions(levelId)
 
-    et.G_Print("removed permissions from "..levelId.."\n")
+    output.serverConsole("removed permissions from "..levelId)
 end
 
 function commandAcl(command, action, ...)
@@ -199,7 +200,7 @@ function commandAcl(command, action, ...)
     elseif action == "removepermissions" then
         return commandAclRemoveLevelPermissions(...)
     else
-        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listpermissions|isallowed|addpermission|removepermission|copypermissions|removepermissions]")
+        output.serverConsole("usage: acl [listlevels|addlevel|removelevel|relevel|listpermissions|isallowed|addpermission|removepermission|copypermissions|removepermission]")
     end
     
     return true

@@ -16,13 +16,14 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local commands = wolfa_requireModule("commands.commands")
-
-local logs = wolfa_requireModule("util.logs")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
+local logs = wolfa_requireModule("util.logs")
 
 function commandR(clientId, command, ...)
     if not ... then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("r")["syntax"].."\";")
+        output.clientConsole("^9usage: "..commands.getclient("r")["syntax"], clientId)
 
         return true
     end
@@ -30,7 +31,7 @@ function commandR(clientId, command, ...)
     local recipient = players.getLastPMSender(clientId)
 
     if not (recipient and et.gentity_get(recipient, "pers.netname")) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"player not found\";")
+        output.clientConsole("player not found", clientId)
 
         return true
     end
@@ -39,16 +40,16 @@ function commandR(clientId, command, ...)
 
     players.setLastPMSender(recipient, clientId)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message.."\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/misc/pm.wav\";")
+    output.clientChat("^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message, clientId)
+    server.exec(string.format("playsound %d \"sound/misc/pm.wav\";", clientId))
 
     if clientId ~= recipient then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message.."\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
+        output.clientChat("^7"..et.gentity_get(clientId, "pers.netname").."^7 -> "..recipient..": (1 recipients): ^3"..message, recipient)
+        server.exec(string.format("playsound %d \"sound/misc/pm.wav\";", recipient))
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..recipient.." \"^3private message from "..et.gentity_get(clientId, "pers.netname").."\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..recipient.." \"^9reply: ^7r [^2message^7]\";")
+    output.clientCenter("^3private message from "..et.gentity_get(clientId, "pers.netname"), recipient)
+    output.clientConsole("^9reply: ^7r [^2message^7]", recipient)
 
     logs.writeChat(clientId, "priv", recipient, ...)
 

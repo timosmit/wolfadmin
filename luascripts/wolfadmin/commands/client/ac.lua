@@ -16,14 +16,14 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 
 function commandAdminChat(clientId, command, ...)
     if not ... then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9usage: "..commands.getclient("adminchat")["syntax"].."\";")
+        output.clientConsole("^9usage: "..commands.getclient("adminchat")["syntax"], clientId)
     else
         local recipients = {}
         
@@ -32,14 +32,16 @@ function commandAdminChat(clientId, command, ...)
                 table.insert(recipients, playerId) 
             end
         end
-        
+
+        local message = table.concat({...}, " ")
+
         for _, recipient in ipairs(recipients) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> adminchat ("..#recipients.." recipients): ^a"..table.concat({...}, " ").."\";")
-            et.trap_SendServerCommand(recipient, "cp \"^jadminchat message from ^7"..et.gentity_get(clientId, "pers.netname"))
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
+            output.clientChat("^7"..et.gentity_get(clientId, "pers.netname").."^7 -> adminchat ("..#recipients.." recipients): ^a"..message, recipient)
+            output.clientCenter("^jadminchat message from ^7"..et.gentity_get(clientId, "pers.netname"), recipient)
+            server.exec(string.format("playsound %d \"sound/misc/pm.wav\";", recipient))
         end
-        
-        et.G_LogPrint("adminchat: "..et.gentity_get(clientId, "pers.netname")..": "..table.concat({...}, " ").."\n")
+
+        et.G_LogPrint("adminchat: "..et.gentity_get(clientId, "pers.netname")..": "..message.."\n")
     end
     
     return true

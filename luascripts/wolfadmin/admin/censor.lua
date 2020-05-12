@@ -20,6 +20,7 @@ local mutes = wolfa_requireModule("admin.mutes")
 local history = wolfa_requireModule("admin.history")
 local auth = wolfa_requireModule("auth.auth")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local events = wolfa_requireModule("util.events")
 local toml = wolfa_requireLib("toml")
@@ -59,25 +60,25 @@ function censor.punishClient(clientId)
     if config.get("g_censorBurn") ~= 0 then
         admin.burnPlayer(clientId)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dburn: ^7"..players.getName(clientId).." ^9burnt his tongue.\";")
+        output.clientChat("^dburn: ^7"..players.getName(clientId).." ^9burnt his tongue.")
     end
 
     if config.get("g_censorSlap") ~= 0 then
         admin.slapPlayer(clientId, 20)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(clientId).." ^9was slapped for his foul language.\";")
+        output.clientChat("^dslap: ^7"..players.getName(clientId).." ^9was slapped for his foul language.")
     end
 
     if config.get("g_censorKill") ~= 0 and config.get("g_censorGib") == 0 then
         admin.killPlayer(clientId)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkill: ^7"..players.getName(clientId).." ^9stumbled over his words.\";")
+        output.clientChat("^dkill: ^7"..players.getName(clientId).." ^9stumbled over his words.")
     end
 
     if config.get("g_censorGib") ~= 0 then
         admin.gibPlayer(clientId)
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(clientId).." ^9should not have said that.\";")
+        output.clientChat("^dgib: ^7"..players.getName(clientId).." ^9should not have said that.")
     end
 
     if config.get("g_censorMute") > 0 then
@@ -87,7 +88,7 @@ function censor.punishClient(clientId)
             history.add(clientId, -1337, "mute", "censor")
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmute: ^7"..players.getName(clientId).." ^9has been muted for "..config.get("g_censorMute").." seconds\";")
+        output.clientChat("^dmute: ^7"..players.getName(clientId).." ^9has been muted for "..config.get("g_censorMute").." seconds")
     end
 end
 

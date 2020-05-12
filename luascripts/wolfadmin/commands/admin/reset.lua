@@ -18,11 +18,13 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandReset(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dreset: ^9match reset.\";")
+    output.clientChat("^dreset: ^9match reset")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "reset_match")
+    server.exec("reset_match;")
 
     return true
 end

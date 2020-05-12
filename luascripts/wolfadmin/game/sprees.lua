@@ -18,6 +18,8 @@
 local db = wolfa_requireModule("db.db")
 local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 local bits = wolfa_requireModule("util.bits")
 local constants = wolfa_requireModule("util.constants")
@@ -189,7 +191,7 @@ function sprees.printRecords()
     if db.isConnected() and config.get("g_spreeRecords") ~= 0 then
         for i = 0, sprees.TYPE_NUM - 1 do
             if currentRecords[i] and currentRecords[i]["record"] > 0 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getLastAlias(currentRecords[i]["player"])["alias"].."^9.\";")
+                output.clientChat("^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..currentRecords[i]["record"].."^9) by ^7"..db.getLastAlias(currentRecords[i]["player"])["alias"].."^9.")
             end
         end
     end
@@ -264,13 +266,13 @@ function sprees.onPlayerSpree(clientId, causeId, type)
 
             if config.get("g_spreeSounds") > 0 and spreeMessage["sound"] and spreeMessage["sound"] ~= "" and files.exists("sound/spree/"..spreeMessage["sound"]) then
                 if bits.hasbit(config.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..spreeMessage["sound"].."\";")
+                    server.exec(string.format("playsound \"sound/spree/%s\";", spreeMessage["sound"]))
                 else
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..spreeMessage["sound"].."\";")
+                    server.exec(string.format("playsound %d \"sound/spree/%s\";", clientId, spreeMessage["sound"]))
                 end
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+            output.clientChat(msg)
         elseif currentSpree % 5 == 0 and currentSpree > maxSpreeMessage["amount"] then
             local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
                 string.upper(spreeNames[type]),
@@ -281,13 +283,13 @@ function sprees.onPlayerSpree(clientId, causeId, type)
 
             if config.get("g_spreeSounds") > 0 and maxSpreeMessage["sound"] and maxSpreeMessage["sound"] ~= "" and files.exists("sound/spree/"..maxSpreeMessage["sound"]) then
                 if bits.hasbit(config.get("g_spreeSounds"), sprees.SOUND_PLAY_PUBLIC) then
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/spree/"..maxSpreeMessage["sound"].."\";")
+                    server.exec(string.format("playsound \"sound/spree/%s\";", maxSpreeMessage["sound"]))
                 else
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/spree/"..maxSpreeMessage["sound"].."\";")
+                    server.exec(string.format("playsound %d \"sound/spree/%s\";", clientId, maxSpreeMessage["sound"]))
                 end
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+            output.clientChat(msg)
         end
     end
 end
@@ -301,7 +303,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
                 playerSprees[clientId][sprees.TYPE_DEATH],
                 spreeNames[sprees.TYPE_DEATH])
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+            output.clientChat(msg)
         end
 
         playerSprees[clientId][sprees.TYPE_DEATH] = 0
@@ -336,7 +338,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
                             spreeNames[i])
                     end
 
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+                    output.clientChat(msg)
                 end
 
                 playerSprees[clientId][i] = 0

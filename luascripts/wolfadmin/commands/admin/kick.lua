@@ -20,12 +20,13 @@ local admin = wolfa_requireModule("admin.admin")
 local history = wolfa_requireModule("admin.history")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 
 function commandKick(clientId, command, victim, ...)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick usage: "..commands.getadmin("kick")["syntax"].."\";")
+        output.clientConsole("^dkick usage: "..commands.getadmin("kick")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -35,21 +36,21 @@ function commandKick(clientId, command, victim, ...)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dkick: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dkick: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
 
     if auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
 
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dkick: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     end
@@ -62,7 +63,7 @@ function commandKick(clientId, command, victim, ...)
     elseif auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         reason = "kicked by admin"
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dkick usage: "..commands.getadmin("kick")["syntax"].."\";")
+        output.clientConsole("^dkick usage: "..commands.getadmin("kick")["syntax"].."", clientId)
 
         return true
     end
@@ -71,7 +72,7 @@ function commandKick(clientId, command, victim, ...)
         history.add(cmdClient, clientId, "kick", reason)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been kicked\";")
+    output.clientChat("^dkick: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been kicked", clientId)
 
     admin.kickPlayer(cmdClient, clientId, reason)
 

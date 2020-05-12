@@ -18,11 +18,13 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandPause(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dpause: ^9map paused.\";")
+    output.clientChat("^dpause: ^9match paused.")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "ref pause")
+    server.exec("ref pause;")
 
     return true
 end

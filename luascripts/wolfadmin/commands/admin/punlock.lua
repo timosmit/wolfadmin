@@ -16,16 +16,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandPlayerUnlock(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock usage: "..commands.getadmin("punlock")["syntax"].."\";")
+        output.clientConsole("^dpunlock usage: "..commands.getadmin("punlock")["syntax"], clientId)
         
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -35,22 +34,22 @@ function commandPlayerUnlock(clientId, command, victim)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dpunlock: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dpunlock: ^9no connected player by that name or slot #", clientId)
         
         return true
     end
     
     if not players.isTeamLocked(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dpunlock: ^9no player by that name or slot # is locked to a team\";")
+        output.clientConsole("^dpunlock: ^9no player by that name or slot # is locked to a team", clientId)
         
         return true
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dpunlock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unlocked from his team\";")
+    output.clientChat("^dpunlock: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been unlocked from his team")
 
     players.setTeamLocked(cmdClient, false)
     

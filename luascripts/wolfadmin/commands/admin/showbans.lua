@@ -17,15 +17,16 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local bans = wolfa_requireModule("admin.bans")
+local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
-local commands = wolfa_requireModule("commands.commands")
+local output = wolfa_requireModule("game.output")
 local pagination = wolfa_requireModule("util.pagination")
 local util = wolfa_requireModule("util.util")
 
 function commandShowBans(clientId, offset)
     if not db.isConnected() then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowbans: ^9bans are disabled.\";")
+        output.clientConsole("^dshowbans: ^9bans are disabled.", clientId)
 
         return true
     end
@@ -35,15 +36,15 @@ function commandShowBans(clientId, offset)
     local bans = bans.getList(limit, offset)
 
     if not (bans and #bans > 0) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowbans: ^9there are no bans.\";")
+        output.clientConsole("^dshowbans: ^9there are no bans.", clientId)
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^d"..count.." bans:\";")
+        output.clientConsole("^d"..count.." bans:", clientId)
         for _, ban in pairs(bans) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", ban["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(ban["victim_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", ban["issued"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(ban["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", ban["expires"]).." ^7"..ban["reason"].."\";")
+            output.clientConsole("^f"..string.format("%4s", ban["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(ban["victim_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", ban["issued"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(ban["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", ban["expires"]).." ^7"..ban["reason"].."", clientId)
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowbans: ^9bans were printed to the console.\";")
+        output.clientConsole("^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.", clientId)
+        output.clientChat("^dshowbans: ^9bans were printed to the console.", clientId)
     end
 
     return true

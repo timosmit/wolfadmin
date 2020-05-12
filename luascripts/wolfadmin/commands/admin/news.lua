@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2017 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,25 +16,26 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
 local game = wolfa_requireModule("game.game")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandNews(clientId, command, map)
     map = map and map or game.getMap()
 
-    local fileDescriptor, fileLength = et.trap_FS_FOpenFile("sound/vo/"..map.."/news_"..map..".wav", et.FS_READ)
+    local fileName = string.format("sound/vo/%s/news_%s.wav", map, map)
+    local fileDescriptor, fileLength = et.trap_FS_FOpenFile(fileName, et.FS_READ)
 
     if fileLength == -1 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dnews: ^9file news_"..map.." does not exist.\";")
+        output.clientConsole(string.format("^dnews: ^9file news_%s.wav does not exist", map), clientId)
 
         return 0
     end
 
     et.trap_FS_FCloseFile(fileDescriptor)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/vo/"..map.."/news_"..map..".wav\";")
+    server.exec(string.format("playsound \"%s\"", fileName))
 
     return true
 end

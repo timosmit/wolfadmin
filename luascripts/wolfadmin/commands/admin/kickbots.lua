@@ -18,11 +18,12 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local bots = wolfa_requireModule("game.bots")
+local output = wolfa_requireModule("game.output")
 
 function commandBotsOff(clientId, command)
     bots.enable(false)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dkickbots: ^9bots were toggled off.\";")
+    output.clientChat("^dkickbots: ^9bots were toggled off.")
 
     return true
 end

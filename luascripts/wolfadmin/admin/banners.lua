@@ -16,11 +16,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local bits = wolfa_requireModule("util.bits")
 local events = wolfa_requireModule("util.events")
 local timers = wolfa_requireModule("util.timers")
 local constants = wolfa_requireModule("util.constants")
-local util = wolfa_requireModule("util.util")
 
 local toml = wolfa_requireLib("toml")
 
@@ -36,10 +36,11 @@ local welcomeBanners = {}
 local infoBanners = {}
 
 function banners.print(clientId, banner)
-    local prefix = (config.get("g_bannerArea") ~= constants.AREA_CHAT) and "^7" or "^dbanner: ^9"
-    local target = clientId and clientId or -1
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, 
-        string.format("%s %i \"%s%s\";", util.getCommandForArea(config.get("g_bannerArea")), target, prefix, banner["text"]))
+    local area = config.get("g_bannerArea")
+    local prefix = area == constants.AREA_CHAT and "^dbanner: ^9" or "^7"
+    local text = prefix..banner["text"]
+
+    output.client(area, text, clientId)
 end
 
 function banners.nextBanner(random)

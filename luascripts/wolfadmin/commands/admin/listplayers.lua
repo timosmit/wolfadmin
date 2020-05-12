@@ -20,6 +20,7 @@ local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
 local fireteams = wolfa_requireModule("game.fireteams")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
@@ -33,7 +34,7 @@ function commandListPlayers(clientId, command)
         end
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dCurrently ^7"..(#playersOnline).." ^dplayers online^d:\";")
+    output.clientConsole("^dCurrently ^7"..(#playersOnline).." ^dplayers online^d:", clientId)
     for _, player in pairs(playersOnline) do
         local teamColor, teamCode
 
@@ -57,7 +58,7 @@ function commandListPlayers(clientId, command)
             aka = "(a.k.a. "..mostUsedAlias.."^7)"
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%2i %s%s ^7%-2i %20s ^7(%s) ^1%1s ^3%1s ^7%s ^7%s",
+        output.clientConsole("^f"..string.format("%2i %s%s ^7%-2i %20s ^7(%s) ^1%1s ^3%1s ^7%s ^7%s",
             player, -- slot
             teamColor, -- team
             teamCode, -- team
@@ -68,10 +69,10 @@ function commandListPlayers(clientId, command)
             fireteamName, -- fireteam
             players.getName(player), -- name
             aka -- alias
-        ).."\";")
+        ), clientId)
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistplayers: ^9current player info was printed to the console.\";")
+    output.clientChat("^dlistplayers: ^9current player info was printed to the console.", clientId)
 
     return true
 end

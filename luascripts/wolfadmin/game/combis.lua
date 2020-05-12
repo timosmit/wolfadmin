@@ -16,8 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local config = wolfa_requireModule("config.config")
-local db = wolfa_requireModule("db.db")
-local game = wolfa_requireModule("game.game")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 local bits = wolfa_requireModule("util.bits")
 local constants = wolfa_requireModule("util.constants")
@@ -117,13 +117,13 @@ function combis.printCombi(clientId, type)
 
             if config.get("g_combiSounds") > 0 and combiMessage["sound"] and combiMessage["sound"] ~= "" then
                 if bits.hasbit(config.get("g_combiSounds"), combis.SOUND_PLAY_PUBLIC) then
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/combi/"..combiMessage["sound"].."\";")
+                    server.exec(string.format("playsound \"sound/combi/%s\";", combiMessage["sound"]))
                 else
-                    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/combi/"..combiMessage["sound"].."\";")
+                    server.exec(string.format("playsound %d \"sound/combi/%s\";", clientId, combiMessage["sound"]))
                 end
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \""..msg.."\";")
+            output.clientChat(msg)
         end
     end
 end

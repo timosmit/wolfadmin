@@ -18,6 +18,7 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local util = wolfa_requireModule("util.util")
 
@@ -25,7 +26,7 @@ function commandFinger(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfinger usage: "..commands.getadmin("finger")["syntax"].."\";")
+        output.clientConsole("^dfinger usage: "..commands.getadmin("finger")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -35,11 +36,11 @@ function commandFinger(clientId, command, victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfinger: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dfinger: ^9no or multiple matches for '^7"..victim.."^9'", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfinger: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dfinger: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -53,12 +54,12 @@ function commandFinger(clientId, command, victim)
     local guid = players.getGUID(cmdClient)
     local ip = players.getIP(cmdClient)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dInformation about ^7"..name.."^d:\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dName:    ^2"..cleanname.." ("..codedname..")\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dSlot:    ^2"..slot..(slot < tonumber(et.trap_Cvar_Get("sv_privateClients")) and " ^9(private)" or "").."\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dLevel:   ^2"..level.." ("..levelName..")\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dGUID:    ^2"..guid.."\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dIP:      ^2"..ip.."\";")
+    output.clientConsole("^dInformation about ^7"..name.."^d:", clientId)
+    output.clientConsole("^dName:    ^2"..cleanname.." ("..codedname..")", clientId)
+    output.clientConsole("^dSlot:    ^2"..slot..(slot < tonumber(et.trap_Cvar_Get("sv_privateClients")) and " ^9(private)" or ""), clientId)
+    output.clientConsole("^dLevel:   ^2"..level.." ("..levelName..")", clientId)
+    output.clientConsole("^dGUID:    ^2"..guid.."", clientId)
+    output.clientConsole("^dIP:      ^2"..ip.."", clientId)
 
     return true
 end

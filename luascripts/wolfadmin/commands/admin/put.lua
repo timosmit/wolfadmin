@@ -19,6 +19,7 @@ local admin = wolfa_requireModule("admin.admin")
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local util = wolfa_requireModule("util.util")
 local constants = wolfa_requireModule("util.constants")
 
@@ -26,7 +27,7 @@ function commandPlayerPut(clientId, command, victim, team)
     local cmdClient
 
     if victim == nil or team == nil or (team ~= constants.TEAM_AXIS_SC and team ~= constants.TEAM_ALLIES_SC and team ~= constants.TEAM_SPECTATORS_SC) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput usage: "..commands.getadmin("put")["syntax"].."\";")
+        output.clientConsole("^dput usage: "..commands.getadmin("put")["syntax"], clientId)
         
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -36,21 +37,21 @@ function commandPlayerPut(clientId, command, victim, team)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dput: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dput: ^9no connected player by that name or slot #", clientId)
         
         return true
     end
 
     if auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
         
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(cmdClient) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dput: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dput: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
         
         return true
     end
@@ -59,7 +60,7 @@ function commandPlayerPut(clientId, command, victim, team)
 
     -- cannot unbalance teams in certain mods (see g_svcmds.c:SetTeam)
     -- fixed in legacymod
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..util.getTeamColor(team)..util.getTeamName(team).."\";")
+    output.clientChat("^dput: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been put to "..util.getTeamColor(team)..util.getTeamName(team))
 
     admin.putPlayer(cmdClient, team)
 

@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2017 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandRename(clientId, command, victim, newName)
     local cmdClient
 
     if victim == nil or newName == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename usage: "..commands.getadmin("rename")["syntax"].."\";")
+        output.clientConsole("^drename usage: "..commands.getadmin("rename")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -34,11 +35,11 @@ function commandRename(clientId, command, victim, newName)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^drename: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^drename: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -50,7 +51,7 @@ function commandRename(clientId, command, victim, newName)
     et.trap_SetUserinfo(cmdClient, clientInfo)
     et.ClientUserinfoChanged(cmdClient)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drename: ^7"..oldName.." ^9has been renamed to ^7"..newName.."^9.\";")
+    output.clientChat("^drename: ^7"..oldName.." ^9has been renamed to ^7"..newName)
 
     return true
 end

@@ -18,9 +18,10 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 
 function commandTime(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dtime: ^9current time is ^7"..os.date("%H:%M:%S").."^9.\";")
+    output.clientChat("^dtime: ^9current time is ^7"..os.date("%H:%M:%S").."^9.")
 
     return true
 end

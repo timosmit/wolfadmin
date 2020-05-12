@@ -21,6 +21,7 @@ local rules = wolfa_requireModule("admin.rules")
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local sprees = wolfa_requireModule("game.sprees")
 local greetings = wolfa_requireModule("players.greetings")
 
@@ -31,7 +32,7 @@ function commandReadconfig(clientId, command)
     local greetingsCount = greetings.load()
     local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..spreesCount.." sprees\";")
+    output.clientConsole("readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..spreesCount.." sprees", clientId)
 
     return false
 end
@@ -45,7 +46,7 @@ function commandReadconfig(clientId, command)
     local greetingsCount = greetings.load()
     local spreesCount = sprees.load()
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..censorCount.." censor patterns, "..spreesCount.." sprees\";")
+    output.clientConsole("readconfig: loaded "..bannersCount.." banners, "..rulesCount.." rules, "..greetingsCount.." greetings, "..censorCount.." censor patterns, "..spreesCount.." sprees", clientId)
 
     return false
 end

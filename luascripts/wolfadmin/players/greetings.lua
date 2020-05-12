@@ -18,6 +18,8 @@
 local auth = wolfa_requireModule("auth.auth")
 local config = wolfa_requireModule("config.config")
 local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 local util = wolfa_requireModule("util.util")
@@ -49,13 +51,14 @@ end
 
 function greetings.show(clientId)
     local greeting = greetings.get(clientId)
-    
+
     if greeting then
-        local prefix = (util.getAreaName(config.get("g_greetingArea")) ~= "cp") and "^dgreeting: ^9" or "^7"
+        local area = config.get("g_greetingArea")
+        local prefix = area == constants.AREA_CHAT and "^dgreeting: ^9" or "^7"
         local text = prefix..greeting["text"]:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
+
         local out = ""
-        
-        while util.getAreaName(config.get("g_greetingArea")) == "cp" and string.len(text) > constants.MAX_LENGTH_CP do
+        while area == constants.AREA_CP and string.len(text) > constants.MAX_LENGTH_CP do
             local sub = text:sub(1, constants.MAX_LENGTH_CP)
             local rev = sub:reverse()
 
@@ -71,12 +74,12 @@ function greetings.show(clientId)
                 text = text:sub(pos + 1)
             end
         end
-        
+
         if greeting["sound"] then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"/sound/"..greeting["sound"].."\";")
+            server.exec(string.format("playsound \"sound/%s\";", greeting["sound"]))
         end
-        
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, util.getAreaName(config.get("g_greetingArea")).." \""..out..text.."\";")
+
+        output.client(area, out..text)
     end
 end
 

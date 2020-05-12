@@ -19,6 +19,7 @@ local admin = wolfa_requireModule("admin.admin")
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 
@@ -35,7 +36,7 @@ function commandSpec999(clientId, command)
         end
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dspec999: ^9"..count.." players were put to spectators.\";")
+    output.clientConsole("^dspec999: ^9"..count.." players were put to spectators.", clientId)
 
     return true
 end

@@ -18,6 +18,7 @@
 local auth = wolfa_requireModule("auth.auth")
 local bans = wolfa_requireModule("admin.bans")
 local history = wolfa_requireModule("admin.history")
+local output = wolfa_requireModule("game.output")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local util = wolfa_requireModule("util.util")
@@ -26,7 +27,7 @@ function commandBan(clientId, command, victim, ...)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
+        output.clientConsole("^dban usage: "..commands.getadmin("ban")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -36,11 +37,11 @@ function commandBan(clientId, command, victim, ...)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dban: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dban: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -60,17 +61,17 @@ function commandBan(clientId, command, victim, ...)
     elseif auth.isPlayerAllowed(clientId, auth.PERM_PERMA) and auth.isPlayerAllowed(clientId, auth.PERM_NOREASON) then
         reason = "banned by admin"
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
+        output.clientConsole("^dban usage: "..commands.getadmin("ban")["syntax"], clientId)
         
         return true
     end
 
     if auth.isPlayerAllowed(cmdClient, auth.PERM_IMMUNE) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
 
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dban: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     end
@@ -85,7 +86,7 @@ function commandBan(clientId, command, victim, ...)
         durationText = "for "..duration.." seconds"
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned "..durationText.."\";")
+    output.clientChat("^dban: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9has been banned "..durationText)
 
     bans.add(cmdClient, clientId, duration, reason)
 

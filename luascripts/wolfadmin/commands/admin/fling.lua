@@ -18,6 +18,7 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 local vectors = wolfa_requireModule("util.vectors")
@@ -26,7 +27,7 @@ function commandFling(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling usage: "..commands.getadmin("fling")["syntax"].."\";")
+        output.clientConsole("^dfling usage: "..commands.getadmin("fling")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -36,29 +37,29 @@ function commandFling(clientId, command, victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dfling: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dfling: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
 
     if auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
 
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dfling: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     elseif et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_AXIS and et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_ALLIES then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not playing.\";")
+        output.clientConsole("^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not playing.", clientId)
 
         return true
     elseif et.gentity_get(cmdClient, "health") <= 0 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not alive.\";")
+        output.clientConsole("^dfling: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not alive.", clientId)
 
         return true
 	end
@@ -70,7 +71,7 @@ function commandFling(clientId, command, victim)
 	local modifier = vectors.scale({ math.random(-50, 50), math.random(-50, 50), math.random(0, 5) }, 1500)
     et.gentity_set(cmdClient, "ps.velocity", vectors.add(velocity, modifier))
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dfling: ^7"..players.getName(cmdClient).." ^9was flung.\";")
+    output.clientChat("^dfling: ^7"..players.getName(cmdClient).." ^9was flung.")
 
     return true
 end

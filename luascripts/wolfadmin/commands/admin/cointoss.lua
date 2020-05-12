@@ -16,9 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 
 function commandCoinToss(clientId, command)
@@ -37,7 +36,7 @@ function commandCoinToss(clientId, command)
         result = "the coin got lost."
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dcointoss: ^7"..players.getName(clientId).." ^9tossed a coin..."..result.."\";")
+    output.clientChat("^dcointoss: ^7"..players.getName(clientId).." ^9tossed a coin... "..result)
 
     return true
 end

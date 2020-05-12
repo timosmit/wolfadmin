@@ -17,6 +17,8 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
 local timers = wolfa_requireModule("util.timers")
@@ -51,7 +53,7 @@ function voting.isRestricted(type)
 end
 
 function voting.disableNextMap()
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dvote: ^9next map voting has automatically been disabled.\";")
+    output.clientChat("^dvote: ^9next map voting has automatically been disabled.")
 
     voting.allow("nextmap", 0)
 end
@@ -89,8 +91,8 @@ function voting.onCallvote(clientId, type, args)
     if et.gentity_get(clientId, "sess.sessionTeam") == constants.TEAM_SPECTATORS or args[1] == "?" then
         return 0
     elseif voting.isRestricted(type) and not auth.isPlayerAllowed(clientId, auth.PERM_NOVOTELIMIT) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"callvote: you are not allowed to call this type of vote.\";")
-        et.trap_SendServerCommand(clientId, "cp \"You are not allowed to call this type of vote.")
+        output.clientConsole("callvote: you are not allowed to call this type of vote.", clientId)
+        output.clientCenter("You are not allowed to call this type of vote.", clientId)
 
         return 1
     end
@@ -100,9 +102,9 @@ events.handle("onCallvote", voting.onCallvote)
 function voting.onPollFinish(passed, poll)
     if passed then
         if poll == "enable bots" then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "needbots")
+            server.exec("needbots;")
         elseif poll == "disable bots" then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "kickbots")
+            server.exec("kickbots;")
         elseif string.find(poll, "put bots") == 1 then
             local team = string.sub(poll, 10)
 
@@ -114,7 +116,7 @@ function voting.onPollFinish(passed, poll)
                 return
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "putbots "..team)
+            server.exec(string.format("putbots %s;", team))
         elseif string.find(poll, "set bot difficulty") == 1 then
             local difficulty = string.sub(poll, 20)
 
@@ -138,7 +140,7 @@ function voting.onPollFinish(passed, poll)
                 return
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot difficulty "..difficulty)
+            server.exec(string.format("bot difficulty %d;", difficulty))
         elseif string.find(poll, "set bot max") == 1 then
             local amount = string.sub(poll, 13)
 
@@ -148,8 +150,8 @@ function voting.onPollFinish(passed, poll)
                 return
             end
 
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "bot maxbots "..amount)
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dmaxbots: ^9maximum set to ^7"..amount.." ^9bots.\";")
+            server.exec(string.format("bot maxbots %d;", amount))
+            output.clientChat("^dmaxbots: ^9maximum set to ^7"..amount.." ^9bots.")
         end
     end
 end

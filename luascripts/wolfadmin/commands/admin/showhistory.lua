@@ -17,9 +17,10 @@
 
 local auth = wolfa_requireModule("auth.auth")
 local history = wolfa_requireModule("admin.history")
-local db = wolfa_requireModule("db.db")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local db = wolfa_requireModule("db.db")
+local output = wolfa_requireModule("game.output")
 local util = wolfa_requireModule("util.util")
 local pagination = wolfa_requireModule("util.pagination")
 
@@ -27,11 +28,11 @@ function commandListHistory(clientId, command, victim, offset)
     local cmdClient
 
     if not db.isConnected() or config.get("g_playerHistory") == 0 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9player history is disabled.\";")
+        output.clientConsole("^dshowhistory: ^9player history is disabled.", clientId)
 
         return true
     elseif victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory usage: "..commands.getadmin("showhistory")["syntax"].."\";")
+        output.clientConsole("^dshowhistory usage: "..commands.getadmin("showhistory")["syntax"].."", clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -41,11 +42,11 @@ function commandListHistory(clientId, command, victim, offset)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dshowhistory: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dshowhistory: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
@@ -55,15 +56,15 @@ function commandListHistory(clientId, command, victim, offset)
     local playerHistory = history.getList(cmdClient, limit, offset)
 
     if not (playerHistory and #playerHistory > 0) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowhistory: ^9there is no history for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.\";")
+        output.clientConsole("^dshowhistory: ^9there is no history for player ^7"..et.gentity_get(cmdClient, "pers.netname").."^9.", clientId)
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dHistory for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
+        output.clientConsole("^dHistory for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:", clientId)
         for _, history in pairs(playerHistory) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%4s", history["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(history["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", history["datetime"]).." ^7"..string.format("%-8s", history["type"]..":").." "..history["reason"].."\";")
+            output.clientConsole("^f"..string.format("%4s", history["id"]).." ^7"..string.format("%-20s", util.removeColors(db.getLastAlias(history["invoker_id"])["alias"])).." ^f"..os.date("%d/%m/%Y", history["datetime"]).." ^7"..string.format("%-8s", history["type"]..":").." "..history["reason"].."", clientId)
         end
 
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowhistory: ^9history for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9was printed to the console.\";")
+        output.clientConsole("^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.", clientId)
+        output.clientChat("^dshowhistory: ^9history for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9was printed to the console.", clientId)
     end
 
     return true

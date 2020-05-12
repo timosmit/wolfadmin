@@ -17,6 +17,8 @@
 
 local db = wolfa_requireModule("db.db")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 local events = wolfa_requireModule("util.events")
@@ -68,7 +70,7 @@ function admin.slapPlayer(clientId, damage)
 
     et.gentity_set(clientId, "health", newHealth)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..clientId.." \"sound/player/land_hurt.wav\";")
+    server.exec(string.format("playsound %d \"sound/player/land_hurt.wav\";", clientId))
 end
 
 function admin.killPlayer(clientId)
@@ -205,7 +207,7 @@ function admin.onClientNameChange(clientId, oldName, newName)
     -- on some mods, this message is already printed
     -- known: old NQ versions, Legacy
     if et.trap_Cvar_Get("fs_game") ~= "legacy" then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay -1 \""..oldName.." ^7is now known as "..newName.."\";")
+        output.clientConsole(oldName.." ^7is now known as "..newName)
     end
 
     -- update database

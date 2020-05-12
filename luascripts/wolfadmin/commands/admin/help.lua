@@ -18,6 +18,7 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 
 function commandHelp(clientId, command, cmd)
     local cmds = commands.getadmin()
@@ -31,7 +32,7 @@ function commandHelp(clientId, command, cmd)
             end
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dhelp: ^9"..#availableCommands.." "..((config.get("g_standalone") ~= 0) and "available" or "additional").." commands (open console for the full list)\";")
+        output.clientChat("^dhelp: ^9"..#availableCommands.." "..((config.get("g_standalone") ~= 0) and "available" or "additional").." commands (open console for the full list)", clientId)
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         
@@ -40,27 +41,27 @@ function commandHelp(clientId, command, cmd)
             cmdsOnLine = cmdsOnLine + 1
                 
             if cmdsOnLine == 6 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..cmdsBuffer.."\";")
+                output.clientConsole("^f"..cmdsBuffer, clientId)
                 cmdsBuffer = ""
                 cmdsOnLine = 0
             end
         end
         
         if cmdsBuffer ~= "" then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..cmdsBuffer.."\";")
+            output.clientConsole("^f"..cmdsBuffer, clientId)
         end
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!help ^d[command] ^9for help with a specific command.\";")
+        output.clientConsole("^9Type ^2!help ^d[command] ^9for help with a specific command.", clientId)
         
         return false
     else
         cmd = string.lower(cmd)
         
         if cmds[cmd] ~= nil and (not cmds[cmd]["hidden"] or (type(cmds[cmd]["hidden"]) == "function" and not cmds[cmd]["hidden"]())) then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dhelp: ^9help for '^2".. cmd .."^9':\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dfunction: ^9"..cmds[cmd]["help"].."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsyntax: ^9"..cmds[cmd]["syntax"].."\";")
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dflag: ^9'^2"..cmds[cmd]["flag"].."^9'\";")
+            output.clientConsole("^dhelp: ^9help for '^2".. cmd .."^9':", clientId)
+            output.clientConsole("^dfunction: ^9"..cmds[cmd]["help"], clientId)
+            output.clientConsole("^dsyntax: ^9"..cmds[cmd]["syntax"], clientId)
+            output.clientConsole("^dflag: ^9'^2"..cmds[cmd]["flag"].."^9'", clientId)
             
             return true
         end

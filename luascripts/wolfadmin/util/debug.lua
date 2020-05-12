@@ -16,6 +16,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 
 local COLOURS_CHAT = {
     [1] = "^_", -- termination
@@ -44,7 +45,7 @@ function outputDebug(msg, severity)
 
         for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
             if config.get("g_debugWolfAdmin") ~= 0 then
-                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..playerId.." \"^:[WolfAdmin DEBUG] "..COLOURS_CHAT[severity]..msg.."\";")
+                output.clientConsole("^:[WolfAdmin DEBUG] "..COLOURS_CHAT[severity]..msg, playerId)
             end
         end
     end

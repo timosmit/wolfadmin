@@ -19,9 +19,11 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
 local game = wolfa_requireModule("game.game")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandRestart(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drestart: ^9map restarted.\";")
+    output.clientChat("^drestart: ^9map restarted")
 
     local currentState = game.getState()
     local newState = 5 -- GS_RESET
@@ -30,7 +32,7 @@ function commandRestart(clientId, command)
 			  newState = 2 -- GS_WARMUP
 		end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "map_restart 0 "..newState)
+    server.exec(string.format("map_restart 0 %d;", newState))
 
     return true
 end

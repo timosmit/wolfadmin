@@ -18,11 +18,13 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandNextMap(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dnextmap: ^9next map was loaded.\";")
+    output.clientChat("^dnextmap: ^9next map was loaded.")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "vstr nextmap")
+    server.exec("vstr nextmap;")
 
     return true
 end

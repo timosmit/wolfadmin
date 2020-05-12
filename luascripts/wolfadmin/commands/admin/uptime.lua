@@ -18,6 +18,7 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 
 function commandUptime(clientId, command)
     local uptime = et.trap_Milliseconds() / 1000
@@ -27,7 +28,7 @@ function commandUptime(clientId, command)
     uptime = uptime - (hours * 60 * 60)
     local minutes = math.ceil(uptime / 60)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^duptime: ^2"..days.." days, "..hours.." hours, "..minutes.." minutes.\";")
+    output.clientChat("^duptime: ^2"..days.." days, "..hours.." hours, "..minutes.." minutes.")
 
     return true
 end

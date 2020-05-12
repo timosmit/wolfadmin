@@ -17,11 +17,28 @@
 
 local client = wolfa_requireModule("game.client")
 local server = wolfa_requireModule("game.server")
+local constants = wolfa_requireModule("util.constants")
 
 local this = {}
 
 function this.serverConsole(text)
     server.outputServerConsole(text)
+end
+
+function this.client(area, text, clientId)
+    if area == constants.AREA_CONSOLE then
+        this.clientConsole(text, clientId)
+    elseif area == constants.AREA_BP then
+        this.clientBanner(text, clientId)
+    elseif area == constants.AREA_CP then
+        this.clientCenter(text, clientId)
+    elseif area == constants.AREA_POPUPS then
+        this.clientPopup(text, clientId)
+    elseif area == constants.AREA_CHAT then
+        this.clientChat(text, clientId)
+    else
+        this.clientCenter(text, clientId)
+    end
 end
 
 function this.clientConsole(text, clientId)

@@ -16,9 +16,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local greetings = wolfa_requireModule("players.greetings")
 
 function commandGreeting(clientId, command)
@@ -27,7 +26,7 @@ function commandGreeting(clientId, command)
     if greeting then
         greetings.show(clientId)
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgreeting: ^9you do not have a personal greeting.\";")
+        output.clientConsole("^dgreeting: ^9you do not have a personal greeting.", clientId)
     end
 end
 commands.addadmin("greeting", commandGreeting, auth.PERM_GREETING, "display your personal greeting, if you have one")

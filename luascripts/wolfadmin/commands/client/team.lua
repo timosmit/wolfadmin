@@ -17,6 +17,7 @@
 
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local teams = wolfa_requireModule("game.teams")
 local players = wolfa_requireModule("players.players")
 local util = wolfa_requireModule("util.util")
@@ -27,7 +28,7 @@ function commandTeam(clientId, command)
         local teamName = util.getTeamName(clientTeam)
         local teamColor = util.getTeamColor(clientTeam)
 
-        et.trap_SendServerCommand(clientId, "cp \"^7You are locked to the "..teamColor..teamName.." ^7team")
+        output.clientCenter("^7You are locked to the "..teamColor..teamName.." ^7team", clientId)
 
         return true
     end
@@ -37,7 +38,7 @@ function commandTeam(clientId, command)
         local teamName = util.getTeamName(team)
         local teamColor = util.getTeamColor(team)
 
-        et.trap_SendServerCommand(clientId, "cp \""..teamColor..teamName.." ^7team is locked")
+        output.clientCenter(""..teamColor..teamName.." ^7team is locked", clientId)
 
         return true
     end

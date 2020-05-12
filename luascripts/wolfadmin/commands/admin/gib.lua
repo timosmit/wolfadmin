@@ -19,6 +19,7 @@ local admin = wolfa_requireModule("admin.admin")
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
 local constants = wolfa_requireModule("util.constants")
 
@@ -26,7 +27,7 @@ function commandGib(clientId, command, victim)
     local cmdClient
 
     if victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib usage: "..commands.getadmin("gib")["syntax"].."\";")
+        output.clientConsole("^dgib usage: "..commands.getadmin("gib")["syntax"], clientId)
 
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -36,36 +37,36 @@ function commandGib(clientId, command, victim)
     end
 
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dgib: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
 
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dgib: ^9no connected player by that name or slot #", clientId)
 
         return true
     end
 
     if auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
 
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dgib: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
 
         return true
     elseif et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_AXIS and et.gentity_get(cmdClient, "sess.sessionTeam") ~= constants.TEAM_ALLIES then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not playing.\";")
+        output.clientConsole("^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not playing.", clientId)
 
         return true
     elseif et.gentity_get(cmdClient, "health") <= 0 then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not alive.\";")
+        output.clientConsole("^dgib: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is not alive.", clientId)
 
         return true
     end
 
     admin.gibPlayer(cmdClient)
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.\";")
+    output.clientChat("^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.")
 
     return true
 end

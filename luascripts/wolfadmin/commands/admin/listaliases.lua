@@ -16,13 +16,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local auth = wolfa_requireModule("auth.auth")
-
 local db = wolfa_requireModule("db.db")
-
 local commands = wolfa_requireModule("commands.commands")
-
+local output = wolfa_requireModule("game.output")
 local players = wolfa_requireModule("players.players")
-
 local pagination = wolfa_requireModule("util.pagination")
 local util = wolfa_requireModule("util.util")
 
@@ -30,11 +27,11 @@ function commandListAliases(clientId, command, victim, offset)
     local cmdClient
 
     if not db.isConnected() then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")
+        output.clientConsole("^dlistaliases: ^9alias history is disabled.", clientId)
         
         return true
     elseif victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases usage: "..commands.getadmin("listaliases")["syntax"].."\";")
+        output.clientConsole("^dlistaliases usage: "..commands.getadmin("listaliases")["syntax"], clientId)
         
         return true
     elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
@@ -44,21 +41,21 @@ function commandListAliases(clientId, command, victim, offset)
     end
     
     if cmdClient == -1 or cmdClient == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9no or multiple matches for '^7"..victim.."^9'.\";")
+        output.clientConsole("^dlistaliases: ^9no or multiple matches for '^7"..victim.."^9'.", clientId)
         
         return true
     elseif not et.gentity_get(cmdClient, "pers.netname") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9no connected player by that name or slot #\";")
+        output.clientConsole("^dlistaliases: ^9no connected player by that name or slot #", clientId)
         
         return true
     end
     
     if auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+        output.clientConsole("^dlistaliases: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.", clientId)
         
         return true
     elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+        output.clientConsole("^dlistaliases: ^9sorry, but your intended victim has a higher admin level than you do.", clientId)
         
         return true
     end
@@ -69,16 +66,16 @@ function commandListAliases(clientId, command, victim, offset)
     local limit, offset = pagination.calculate(count, 30, tonumber(offset))
     local aliases = db.getAliases(player, limit, offset)
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
+    output.clientConsole("^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:", clientId)
     for _, alias in pairs(aliases) do
         local numberOfSpaces = 24 - string.len(util.removeColors(alias["alias"]))
         local spaces = string.rep(" ", numberOfSpaces)
         
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..spaces..alias["alias"].." ^7"..string.format("%8s", alias["used"]).." times\";")
+        output.clientConsole("^7"..spaces..alias["alias"].." ^7"..string.format("%8s", alias["used"]).." times", clientId)
     end
     
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistaliases: ^9aliases for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
+    output.clientConsole("^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.", clientId)
+    output.clientChat("^dlistaliases: ^9aliases for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.", clientId)
     
     return true
 end

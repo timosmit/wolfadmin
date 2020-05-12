@@ -17,10 +17,11 @@
 
 local commands = wolfa_requireModule("commands.commands")
 local auth = wolfa_requireModule("auth.auth")
+local output = wolfa_requireModule("game.output")
 local voting = wolfa_requireModule("game.voting")
 
 function commandEnableVote(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^denablevote: ^9next map voting has been enabled.\";")
+    output.clientChat("^denablevote: ^9next map voting has been enabled.")
 
     voting.force("nextmap")
     

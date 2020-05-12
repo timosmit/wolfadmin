@@ -18,11 +18,13 @@
 local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 local config = wolfa_requireModule("config.config")
+local output = wolfa_requireModule("game.output")
+local server = wolfa_requireModule("game.server")
 
 function commandSwap(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dswap: ^9teams swapped.\";")
+    output.clientChat("^dswap: ^9teams swapped.")
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "swap_teams")
+    server.exec("swap_teams;")
 
     return true
 end
