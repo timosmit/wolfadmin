@@ -63,7 +63,7 @@ function commandSlap(clientId, command, victim)
         return true
     end
 
-    admin.slap(cmdClient, 20)
+    admin.slapPlayer(cmdClient, 20)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(cmdClient).." ^9was slapped.\";")
 
