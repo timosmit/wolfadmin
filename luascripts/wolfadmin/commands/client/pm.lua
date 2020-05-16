@@ -52,14 +52,19 @@ function commandPersonalMessageLegacy(clientId, command, target, ...)
 
     local recipients = {}
 
-    local targetSanitized = string.lower(util.removeColors(target))
+    if tonumber(target) ~= nil and et.gentity_get(target, "pers.netname") then
+        table.insert(recipients, tonumber(target))
+    end
 
-    for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
-        if players.isConnected(playerId) then
-            local playerNameSanitized = string.lower(util.removeColors(players.getName(playerId)))
+    if #recipients == 0 then
+        local targetSanitized = string.lower(util.removeColors(target))
+        for playerId = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
+            if players.isConnected(playerId) then
+                local playerNameSanitized = string.lower(util.removeColors(players.getName(playerId)))
 
-            if string.find(playerNameSanitized, targetSanitized, 1, true) then
-                table.insert(recipients, playerId)
+                if string.find(playerNameSanitized, targetSanitized, 1, true) then
+                    table.insert(recipients, playerId)
+                end
             end
         end
     end
