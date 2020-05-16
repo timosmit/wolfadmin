@@ -131,7 +131,7 @@ local cfgStructure = {
     },
     ["greetings"] = {
         ["file"] = "g_fileGreetings",
-        ["area"] = "g_greetingsArea",
+        ["area"] = "g_greetingArea",
         ["bots"] = "g_botGreetings"
     },
     ["records"] = {
