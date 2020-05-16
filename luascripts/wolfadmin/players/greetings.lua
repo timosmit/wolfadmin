@@ -52,35 +52,37 @@ end
 function greetings.show(clientId)
     local greeting = greetings.get(clientId)
 
-    if greeting then
-        local area = config.get("g_greetingArea")
-        local prefix = area == constants.AREA_CHAT and "^dgreeting: ^9" or "^7"
-        local text = prefix..greeting["text"]:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
-
-        local out = ""
-        while area == constants.AREA_CP and string.len(text) > constants.MAX_LENGTH_CP do
-            local sub = text:sub(1, constants.MAX_LENGTH_CP)
-            local rev = sub:reverse()
-
-            local pos = rev:find(" [^^]") -- some epic smiley exclusion here
-
-            if pos then
-                pos = constants.MAX_LENGTH_CP - pos
-                out = out..text:sub(1, pos).."\\n"
-                text = text:sub(pos + 2)
-            else
-                pos = sub:len()
-                out = out..text:sub(1, pos).."\\n"
-                text = text:sub(pos + 1)
-            end
-        end
-
-        if greeting["sound"] then
-            server.exec(string.format("playsound \"sound/%s\";", greeting["sound"]))
-        end
-
-        output.client(area, out..text)
+    if not greeting then
+        return
     end
+
+    local area = config.get("g_greetingArea")
+    local prefix = area == constants.AREA_CHAT and "^dgreeting: ^9" or "^7"
+    local text = prefix..greeting["text"]:gsub("%[N%]", et.gentity_get(clientId, "pers.netname"))
+
+    local out = ""
+    while area == constants.AREA_CP and string.len(text) > constants.MAX_LENGTH_CP do
+        local sub = text:sub(1, constants.MAX_LENGTH_CP)
+        local rev = sub:reverse()
+
+        local pos = rev:find(" [^^]") -- some epic smiley exclusion here
+
+        if pos then
+            pos = constants.MAX_LENGTH_CP - pos
+            out = out..text:sub(1, pos).."\\n"
+            text = text:sub(pos + 2)
+        else
+            pos = sub:len()
+            out = out..text:sub(1, pos).."\\n"
+            text = text:sub(pos + 1)
+        end
+    end
+
+    if greeting["sound"] then
+        server.exec(string.format("playsound \"sound/%s\";", greeting["sound"]))
+    end
+
+    output.client(area, out..text)
 end
 
 function greetings.load()
